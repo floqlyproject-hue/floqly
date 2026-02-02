@@ -81,10 +81,10 @@
 - [x] Интеграция Yandex Метрика (подготовлена)
 
 ### 1.8 CI/CD
-- [ ] GitHub репозиторий
-- [ ] GitHub Actions workflow:
-  - [ ] Lint + Type check
-  - [ ] Build
+- [x] GitHub репозиторий (floqlyproject-hue/floqly)
+- [x] GitHub Actions workflow:
+  - [x] Lint + Type check
+  - [x] Build (web + widget)
   - [ ] Deploy preview
   - [ ] Production deploy
 
@@ -309,3 +309,4 @@
 | 2026-02-02 | **Фаза 1 (частично)**: Монорепо, конфиги, Next.js 16.1.6, Виджет, packages |
 | 2026-02-03 | **Фаза 1 (продолжение)**: Дизайн-система (OKLCH), ThemeProvider, структура маршрутов, UI-кит (10 компонентов) |
 | 2026-02-03 | **Supabase**: Схема БД (7 таблиц), RLS политики, TypeScript типы, SSR клиенты, middleware |
+| 2026-02-03 | **GitHub**: Репозиторий floqlyproject-hue/floqly, CI workflow (lint, type-check, build) |
