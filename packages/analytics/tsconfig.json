@@ -1,0 +1,9 @@
+{
+  "extends": "@floqly/config/typescript/base",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "noEmit": true
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"]
+}

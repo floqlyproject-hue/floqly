@@ -1,0 +1,201 @@
+@import "tailwindcss";
+
+/* ============================================
+   Floqly Design System - Tailwind CSS v4
+   Следует skill: tailwind-design-system
+   ============================================ */
+
+@theme {
+  /* ─────────────────────────────────────────
+     Semantic Color Tokens (OKLCH)
+     ───────────────────────────────────────── */
+
+  /* Background & Foreground */
+  --color-background: oklch(100% 0 0);
+  --color-foreground: oklch(14.5% 0.025 264);
+
+  /* Primary - основной акцент */
+  --color-primary: oklch(55% 0.22 260);
+  --color-primary-foreground: oklch(98% 0.01 264);
+
+  /* Secondary - вторичный */
+  --color-secondary: oklch(96% 0.01 264);
+  --color-secondary-foreground: oklch(14.5% 0.025 264);
+
+  /* Muted - приглушённый */
+  --color-muted: oklch(96% 0.01 264);
+  --color-muted-foreground: oklch(46% 0.02 264);
+
+  /* Accent - акцент */
+  --color-accent: oklch(96% 0.01 264);
+  --color-accent-foreground: oklch(14.5% 0.025 264);
+
+  /* Destructive - ошибки/удаление */
+  --color-destructive: oklch(53% 0.22 27);
+  --color-destructive-foreground: oklch(98% 0.01 264);
+
+  /* Success - успех */
+  --color-success: oklch(65% 0.2 145);
+  --color-success-foreground: oklch(98% 0.01 264);
+
+  /* Warning - предупреждение */
+  --color-warning: oklch(75% 0.18 85);
+  --color-warning-foreground: oklch(14.5% 0.025 264);
+
+  /* Border & Ring */
+  --color-border: oklch(91% 0.01 264);
+  --color-ring: oklch(55% 0.22 260);
+  --color-ring-offset: oklch(100% 0 0);
+
+  /* Card */
+  --color-card: oklch(100% 0 0);
+  --color-card-foreground: oklch(14.5% 0.025 264);
+
+  /* Input */
+  --color-input: oklch(91% 0.01 264);
+
+  /* ─────────────────────────────────────────
+     Radius Tokens
+     ───────────────────────────────────────── */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+  --radius-2xl: 1rem;
+  --radius-full: 9999px;
+
+  /* ─────────────────────────────────────────
+     Animation Tokens
+     ───────────────────────────────────────── */
+  --animate-fade-in: fade-in 0.2s ease-out;
+  --animate-fade-out: fade-out 0.2s ease-in;
+  --animate-slide-in: slide-in 0.3s ease-out;
+  --animate-slide-out: slide-out 0.3s ease-in;
+  --animate-scale-in: scale-in 0.2s ease-out;
+  --animate-spin: spin 1s linear infinite;
+  --animate-pulse: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes fade-out {
+    from { opacity: 1; }
+    to { opacity: 0; }
+  }
+
+  @keyframes slide-in {
+    from { transform: translateY(-0.5rem); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+
+  @keyframes slide-out {
+    from { transform: translateY(0); opacity: 1; }
+    to { transform: translateY(-0.5rem); opacity: 0; }
+  }
+
+  @keyframes scale-in {
+    from { transform: scale(0.95); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  @keyframes pulse {
+    50% { opacity: 0.5; }
+  }
+}
+
+/* ─────────────────────────────────────────
+   Dark Mode Variant (class-based)
+   ───────────────────────────────────────── */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Dark theme overrides */
+.dark {
+  --color-background: oklch(14.5% 0.025 264);
+  --color-foreground: oklch(98% 0.01 264);
+
+  --color-primary: oklch(65% 0.22 260);
+  --color-primary-foreground: oklch(14.5% 0.025 264);
+
+  --color-secondary: oklch(22% 0.02 264);
+  --color-secondary-foreground: oklch(98% 0.01 264);
+
+  --color-muted: oklch(22% 0.02 264);
+  --color-muted-foreground: oklch(65% 0.02 264);
+
+  --color-accent: oklch(22% 0.02 264);
+  --color-accent-foreground: oklch(98% 0.01 264);
+
+  --color-destructive: oklch(55% 0.2 27);
+  --color-destructive-foreground: oklch(98% 0.01 264);
+
+  --color-success: oklch(70% 0.2 145);
+  --color-success-foreground: oklch(14.5% 0.025 264);
+
+  --color-warning: oklch(78% 0.18 85);
+  --color-warning-foreground: oklch(14.5% 0.025 264);
+
+  --color-border: oklch(25% 0.02 264);
+  --color-ring: oklch(65% 0.22 260);
+  --color-ring-offset: oklch(14.5% 0.025 264);
+
+  --color-card: oklch(18% 0.02 264);
+  --color-card-foreground: oklch(98% 0.01 264);
+
+  --color-input: oklch(25% 0.02 264);
+}
+
+/* ─────────────────────────────────────────
+   Base Styles
+   ───────────────────────────────────────── */
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  /* Улучшенные стили для accessibility */
+  :focus-visible {
+    @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
+  }
+
+  /* Smooth scrolling */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Reduced motion support */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+
+    html {
+      scroll-behavior: auto;
+    }
+  }
+}
+
+/* ─────────────────────────────────────────
+   Custom Utilities
+   ───────────────────────────────────────── */
+@utility text-balance {
+  text-wrap: balance;
+}
+
+@utility text-gradient {
+  @apply bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent;
+}

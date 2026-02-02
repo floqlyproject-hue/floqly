@@ -1,0 +1,30 @@
+{
+  "name": "floqly",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Floqly - Widget ecosystem for websites with AI chat",
+  "scripts": {
+    "dev": "pnpm --filter @floqly/web dev",
+    "build": "pnpm --filter @floqly/web build",
+    "start": "pnpm --filter @floqly/web start",
+    "lint": "pnpm -r lint",
+    "type-check": "pnpm -r type-check",
+    "test": "pnpm -r test",
+    "widget:dev": "pnpm --filter @floqly/widget dev",
+    "widget:build": "pnpm --filter @floqly/widget build",
+    "admin:dev": "pnpm --filter @floqly/admin dev",
+    "db:migrate": "pnpm --filter @floqly/database migrate",
+    "db:generate": "pnpm --filter @floqly/database generate",
+    "clean": "pnpm -r clean && rm -rf node_modules",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\""
+  },
+  "devDependencies": {
+    "prettier": "^3.4.2",
+    "typescript": "^5.7.3"
+  },
+  "packageManager": "pnpm@10.28.2",
+  "engines": {
+    "node": ">=20.9.0",
+    "pnpm": ">=10.0.0"
+  }
+}

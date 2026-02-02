@@ -1,0 +1,16 @@
+{
+  "extends": "@floqly/config/typescript/base",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@floqly/ui": ["packages/ui/src"],
+      "@floqly/ui/*": ["packages/ui/src/*"],
+      "@floqly/database": ["packages/database/src"],
+      "@floqly/database/*": ["packages/database/src/*"],
+      "@floqly/analytics": ["packages/analytics/src"],
+      "@floqly/analytics/*": ["packages/analytics/src/*"]
+    }
+  },
+  "include": [],
+  "exclude": ["node_modules"]
+}
