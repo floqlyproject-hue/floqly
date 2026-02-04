@@ -68,13 +68,13 @@ export function BannerPreview({
         }
       case 'floating':
         return {
-          container: 'bottom-4 left-4 right-4',
+          container: 'bottom-3 left-3 right-3',
           inner: 'rounded-xl border shadow-lg max-w-2xl mx-auto',
           animation: banner.animation === 'slide' ? 'animate-slide-up' : '',
         }
       case 'corner':
         return {
-          container: 'bottom-4 right-4 left-auto max-w-sm',
+          container: 'bottom-3 right-3 left-auto max-w-[200px]',
           inner: 'rounded-xl border shadow-lg',
           animation: banner.animation === 'slide' ? 'animate-slide-up' : '',
         }
@@ -88,149 +88,155 @@ export function BannerPreview({
   }, [banner.position, banner.animation])
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-4">
+      {/* Header */}
       <div className="flex items-center justify-between">
         <h3 className="text-sm font-medium text-foreground">Предпросмотр</h3>
-        <div className="flex items-center gap-2">
-          <span className="text-xs text-muted-foreground">Масштаб: 80%</span>
+        <div className="flex items-center gap-1.5 rounded-full bg-muted/60 px-2 py-0.5">
+          <div className="size-1.5 rounded-full bg-success" />
+          <span className="text-[10px] font-medium text-muted-foreground">Live</span>
         </div>
       </div>
 
-      {/* Preview Container */}
-      <div className="relative aspect-[16/10] overflow-hidden rounded-xl border border-border bg-gradient-to-b from-muted to-muted/50">
-        {/* Fake website background */}
-        <div className="absolute inset-0 p-6">
-          {/* Header */}
-          <div className="flex items-center gap-4">
-            <div className="size-8 rounded bg-muted-foreground/20" />
-            <div className="h-3 w-20 rounded bg-muted-foreground/15" />
-            <div className="ml-auto flex gap-2">
-              <div className="h-3 w-12 rounded bg-muted-foreground/10" />
-              <div className="h-3 w-12 rounded bg-muted-foreground/10" />
-              <div className="h-3 w-12 rounded bg-muted-foreground/10" />
+      {/* Preview Container - Premium Browser Frame */}
+      <div className="overflow-hidden rounded-xl border border-border/60 bg-muted/30 shadow-sm">
+        {/* Browser Chrome */}
+        <div className="flex items-center gap-2 border-b border-border/40 bg-muted/50 px-3 py-2">
+          <div className="flex gap-1.5">
+            <div className="size-2.5 rounded-full bg-red-400/60" />
+            <div className="size-2.5 rounded-full bg-yellow-400/60" />
+            <div className="size-2.5 rounded-full bg-green-400/60" />
+          </div>
+          <div className="flex-1">
+            <div className="mx-auto flex h-5 w-48 items-center justify-center rounded-md bg-background/60 text-[9px] text-muted-foreground">
+              yoursite.ru
             </div>
           </div>
-
-          {/* Content */}
-          <div className="mt-8">
-            <div className="h-4 w-48 rounded bg-muted-foreground/20" />
-            <div className="mt-4 space-y-2">
-              <div className="h-2.5 w-full rounded bg-muted-foreground/10" />
-              <div className="h-2.5 w-5/6 rounded bg-muted-foreground/10" />
-              <div className="h-2.5 w-4/6 rounded bg-muted-foreground/10" />
-            </div>
-          </div>
-
-          {/* Cards */}
-          <div className="mt-6 grid grid-cols-3 gap-3">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="rounded-lg bg-background/50 p-3">
-                <div className="h-12 rounded bg-muted-foreground/10" />
-                <div className="mt-2 h-2 w-3/4 rounded bg-muted-foreground/10" />
-                <div className="mt-1 h-2 w-1/2 rounded bg-muted-foreground/10" />
-              </div>
-            ))}
-          </div>
+          <div className="w-12" />
         </div>
 
-        {/* Backdrop blur overlay */}
-        {banner.backdropBlur && (
-          <div className="pointer-events-none absolute inset-0 bg-black/5 backdrop-blur-[2px]" />
-        )}
-
-        {/* Cookie Banner */}
-        <div
-          className={`absolute ${positionStyles.container} ${
-            banner.animation === 'fade' ? 'animate-fade-in' : ''
-          } ${positionStyles.animation}`}
-          style={{ scale: '0.8', transformOrigin: banner.position === 'top' ? 'top' : 'bottom' }}
-        >
-          <div
-            className={`${colorStyles.bg} ${positionStyles.inner} ${colorStyles.border} p-4 ${
-              banner.backdropBlur ? 'backdrop-blur-md' : ''
-            }`}
-          >
-            {banner.position === 'corner' ? (
-              /* Corner layout - vertical */
-              <div className="space-y-3">
-                <p className={`text-xs leading-relaxed ${colorStyles.text}`}>
-                  {bannerText}
-                </p>
-                {company.privacyPolicyUrl && (
-                  <a
-                    href="#"
-                    className={`text-xs underline underline-offset-2 ${colorStyles.textMuted}`}
-                  >
-                    Подробнее
-                  </a>
-                )}
-                <div className="flex flex-col gap-2">
-                  <button
-                    className={`rounded-lg px-3 py-2 text-xs font-medium transition-colors ${colorStyles.buttonPrimary}`}
-                  >
-                    {buttonText.accept}
-                  </button>
-                  {banner.showDeclineButton && (
-                    <button
-                      className={`rounded-lg border px-3 py-2 text-xs font-medium transition-colors ${colorStyles.buttonSecondary}`}
-                    >
-                      {buttonText.decline}
-                    </button>
-                  )}
-                  {banner.showSettingsButton && (
-                    <button
-                      className={`text-xs ${colorStyles.textMuted} hover:underline`}
-                    >
-                      {buttonText.settings}
-                    </button>
-                  )}
-                </div>
+        {/* Website Preview */}
+        <div className="relative aspect-[4/3] bg-gradient-to-b from-background via-background to-muted/20">
+          {/* Fake website content */}
+          <div className="absolute inset-0 p-4">
+            {/* Navigation */}
+            <div className="flex items-center gap-3">
+              <div className="flex size-6 items-center justify-center rounded-md bg-primary/10">
+                <div className="size-3 rounded-sm bg-primary/40" />
               </div>
-            ) : (
-              /* Default layout - horizontal */
-              <div className="flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center">
-                <div className="flex-1">
-                  <p className={`text-xs leading-relaxed ${colorStyles.text}`}>
-                    {bannerText}
+              <div className="h-2 w-14 rounded-full bg-muted-foreground/10" />
+              <div className="ml-auto flex gap-3">
+                <div className="h-2 w-8 rounded-full bg-muted-foreground/8" />
+                <div className="h-2 w-8 rounded-full bg-muted-foreground/8" />
+                <div className="h-2 w-8 rounded-full bg-muted-foreground/8" />
+              </div>
+            </div>
+
+            {/* Hero Section */}
+            <div className="mt-6 flex flex-col items-center text-center">
+              <div className="h-3 w-32 rounded-full bg-muted-foreground/15" />
+              <div className="mt-2 h-2 w-48 rounded-full bg-muted-foreground/8" />
+              <div className="mt-1 h-2 w-40 rounded-full bg-muted-foreground/8" />
+              <div className="mt-4 h-5 w-20 rounded-md bg-primary/20" />
+            </div>
+
+            {/* Cards Grid */}
+            <div className="mt-6 grid grid-cols-3 gap-2">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="rounded-lg border border-border/30 bg-card/50 p-2">
+                  <div className="aspect-video rounded-md bg-muted-foreground/8" />
+                  <div className="mt-2 h-1.5 w-3/4 rounded-full bg-muted-foreground/10" />
+                  <div className="mt-1 h-1.5 w-1/2 rounded-full bg-muted-foreground/6" />
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Backdrop blur overlay */}
+          {banner.backdropBlur && (
+            <div className="pointer-events-none absolute inset-0 bg-background/10 backdrop-blur-[1px]" />
+          )}
+
+          {/* Cookie Banner */}
+          <div
+            className={`absolute ${positionStyles.container} ${
+              banner.animation === 'fade' ? 'animate-fade-in' : ''
+            } ${positionStyles.animation}`}
+            style={{ scale: '0.75', transformOrigin: banner.position === 'top' ? 'top center' : 'bottom center' }}
+          >
+            <div
+              className={`${colorStyles.bg} ${positionStyles.inner} ${colorStyles.border} p-3 ${
+                banner.backdropBlur ? 'backdrop-blur-md bg-opacity-95' : ''
+              }`}
+            >
+              {banner.position === 'corner' ? (
+                /* Corner layout - vertical */
+                <div className="space-y-2">
+                  <p className={`text-[9px] leading-relaxed ${colorStyles.text}`}>
+                    {bannerText.slice(0, 80)}…
                   </p>
                   {company.privacyPolicyUrl && (
-                    <a
-                      href="#"
-                      className={`mt-1 inline-block text-xs underline underline-offset-2 ${colorStyles.textMuted}`}
-                    >
-                      Политика конфиденциальности
-                    </a>
+                    <span className={`text-[8px] underline underline-offset-2 ${colorStyles.textMuted}`}>
+                      Подробнее
+                    </span>
                   )}
-                </div>
-                <div className="flex shrink-0 flex-wrap items-center gap-2">
-                  {banner.showSettingsButton && (
+                  <div className="flex flex-col gap-1.5">
                     <button
-                      className={`text-xs ${colorStyles.textMuted} hover:underline`}
+                      className={`rounded-md px-2 py-1.5 text-[8px] font-medium ${colorStyles.buttonPrimary}`}
                     >
-                      {buttonText.settings}
+                      {buttonText.accept}
                     </button>
-                  )}
-                  {banner.showDeclineButton && (
-                    <button
-                      className={`rounded-lg border px-3 py-1.5 text-xs font-medium transition-colors ${colorStyles.buttonSecondary}`}
-                    >
-                      {buttonText.decline}
-                    </button>
-                  )}
-                  <button
-                    className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${colorStyles.buttonPrimary}`}
-                  >
-                    {buttonText.accept}
-                  </button>
+                    {banner.showDeclineButton && (
+                      <button
+                        className={`rounded-md border px-2 py-1 text-[8px] font-medium ${colorStyles.buttonSecondary}`}
+                      >
+                        {buttonText.decline}
+                      </button>
+                    )}
+                    {banner.showSettingsButton && (
+                      <span className={`text-center text-[7px] ${colorStyles.textMuted}`}>
+                        {buttonText.settings}
+                      </span>
+                    )}
+                  </div>
                 </div>
-              </div>
-            )}
+              ) : (
+                /* Default layout - horizontal */
+                <div className="flex items-center justify-between gap-3">
+                  <div className="flex-1 min-w-0">
+                    <p className={`text-[9px] leading-relaxed ${colorStyles.text} truncate`}>
+                      {bannerText.slice(0, 60)}…
+                    </p>
+                  </div>
+                  <div className="flex shrink-0 items-center gap-1.5">
+                    {banner.showSettingsButton && (
+                      <span className={`text-[7px] ${colorStyles.textMuted}`}>
+                        {buttonText.settings}
+                      </span>
+                    )}
+                    {banner.showDeclineButton && (
+                      <button
+                        className={`rounded-md border px-2 py-1 text-[8px] font-medium ${colorStyles.buttonSecondary}`}
+                      >
+                        {buttonText.decline}
+                      </button>
+                    )}
+                    <button
+                      className={`rounded-md px-2 py-1 text-[8px] font-medium ${colorStyles.buttonPrimary}`}
+                    >
+                      {buttonText.accept}
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
 
+      {/* Info */}
       <p className="text-center text-xs text-muted-foreground">
-        Баннер адаптируется под размер экрана пользователя
+        Баннер адаптируется под размер экрана
       </p>
     </div>
   )

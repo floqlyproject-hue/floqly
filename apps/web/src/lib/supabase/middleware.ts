@@ -36,22 +36,22 @@ export async function updateSession(request: NextRequest) {
 
   // Protected routes
   const isProtectedRoute = request.nextUrl.pathname.startsWith('/dashboard')
-  const isAuthRoute =
-    request.nextUrl.pathname.startsWith('/login') ||
-    request.nextUrl.pathname.startsWith('/signup')
+  const isAuthRoute = request.nextUrl.pathname.startsWith('/auth')
 
   // Redirect unauthenticated users from protected routes
   if (isProtectedRoute && !user) {
     const url = request.nextUrl.clone()
-    url.pathname = '/login'
+    url.pathname = '/auth/login'
     url.searchParams.set('redirect', request.nextUrl.pathname)
     return NextResponse.redirect(url)
   }
 
   // Redirect authenticated users from auth routes
   if (isAuthRoute && user) {
+    const redirect = request.nextUrl.searchParams.get('redirect')
     const url = request.nextUrl.clone()
-    url.pathname = '/dashboard'
+    url.pathname = redirect || '/dashboard'
+    url.search = ''
     return NextResponse.redirect(url)
   }
 

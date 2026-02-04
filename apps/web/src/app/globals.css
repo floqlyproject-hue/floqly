@@ -10,8 +10,8 @@
      Semantic Color Tokens (OKLCH)
      ───────────────────────────────────────── */
 
-  /* Background & Foreground */
-  --color-background: oklch(100% 0 0);
+  /* Background & Foreground - Warm cream theme */
+  --color-background: oklch(98.5% 0.008 85);
   --color-foreground: oklch(14.5% 0.025 264);
 
   /* Primary - основной акцент */
@@ -47,8 +47,8 @@
   --color-ring: oklch(55% 0.22 260);
   --color-ring-offset: oklch(100% 0 0);
 
-  /* Card */
-  --color-card: oklch(100% 0 0);
+  /* Card - Slightly lighter than background */
+  --color-card: oklch(99.5% 0.005 85);
   --color-card-foreground: oklch(14.5% 0.025 264);
 
   /* Input */
@@ -126,40 +126,40 @@
    ───────────────────────────────────────── */
 @custom-variant dark (&:where(.dark, .dark *));
 
-/* Dark theme overrides */
+/* Dark theme overrides - Linear-style deep blue */
 .dark {
-  --color-background: oklch(14.5% 0.025 264);
+  --color-background: oklch(12% 0.02 260);
   --color-foreground: oklch(98% 0.01 264);
 
   --color-primary: oklch(65% 0.22 260);
-  --color-primary-foreground: oklch(14.5% 0.025 264);
+  --color-primary-foreground: oklch(98% 0.01 264);
 
-  --color-secondary: oklch(22% 0.02 264);
+  --color-secondary: oklch(18% 0.025 260);
   --color-secondary-foreground: oklch(98% 0.01 264);
 
-  --color-muted: oklch(22% 0.02 264);
+  --color-muted: oklch(18% 0.025 260);
   --color-muted-foreground: oklch(65% 0.02 264);
 
-  --color-accent: oklch(22% 0.02 264);
+  --color-accent: oklch(20% 0.03 260);
   --color-accent-foreground: oklch(98% 0.01 264);
 
   --color-destructive: oklch(55% 0.2 27);
   --color-destructive-foreground: oklch(98% 0.01 264);
 
   --color-success: oklch(70% 0.2 145);
-  --color-success-foreground: oklch(14.5% 0.025 264);
+  --color-success-foreground: oklch(98% 0.01 264);
 
   --color-warning: oklch(78% 0.18 85);
   --color-warning-foreground: oklch(14.5% 0.025 264);
 
-  --color-border: oklch(25% 0.02 264);
+  --color-border: oklch(22% 0.025 260);
   --color-ring: oklch(65% 0.22 260);
-  --color-ring-offset: oklch(14.5% 0.025 264);
+  --color-ring-offset: oklch(12% 0.02 260);
 
-  --color-card: oklch(18% 0.02 264);
+  --color-card: oklch(15% 0.025 260);
   --color-card-foreground: oklch(98% 0.01 264);
 
-  --color-input: oklch(25% 0.02 264);
+  --color-input: oklch(20% 0.025 260);
 }
 
 /* ─────────────────────────────────────────

@@ -13,70 +13,99 @@ export function CompanyForm({ data, onChange }: CompanyFormProps) {
   }
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
-        <div className="flex size-6 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">
+    <div className="space-y-6">
+      {/* Section Header */}
+      <div className="flex items-center gap-3">
+        <div className="flex size-8 items-center justify-center rounded-xl bg-gradient-to-br from-primary/15 to-primary/5 text-sm font-semibold text-primary ring-1 ring-primary/10">
           1
         </div>
-        Информация о компании
+        <div>
+          <h3 className="text-base font-medium text-foreground">Информация о компании</h3>
+          <p className="text-sm text-muted-foreground">Базовые данные для текста баннера</p>
+        </div>
       </div>
 
-      <div className="space-y-4 rounded-lg border border-border bg-card/50 p-4">
-        <div>
-          <label className="mb-1.5 block text-sm font-medium text-foreground">
+      {/* Form Fields */}
+      <div className="space-y-5">
+        {/* Company Name - Required */}
+        <div className="group">
+          <label htmlFor="company-name" className="mb-2 flex items-center gap-2 text-sm font-medium text-foreground">
             Название компании/сайта
+            <span className="rounded bg-primary/10 px-1.5 py-0.5 text-[10px] font-medium text-primary">
+              Обязательно
+            </span>
           </label>
           <input
+            id="company-name"
             type="text"
             value={data.name}
             onChange={(e) => handleChange('name', e.target.value)}
-            placeholder="ООО «Компания» или Мой сайт"
-            className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+            placeholder="ООО «Компания» или Мой сайт…"
+            autoComplete="organization"
+            className="w-full rounded-xl border border-input bg-background px-4 py-3 text-sm text-foreground transition-all duration-200 placeholder:text-muted-foreground/60 hover:border-muted-foreground/30 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
           />
-          <p className="mt-1 text-xs text-muted-foreground">
-            Будет использоваться в тексте баннера
+          <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
+            Будет использоваться в тексте баннера и документе политики
           </p>
         </div>
 
-        <div>
-          <label className="mb-1.5 block text-sm font-medium text-foreground">
+        {/* Website Domain */}
+        <div className="group">
+          <label htmlFor="company-website" className="mb-2 block text-sm font-medium text-foreground">
             Домен сайта
           </label>
-          <input
-            type="text"
-            value={data.website}
-            onChange={(e) => handleChange('website', e.target.value)}
-            placeholder="example.ru"
-            className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-          />
+          <div className="relative">
+            <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-sm text-muted-foreground/60">
+              https://
+            </span>
+            <input
+              id="company-website"
+              type="text"
+              value={data.website}
+              onChange={(e) => handleChange('website', e.target.value)}
+              placeholder="example.ru"
+              autoComplete="url"
+              className="w-full rounded-xl border border-input bg-background py-3 pl-[4.5rem] pr-4 text-sm text-foreground transition-all duration-200 placeholder:text-muted-foreground/60 hover:border-muted-foreground/30 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+            />
+          </div>
         </div>
 
-        <div>
-          <label className="mb-1.5 block text-sm font-medium text-foreground">
+        {/* Email */}
+        <div className="group">
+          <label htmlFor="company-email" className="mb-2 flex items-center gap-2 text-sm font-medium text-foreground">
             Email для связи
-            <span className="ml-1 text-xs text-muted-foreground">(опционально)</span>
+            <span className="text-xs font-normal text-muted-foreground">опционально</span>
           </label>
           <input
+            id="company-email"
             type="email"
             value={data.email}
             onChange={(e) => handleChange('email', e.target.value)}
             placeholder="privacy@example.ru"
-            className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+            autoComplete="email"
+            spellCheck={false}
+            className="w-full rounded-xl border border-input bg-background px-4 py-3 text-sm text-foreground transition-all duration-200 placeholder:text-muted-foreground/60 hover:border-muted-foreground/30 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
           />
         </div>
 
-        <div>
-          <label className="mb-1.5 block text-sm font-medium text-foreground">
+        {/* Privacy Policy URL */}
+        <div className="group">
+          <label htmlFor="privacy-url" className="mb-2 flex items-center gap-2 text-sm font-medium text-foreground">
             Ссылка на политику конфиденциальности
-            <span className="ml-1 text-xs text-muted-foreground">(опционально)</span>
+            <span className="text-xs font-normal text-muted-foreground">опционально</span>
           </label>
           <input
+            id="privacy-url"
             type="url"
             value={data.privacyPolicyUrl}
             onChange={(e) => handleChange('privacyPolicyUrl', e.target.value)}
             placeholder="https://example.ru/privacy"
-            className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+            autoComplete="url"
+            className="w-full rounded-xl border border-input bg-background px-4 py-3 text-sm text-foreground transition-all duration-200 placeholder:text-muted-foreground/60 hover:border-muted-foreground/30 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
           />
+          <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
+            Если есть — появится ссылка в баннере
+          </p>
         </div>
       </div>
     </div>

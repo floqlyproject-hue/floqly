@@ -12,9 +12,9 @@ const POSITIONS: { value: BannerPosition; label: string; icon: React.ReactNode }
     value: 'bottom',
     label: 'Снизу',
     icon: (
-      <svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
-        <rect x="3" y="3" width="18" height="18" rx="2" />
-        <rect x="5" y="15" width="14" height="4" rx="1" fill="currentColor" opacity="0.3" />
+      <svg className="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
+        <rect x="3" y="3" width="18" height="18" rx="3" />
+        <rect x="5" y="15" width="14" height="4" rx="1.5" fill="currentColor" opacity="0.2" stroke="none" />
       </svg>
     ),
   },
@@ -22,9 +22,9 @@ const POSITIONS: { value: BannerPosition; label: string; icon: React.ReactNode }
     value: 'top',
     label: 'Сверху',
     icon: (
-      <svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
-        <rect x="3" y="3" width="18" height="18" rx="2" />
-        <rect x="5" y="5" width="14" height="4" rx="1" fill="currentColor" opacity="0.3" />
+      <svg className="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
+        <rect x="3" y="3" width="18" height="18" rx="3" />
+        <rect x="5" y="5" width="14" height="4" rx="1.5" fill="currentColor" opacity="0.2" stroke="none" />
       </svg>
     ),
   },
@@ -32,9 +32,9 @@ const POSITIONS: { value: BannerPosition; label: string; icon: React.ReactNode }
     value: 'floating',
     label: 'Плавающая',
     icon: (
-      <svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
-        <rect x="3" y="3" width="18" height="18" rx="2" />
-        <rect x="6" y="14" width="12" height="6" rx="1.5" fill="currentColor" opacity="0.3" />
+      <svg className="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
+        <rect x="3" y="3" width="18" height="18" rx="3" />
+        <rect x="6" y="13" width="12" height="6" rx="2" fill="currentColor" opacity="0.2" stroke="none" />
       </svg>
     ),
   },
@@ -42,19 +42,25 @@ const POSITIONS: { value: BannerPosition; label: string; icon: React.ReactNode }
     value: 'corner',
     label: 'В углу',
     icon: (
-      <svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
-        <rect x="3" y="3" width="18" height="18" rx="2" />
-        <rect x="12" y="13" width="8" height="7" rx="1.5" fill="currentColor" opacity="0.3" />
+      <svg className="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
+        <rect x="3" y="3" width="18" height="18" rx="3" />
+        <rect x="12" y="12" width="8" height="8" rx="2" fill="currentColor" opacity="0.2" stroke="none" />
       </svg>
     ),
   },
 ]
 
-const COLOR_SCHEMES: { value: ColorScheme; label: string; preview: string }[] = [
-  { value: 'light', label: 'Светлая', preview: 'bg-white border-zinc-200' },
-  { value: 'dark', label: 'Тёмная', preview: 'bg-zinc-900 border-zinc-700' },
-  { value: 'brand', label: 'Брендовая', preview: 'bg-primary border-primary' },
+const COLOR_SCHEMES: { value: ColorScheme; label: string; colors: string[] }[] = [
+  { value: 'light', label: 'Светлая', colors: ['#ffffff', '#f4f4f5', '#e4e4e7'] },
+  { value: 'dark', label: 'Тёмная', colors: ['#18181b', '#27272a', '#3f3f46'] },
+  { value: 'brand', label: 'Брендовая', colors: ['hsl(var(--primary))', 'hsl(var(--primary) / 0.8)', 'hsl(var(--primary) / 0.6)'] },
 ]
+
+const ANIMATIONS = [
+  { value: 'none', label: 'Без анимации', icon: '—' },
+  { value: 'slide', label: 'Выезд', icon: '↑' },
+  { value: 'fade', label: 'Появление', icon: '◐' },
+] as const
 
 export function BannerSettingsForm({ data, onChange }: BannerSettingsFormProps) {
   const handleChange = <K extends keyof BannerSettings>(
@@ -65,191 +71,199 @@ export function BannerSettingsForm({ data, onChange }: BannerSettingsFormProps) 
   }
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
-        <div className="flex size-6 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">
+    <div className="space-y-6">
+      {/* Section Header */}
+      <div className="flex items-center gap-3">
+        <div className="flex size-8 items-center justify-center rounded-xl bg-gradient-to-br from-primary/15 to-primary/5 text-sm font-semibold text-primary ring-1 ring-primary/10">
           3
         </div>
-        Внешний вид
+        <div>
+          <h3 className="text-base font-medium text-foreground">Внешний вид</h3>
+          <p className="text-sm text-muted-foreground">Настройте дизайн баннера</p>
+        </div>
       </div>
 
-      <div className="space-y-5 rounded-lg border border-border bg-card/50 p-4">
-        {/* Position */}
-        <div>
-          <label className="mb-2 block text-sm font-medium text-foreground">
-            Позиция баннера
-          </label>
-          <div className="grid grid-cols-4 gap-2">
-            {POSITIONS.map(({ value, label, icon }) => (
+      {/* Position Selection */}
+      <div className="space-y-3">
+        <label className="text-sm font-medium text-foreground">Позиция баннера</label>
+        <div className="grid grid-cols-4 gap-2" role="radiogroup" aria-label="Позиция баннера">
+          {POSITIONS.map(({ value, label, icon }) => (
+            <button
+              key={value}
+              type="button"
+              role="radio"
+              aria-checked={data.position === value}
+              onClick={() => handleChange('position', value)}
+              className={`group flex flex-col items-center gap-2 rounded-xl border p-3 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
+                data.position === value
+                  ? 'border-primary/40 bg-primary/[0.06] text-primary'
+                  : 'border-border/60 bg-card/40 text-muted-foreground hover:border-border hover:bg-card/60 hover:text-foreground'
+              }`}
+            >
+              {icon}
+              <span className="text-xs font-medium">{label}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Color Scheme */}
+      <div className="space-y-3">
+        <label className="text-sm font-medium text-foreground">Цветовая схема</label>
+        <div className="flex gap-3" role="radiogroup" aria-label="Цветовая схема">
+          {COLOR_SCHEMES.map(({ value, label, colors }) => (
+            <button
+              key={value}
+              type="button"
+              role="radio"
+              aria-checked={data.colorScheme === value}
+              onClick={() => handleChange('colorScheme', value)}
+              className={`group flex flex-col items-center gap-2.5 rounded-xl border p-3 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
+                data.colorScheme === value
+                  ? 'border-primary/40 bg-primary/[0.04]'
+                  : 'border-border/60 bg-card/40 hover:border-border hover:bg-card/60'
+              }`}
+            >
+              <div className="flex -space-x-1.5">
+                {colors.map((color, i) => (
+                  <div
+                    key={i}
+                    className="size-6 rounded-full border border-border/40 shadow-sm"
+                    style={{ backgroundColor: color, zIndex: 3 - i }}
+                  />
+                ))}
+              </div>
+              <span className={`text-xs font-medium ${data.colorScheme === value ? 'text-primary' : 'text-muted-foreground group-hover:text-foreground'}`}>
+                {label}
+              </span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Buttons Section */}
+      <div className="space-y-3">
+        <label className="text-sm font-medium text-foreground">Кнопки</label>
+        <div className="space-y-2">
+          <ToggleOption
+            checked={data.showDeclineButton}
+            onChange={() => handleChange('showDeclineButton', !data.showDeclineButton)}
+            title="Кнопка «Отклонить»"
+            description="Позволяет отказаться от cookie"
+          />
+          <ToggleOption
+            checked={data.showSettingsButton}
+            onChange={() => handleChange('showSettingsButton', !data.showSettingsButton)}
+            title="Кнопка «Настройки»"
+            description="Детальный выбор типов cookie"
+          />
+        </div>
+      </div>
+
+      {/* Effects Section */}
+      <div className="space-y-3">
+        <label className="text-sm font-medium text-foreground">Эффекты</label>
+        <div className="space-y-2">
+          <ToggleOption
+            checked={data.backdropBlur}
+            onChange={() => handleChange('backdropBlur', !data.backdropBlur)}
+            title="Размытие фона"
+            description="Backdrop blur под баннером"
+          />
+        </div>
+
+        {/* Animation Selection */}
+        <div className="pt-2">
+          <label className="mb-2.5 block text-sm text-foreground">Анимация появления</label>
+          <div className="grid grid-cols-3 gap-2" role="radiogroup" aria-label="Анимация появления">
+            {ANIMATIONS.map(({ value, label, icon }) => (
               <button
                 key={value}
                 type="button"
-                onClick={() => handleChange('position', value)}
-                className={`flex flex-col items-center gap-1.5 rounded-lg border p-2.5 text-xs transition-colors ${
-                  data.position === value
-                    ? 'border-primary bg-primary/10 text-primary'
-                    : 'border-border bg-background text-muted-foreground hover:bg-muted hover:text-foreground'
+                role="radio"
+                aria-checked={data.animation === value}
+                onClick={() => handleChange('animation', value)}
+                className={`flex items-center justify-center gap-2 rounded-xl border px-3 py-2.5 text-xs font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
+                  data.animation === value
+                    ? 'border-primary/40 bg-primary/[0.06] text-primary'
+                    : 'border-border/60 bg-card/40 text-muted-foreground hover:border-border hover:bg-card/60 hover:text-foreground'
                 }`}
               >
-                {icon}
+                <span className="text-sm opacity-60">{icon}</span>
                 {label}
               </button>
             ))}
           </div>
         </div>
+      </div>
 
-        {/* Color Scheme */}
-        <div>
-          <label className="mb-2 block text-sm font-medium text-foreground">
-            Цветовая схема
-          </label>
-          <div className="flex gap-2">
-            {COLOR_SCHEMES.map(({ value, label, preview }) => (
-              <button
-                key={value}
-                type="button"
-                onClick={() => handleChange('colorScheme', value)}
-                className={`group flex flex-col items-center gap-1.5 rounded-lg border p-2 transition-colors ${
-                  data.colorScheme === value
-                    ? 'border-primary'
-                    : 'border-border hover:border-muted-foreground'
-                }`}
-              >
-                <div
-                  className={`size-8 rounded-md border ${preview}`}
-                />
-                <span className={`text-xs ${
-                  data.colorScheme === value ? 'text-primary' : 'text-muted-foreground group-hover:text-foreground'
-                }`}>
-                  {label}
-                </span>
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Buttons */}
-        <div className="space-y-3">
-          <label className="block text-sm font-medium text-foreground">
-            Кнопки
-          </label>
-
-          <div className="flex items-center justify-between rounded-lg border border-border bg-background p-3">
-            <div>
-              <div className="text-sm text-foreground">Кнопка «Отклонить»</div>
-              <div className="text-xs text-muted-foreground">
-                Позволяет отказаться от cookie
-              </div>
-            </div>
-            <button
-              type="button"
-              onClick={() => handleChange('showDeclineButton', !data.showDeclineButton)}
-              className={`relative h-5 w-9 rounded-full transition-colors ${
-                data.showDeclineButton ? 'bg-primary' : 'bg-input'
-              }`}
-            >
-              <span
-                className={`absolute top-0.5 block size-4 rounded-full bg-white shadow-sm transition-transform ${
-                  data.showDeclineButton ? 'left-[18px]' : 'left-0.5'
-                }`}
-              />
-            </button>
-          </div>
-
-          <div className="flex items-center justify-between rounded-lg border border-border bg-background p-3">
-            <div>
-              <div className="text-sm text-foreground">Кнопка «Настройки»</div>
-              <div className="text-xs text-muted-foreground">
-                Детальный выбор типов cookie
-              </div>
-            </div>
-            <button
-              type="button"
-              onClick={() => handleChange('showSettingsButton', !data.showSettingsButton)}
-              className={`relative h-5 w-9 rounded-full transition-colors ${
-                data.showSettingsButton ? 'bg-primary' : 'bg-input'
-              }`}
-            >
-              <span
-                className={`absolute top-0.5 block size-4 rounded-full bg-white shadow-sm transition-transform ${
-                  data.showSettingsButton ? 'left-[18px]' : 'left-0.5'
-                }`}
-              />
-            </button>
-          </div>
-        </div>
-
-        {/* Effects */}
-        <div className="space-y-3">
-          <label className="block text-sm font-medium text-foreground">
-            Эффекты
-          </label>
-
-          <div className="flex items-center justify-between rounded-lg border border-border bg-background p-3">
-            <div>
-              <div className="text-sm text-foreground">Размытие фона</div>
-              <div className="text-xs text-muted-foreground">
-                Backdrop blur под баннером
-              </div>
-            </div>
-            <button
-              type="button"
-              onClick={() => handleChange('backdropBlur', !data.backdropBlur)}
-              className={`relative h-5 w-9 rounded-full transition-colors ${
-                data.backdropBlur ? 'bg-primary' : 'bg-input'
-              }`}
-            >
-              <span
-                className={`absolute top-0.5 block size-4 rounded-full bg-white shadow-sm transition-transform ${
-                  data.backdropBlur ? 'left-[18px]' : 'left-0.5'
-                }`}
-              />
-            </button>
-          </div>
-
-          <div>
-            <label className="mb-1.5 block text-sm text-foreground">
-              Анимация появления
-            </label>
-            <div className="grid grid-cols-3 gap-2">
-              {(['none', 'slide', 'fade'] as const).map((anim) => (
-                <button
-                  key={anim}
-                  type="button"
-                  onClick={() => handleChange('animation', anim)}
-                  className={`rounded-lg border px-3 py-2 text-xs transition-colors ${
-                    data.animation === anim
-                      ? 'border-primary bg-primary/10 text-primary'
-                      : 'border-border bg-background text-muted-foreground hover:bg-muted hover:text-foreground'
-                  }`}
-                >
-                  {anim === 'none' && 'Без анимации'}
-                  {anim === 'slide' && 'Выезд'}
-                  {anim === 'fade' && 'Появление'}
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Hide days */}
-        <div>
-          <label className="mb-1.5 block text-sm font-medium text-foreground">
-            Срок скрытия после принятия (дней)
-          </label>
+      {/* Hide Days */}
+      <div className="space-y-2">
+        <label htmlFor="hide-days" className="text-sm font-medium text-foreground">
+          Срок скрытия после принятия
+        </label>
+        <div className="relative">
           <input
+            id="hide-days"
             type="number"
             value={data.hideAfterDays}
             onChange={(e) => handleChange('hideAfterDays', parseInt(e.target.value) || 365)}
             min={1}
             max={365}
-            className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+            className="w-full rounded-xl border border-input bg-background px-4 py-3 pr-16 text-sm tabular-nums text-foreground transition-all duration-200 hover:border-muted-foreground/30 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
           />
-          <p className="mt-1 text-xs text-muted-foreground">
-            Через сколько дней баннер появится снова
-          </p>
+          <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">
+            дней
+          </span>
         </div>
+        <p className="text-xs leading-relaxed text-muted-foreground">
+          Через сколько дней баннер появится снова после принятия
+        </p>
       </div>
+    </div>
+  )
+}
+
+interface ToggleOptionProps {
+  checked: boolean
+  onChange: () => void
+  title: string
+  description: string
+}
+
+function ToggleOption({ checked, onChange, title, description }: ToggleOptionProps) {
+  return (
+    <div
+      className={`flex cursor-pointer items-center justify-between rounded-xl border p-4 transition-all duration-200 ${
+        checked
+          ? 'border-primary/30 bg-primary/[0.04]'
+          : 'border-border/60 bg-card/40 hover:border-border hover:bg-card/60'
+      }`}
+      onClick={onChange}
+    >
+      <div className="space-y-0.5">
+        <div className="text-sm font-medium text-foreground">{title}</div>
+        <div className="text-xs text-muted-foreground">{description}</div>
+      </div>
+      <button
+        type="button"
+        role="switch"
+        aria-checked={checked}
+        aria-label={title}
+        onClick={(e) => {
+          e.stopPropagation()
+          onChange()
+        }}
+        className={`relative h-6 w-11 shrink-0 cursor-pointer rounded-full transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${
+          checked ? 'bg-primary' : 'bg-input'
+        }`}
+      >
+        <span
+          className={`absolute top-0.5 block size-5 rounded-full bg-white shadow-sm transition-transform duration-200 ${
+            checked ? 'translate-x-[22px]' : 'translate-x-0.5'
+          }`}
+        />
+      </button>
     </div>
   )
 }
