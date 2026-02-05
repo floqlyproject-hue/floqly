@@ -80,6 +80,9 @@ importers:
       '@floqly/config':
         specifier: workspace:*
         version: link:../../packages/config
+      eslint:
+        specifier: ^9
+        version: 9.39.2(jiti@2.6.1)
       typescript:
         specifier: ^5.7.3
         version: 5.9.3
@@ -95,6 +98,9 @@ importers:
       '@floqly/config':
         specifier: workspace:*
         version: link:../config
+      eslint:
+        specifier: ^9
+        version: 9.39.2(jiti@2.6.1)
       typescript:
         specifier: ^5
         version: 5.9.3
@@ -120,6 +126,9 @@ importers:
       '@types/node':
         specifier: ^25.2.0
         version: 25.2.0
+      eslint:
+        specifier: ^9
+        version: 9.39.2(jiti@2.6.1)
       supabase:
         specifier: ^2.21.0
         version: 2.75.0
@@ -154,6 +163,9 @@ importers:
       '@types/react-dom':
         specifier: ^19
         version: 19.2.3(@types/react@19.2.10)
+      eslint:
+        specifier: ^9
+        version: 9.39.2(jiti@2.6.1)
       typescript:
         specifier: ^5
         version: 5.9.3

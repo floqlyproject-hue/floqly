@@ -15,6 +15,7 @@
   },
   "devDependencies": {
     "@floqly/config": "workspace:*",
+    "eslint": "^9",
     "typescript": "^5"
   }
 }

@@ -22,6 +22,7 @@
     "@floqly/config": "workspace:*",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "eslint": "^9",
     "typescript": "^5"
   },
   "dependencies": {
