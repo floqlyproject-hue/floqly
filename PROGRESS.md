@@ -87,6 +87,8 @@
   - [x] Build (web + widget)
   - [ ] Deploy preview
   - [ ] Production deploy
+- [x] Netlify деплой (временно для тестирования, `netlify.toml` в корне)
+- [ ] Production деплой на Timeweb Cloud (Docker) — финальная цель
 
 ---
 

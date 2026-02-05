@@ -1,3 +1,7 @@
+# ВРЕМЕННО: Netlify используется только для тестового деплоя.
+# Production деплой будет на Timeweb Cloud (Docker) — см. CLAUDE.md.
+# Этот файл удалится когда перейдём на prod.
+
 [build]
   base = "."
   command = "pnpm install --frozen-lockfile && pnpm --filter @floqly/web build"
