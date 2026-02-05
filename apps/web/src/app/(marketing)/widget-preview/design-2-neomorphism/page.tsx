@@ -216,7 +216,7 @@ export default function NeomorphismPreview() {
           <h2 className={`mb-4 text-lg font-semibold ${textColor}`}>Заметки по дизайну</h2>
           <ul className={`space-y-2 text-sm ${mutedColor}`}>
             <li>- Двойные тени: светлая и тёмная для объёма</li>
-            <li>- Inset-тени для состояния "нажато"</li>
+            <li>- Inset-тени для состояния &quot;нажато&quot;</li>
             <li>- Монохромная палитра (серые тона)</li>
             <li>- Скруглённые формы</li>
             <li>- Поддержка светлой и тёмной темы</li>

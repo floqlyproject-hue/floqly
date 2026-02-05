@@ -30,6 +30,7 @@ export function useSiteScreenshot(websiteInput: string) {
     const url = normalizeUrl(websiteInput)
 
     if (!url) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setScreenshotUrl(null)
       setIsLoading(false)
       return

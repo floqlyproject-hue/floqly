@@ -29,6 +29,7 @@ export function ThemeProvider({
   useEffect(() => {
     const stored = localStorage.getItem(STORAGE_KEY) as Theme | null
     if (stored && ['dark', 'light', 'system'].includes(stored)) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setThemeState(stored)
     }
     setMounted(true)
@@ -51,6 +52,7 @@ export function ThemeProvider({
     }
 
     root.classList.add(resolved)
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setResolvedTheme(resolved)
 
     // Обновление meta theme-color для мобильных браузеров
