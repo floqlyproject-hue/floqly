@@ -32,7 +32,7 @@ window.Floqly = {
 
     // Create new instance
     const widget = new Widget(config)
-    window.Floqly._instance = widget
+    window.Floqly!._instance = widget
 
     // Mount to DOM
     widget.mount()
