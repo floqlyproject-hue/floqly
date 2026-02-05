@@ -479,3 +479,30 @@ CREATE TABLE widget_stats (
 - Реорганизованы sandbox-ы: 5 штук с workflow (sandbox-1-plasma в работе)
 - Зафиксирована архитектура simple/smart: общая кнопка + `simple/` и `smart/` папки внутри sandbox
 - Добавлен раздел про интеграцию с AI-бекендом Ильи (контракт API)
+- Реализован превью сайта клиента в Cookie Generator через скриншоты (Microlink API)
+  - Хук `use-site-screenshot` в `apps/web/src/lib/hooks/` — дебаунс 1.2s, отмена устаревших запросов
+  - При валидном URL → скриншот сайта как фон баннера, при ошибке → остаётся скелетон
+  - Этот же хук планируется использовать в редакторах простого и умного виджета для превью на реальном сайте клиента
+  - Microlink free tier: 50 запросов/день, ключ API не нужен
+
+### Превью на реальном сайте (use-site-screenshot)
+
+Общая фичка для всех редакторов виджетов. Пользователь вводит URL сайта → мы берём скриншот через Microlink и показываем его как фон превью, поверх которого рендерится виджет.
+
+**Где используется сейчас:**
+- Cookie Generator (оба варианта: `/tools/cookie-generator` и `/dashboard/.../edit`)
+
+**Где планируется использовать:**
+- Редактор простого виджета
+- Редактор умного виджета
+
+**Как подключить к новому редактору:**
+```typescript
+import { useSiteScreenshot } from '@/lib/hooks/use-site-screenshot'
+
+const { screenshotUrl, isLoading } = useSiteScreenshot(config.website)
+// screenshotUrl — CDN-ссылка на скриншот или null
+// isLoading — true пока запрос в полёте
+```
+
+**Логика fallback:** если URL невалиден, сайт недоступен или Microlink вернул ошибку — `screenshotUrl` остаётся `null`, превью показывает стандартный скелетон без изменений.
