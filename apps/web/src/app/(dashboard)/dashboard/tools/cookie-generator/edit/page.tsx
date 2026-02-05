@@ -13,6 +13,7 @@ import {
 import { DEFAULT_CONFIG, type CookieConfig } from '@/app/(tools)/tools/cookie-generator/types'
 import { type BannerTemplateId } from '@/app/(tools)/tools/cookie-generator/templates'
 import { useCurrentProject } from '@/lib/hooks/use-current-project'
+import { useSiteScreenshot } from '@/lib/hooks/use-site-screenshot'
 
 type ActiveTab = 'company' | 'cookies' | 'design' | 'text' | 'document'
 
@@ -74,6 +75,7 @@ export default function CookieGeneratorEditPage() {
   const [isSaving, setIsSaving] = useState(false)
   const [isDirty, setIsDirty] = useState(false)
   const [showCodeModal, setShowCodeModal] = useState(false)
+  const { screenshotUrl, isLoading: isScreenshotLoading } = useSiteScreenshot(config.company.website)
 
   const handleCompanyChange = useCallback((company: CookieConfig['company']) => {
     setConfig((prev) => ({ ...prev, company }))
@@ -233,6 +235,8 @@ export default function CookieGeneratorEditPage() {
             config={config}
             selectedTemplate={selectedTemplate}
             customText={customText}
+            screenshotUrl={screenshotUrl}
+            isScreenshotLoading={isScreenshotLoading}
           />
         </div>
       </div>

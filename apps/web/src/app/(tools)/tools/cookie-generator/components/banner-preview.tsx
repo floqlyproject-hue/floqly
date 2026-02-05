@@ -8,12 +8,16 @@ interface BannerPreviewProps {
   config: CookieConfig
   selectedTemplate: BannerTemplateId | 'custom'
   customText: string
+  screenshotUrl: string | null
+  isScreenshotLoading: boolean
 }
 
 export function BannerPreview({
   config,
   selectedTemplate,
   customText,
+  screenshotUrl,
+  isScreenshotLoading,
 }: BannerPreviewProps) {
   const { banner, buttonText, company } = config
 
@@ -87,6 +91,17 @@ export function BannerPreview({
     }
   }, [banner.position, banner.animation])
 
+  const displayDomain = useMemo(() => {
+    if (!company.website) return 'yoursite.ru'
+    try {
+      let url = company.website
+      if (!url.startsWith('http://') && !url.startsWith('https://')) url = 'https://' + url
+      return new URL(url).hostname
+    } catch {
+      return 'yoursite.ru'
+    }
+  }, [company.website])
+
   return (
     <div className="space-y-4">
       {/* Header */}
@@ -109,48 +124,77 @@ export function BannerPreview({
           </div>
           <div className="flex-1">
             <div className="mx-auto flex h-5 w-48 items-center justify-center rounded-md bg-background/60 text-[9px] text-muted-foreground">
-              yoursite.ru
+              {displayDomain}
             </div>
           </div>
           <div className="w-12" />
         </div>
 
         {/* Website Preview */}
-        <div className="relative aspect-[4/3] bg-gradient-to-b from-background via-background to-muted/20">
-          {/* Fake website content */}
-          <div className="absolute inset-0 p-4">
-            {/* Navigation */}
-            <div className="flex items-center gap-3">
-              <div className="flex size-6 items-center justify-center rounded-md bg-primary/10">
-                <div className="size-3 rounded-sm bg-primary/40" />
-              </div>
-              <div className="h-2 w-14 rounded-full bg-muted-foreground/10" />
-              <div className="ml-auto flex gap-3">
-                <div className="h-2 w-8 rounded-full bg-muted-foreground/8" />
-                <div className="h-2 w-8 rounded-full bg-muted-foreground/8" />
-                <div className="h-2 w-8 rounded-full bg-muted-foreground/8" />
-              </div>
-            </div>
+        <div className="relative aspect-[4/3] overflow-hidden bg-gradient-to-b from-background via-background to-muted/20">
+          {/* Screenshot background */}
+          {screenshotUrl && (
+            <img
+              src={screenshotUrl}
+              alt="Превью сайта"
+              className="absolute inset-0 w-full h-full object-cover"
+            />
+          )}
 
-            {/* Hero Section */}
-            <div className="mt-6 flex flex-col items-center text-center">
-              <div className="h-3 w-32 rounded-full bg-muted-foreground/15" />
-              <div className="mt-2 h-2 w-48 rounded-full bg-muted-foreground/8" />
-              <div className="mt-1 h-2 w-40 rounded-full bg-muted-foreground/8" />
-              <div className="mt-4 h-5 w-20 rounded-md bg-primary/20" />
-            </div>
-
-            {/* Cards Grid */}
-            <div className="mt-6 grid grid-cols-3 gap-2">
-              {[1, 2, 3].map((i) => (
-                <div key={i} className="rounded-lg border border-border/30 bg-card/50 p-2">
-                  <div className="aspect-video rounded-md bg-muted-foreground/8" />
-                  <div className="mt-2 h-1.5 w-3/4 rounded-full bg-muted-foreground/10" />
-                  <div className="mt-1 h-1.5 w-1/2 rounded-full bg-muted-foreground/6" />
+          {/* Skeleton fallback (когда скриншота ещё нет) */}
+          {!screenshotUrl && (
+            <div className="absolute inset-0 p-4">
+              {/* Navigation */}
+              <div className="flex items-center gap-3">
+                <div className="flex size-6 items-center justify-center rounded-md bg-primary/10">
+                  <div className="size-3 rounded-sm bg-primary/40" />
                 </div>
-              ))}
+                <div className="h-2 w-14 rounded-full bg-muted-foreground/10" />
+                <div className="ml-auto flex gap-3">
+                  <div className="h-2 w-8 rounded-full bg-muted-foreground/8" />
+                  <div className="h-2 w-8 rounded-full bg-muted-foreground/8" />
+                  <div className="h-2 w-8 rounded-full bg-muted-foreground/8" />
+                </div>
+              </div>
+
+              {/* Hero Section */}
+              <div className="mt-6 flex flex-col items-center text-center">
+                <div className="h-3 w-32 rounded-full bg-muted-foreground/15" />
+                <div className="mt-2 h-2 w-48 rounded-full bg-muted-foreground/8" />
+                <div className="mt-1 h-2 w-40 rounded-full bg-muted-foreground/8" />
+                <div className="mt-4 h-5 w-20 rounded-md bg-primary/20" />
+              </div>
+
+              {/* Cards Grid */}
+              <div className="mt-6 grid grid-cols-3 gap-2">
+                {[1, 2, 3].map((i) => (
+                  <div key={i} className="rounded-lg border border-border/30 bg-card/50 p-2">
+                    <div className="aspect-video rounded-md bg-muted-foreground/8" />
+                    <div className="mt-2 h-1.5 w-3/4 rounded-full bg-muted-foreground/10" />
+                    <div className="mt-1 h-1.5 w-1/2 rounded-full bg-muted-foreground/6" />
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
+
+          {/* Loading overlay (первая загрузка, скриншота ещё нет) */}
+          {isScreenshotLoading && !screenshotUrl && (
+            <div className="absolute inset-0 flex items-center justify-center bg-background/50">
+              <div className="flex items-center gap-2 rounded-lg bg-background/90 px-3 py-2 shadow-sm">
+                <div className="size-3.5 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+                <span className="text-[10px] font-medium text-foreground/70">Загрузка превью…</span>
+              </div>
+            </div>
+          )}
+
+          {/* Loading badge (обновление при смене URL) */}
+          {isScreenshotLoading && screenshotUrl && (
+            <div className="absolute top-1.5 right-1.5 z-10 flex items-center gap-1.5 rounded-full bg-background/90 px-2 py-0.5 shadow-sm backdrop-blur-sm">
+              <div className="size-2.5 animate-spin rounded-full border border-primary border-t-transparent" />
+              <span className="text-[9px] font-medium text-foreground/70">Обновляется…</span>
+            </div>
+          )}
 
           {/* Backdrop blur overlay */}
           {banner.backdropBlur && (

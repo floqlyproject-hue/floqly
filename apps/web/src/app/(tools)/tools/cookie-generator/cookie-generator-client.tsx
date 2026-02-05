@@ -13,6 +13,7 @@ import { DEFAULT_CONFIG, type CookieConfig } from './types'
 import { type BannerTemplateId } from './templates'
 import { AuthModal } from '@/app/auth/components'
 import { createClient } from '@/lib/supabase/client'
+import { useSiteScreenshot } from '@/lib/hooks/use-site-screenshot'
 
 type ActiveTab = 'company' | 'cookies' | 'design' | 'text' | 'document'
 
@@ -78,6 +79,7 @@ export function CookieGeneratorClient() {
   const [showCodeModal, setShowCodeModal] = useState(false)
   const [showAuthModal, setShowAuthModal] = useState(false)
   const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const { screenshotUrl, isLoading: isScreenshotLoading } = useSiteScreenshot(config.company.website)
 
   // Check auth status
   useEffect(() => {
@@ -292,6 +294,8 @@ export function CookieGeneratorClient() {
             config={config}
             selectedTemplate={selectedTemplate}
             customText={customText}
+            screenshotUrl={screenshotUrl}
+            isScreenshotLoading={isScreenshotLoading}
           />
         </div>
 
