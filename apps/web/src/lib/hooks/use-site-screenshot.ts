@@ -3,6 +3,41 @@
 import { useState, useEffect, useRef } from 'react'
 
 const DEBOUNCE_MS = 1200
+const CACHE_KEY = 'floqly:screenshots'
+const CACHE_TTL_MS = 24 * 60 * 60 * 1000 // 24 часа
+
+interface CacheEntry {
+  screenshotUrl: string
+  timestamp: number
+}
+
+function getCache(): Record<string, CacheEntry> {
+  try {
+    const raw = localStorage.getItem(CACHE_KEY)
+    if (!raw) return {}
+    return JSON.parse(raw)
+  } catch {
+    return {}
+  }
+}
+
+function getCachedScreenshot(url: string): string | null {
+  const cache = getCache()
+  const entry = cache[url]
+  if (!entry) return null
+  if (Date.now() - entry.timestamp > CACHE_TTL_MS) {
+    delete cache[url]
+    try { localStorage.setItem(CACHE_KEY, JSON.stringify(cache)) } catch {}
+    return null
+  }
+  return entry.screenshotUrl
+}
+
+function setCachedScreenshot(url: string, screenshotUrl: string) {
+  const cache = getCache()
+  cache[url] = { screenshotUrl, timestamp: Date.now() }
+  try { localStorage.setItem(CACHE_KEY, JSON.stringify(cache)) } catch {}
+}
 
 function normalizeUrl(input: string): string | null {
   const trimmed = input.trim()
@@ -36,6 +71,14 @@ export function useSiteScreenshot(websiteInput: string) {
       return
     }
 
+    // Проверяем кеш
+    const cached = getCachedScreenshot(url)
+    if (cached) {
+      setScreenshotUrl(cached)
+      setIsLoading(false)
+      return
+    }
+
     const currentId = ++requestIdRef.current
     setIsLoading(true)
 
@@ -55,6 +98,10 @@ export function useSiteScreenshot(websiteInput: string) {
 
         const json = await response.json()
         const imgUrl = json?.data?.screenshot?.url
+
+        if (imgUrl) {
+          setCachedScreenshot(url, imgUrl)
+        }
 
         setScreenshotUrl(imgUrl ?? null)
         setIsLoading(false)
