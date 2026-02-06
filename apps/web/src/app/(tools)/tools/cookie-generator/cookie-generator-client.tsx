@@ -8,6 +8,8 @@ import {
   TextTemplateForm,
   BannerPreview,
   DocumentPreview,
+  WizardProgressCard,
+  CookieImpactCard,
 } from './components'
 import { DEFAULT_CONFIG, type CookieConfig } from './types'
 import { type BannerTemplateId } from './templates'
@@ -15,7 +17,7 @@ import { AuthModal } from '@/app/auth/components'
 import { createClient } from '@/lib/supabase/client'
 import { useSiteScreenshot } from '@/lib/hooks/use-site-screenshot'
 
-type ActiveTab = 'company' | 'cookies' | 'design' | 'text' | 'document'
+export type ActiveTab = 'company' | 'cookies' | 'design' | 'text' | 'document'
 
 const TABS: { id: ActiveTab; label: string; shortLabel: string; icon: React.ReactNode }[] = [
   {
@@ -143,8 +145,14 @@ export function CookieGeneratorClient() {
     }
   }, [currentTabIndex])
 
+  const isDesignStep = activeTab === 'design'
+
   return (
-    <div className="grid gap-8 lg:grid-cols-[1fr,420px] xl:grid-cols-[1fr,480px]">
+    <div className={`grid gap-8 transition-all duration-300 ${
+      isDesignStep
+        ? 'lg:grid-cols-1'
+        : 'lg:grid-cols-[1fr,420px] xl:grid-cols-[1fr,480px]'
+    }`}>
       {/* Left Column - Editor */}
       <div className="space-y-6">
         {/* Progress Indicator - Premium Style */}
@@ -219,7 +227,36 @@ export function CookieGeneratorClient() {
               <CookieTypesForm data={config.cookieTypes} onChange={handleCookieTypesChange} />
             )}
             {activeTab === 'design' && (
-              <BannerSettingsForm data={config.banner} onChange={handleBannerChange} />
+              <div className="grid gap-6 lg:grid-cols-2">
+                {/* Design controls */}
+                <div className="lg:max-h-[500px] lg:overflow-y-auto lg:pr-4">
+                  <BannerSettingsForm data={config.banner} onChange={handleBannerChange} />
+                </div>
+                {/* Live preview inline */}
+                <div className="lg:sticky lg:top-0">
+                  <BannerPreview
+                    config={config}
+                    selectedTemplate={selectedTemplate}
+                    customText={customText}
+                    screenshotUrl={screenshotUrl}
+                    isScreenshotLoading={isScreenshotLoading}
+                  />
+                  {/* Design tips below preview */}
+                  <div className="mt-4 rounded-xl bg-muted/30 p-4">
+                    <h4 className="flex items-center gap-2 text-xs font-medium text-foreground">
+                      <svg className="size-3.5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 18v-5.25m0 0a6.01 6.01 0 001.5-.189m-1.5.189a6.01 6.01 0 01-1.5-.189m3.75 7.478a12.06 12.06 0 01-4.5 0m3.75 2.383a14.406 14.406 0 01-3 0M14.25 18v-.192c0-.983.658-1.823 1.508-2.316a7.5 7.5 0 10-7.517 0c.85.493 1.509 1.333 1.509 2.316V18" />
+                      </svg>
+                      Советы по дизайну
+                    </h4>
+                    <ul className="mt-2.5 space-y-1.5">
+                      <TipItem>Плавающая позиция меньше мешает контенту</TipItem>
+                      <TipItem>Кнопка «Отклонить» повышает доверие</TipItem>
+                      <TipItem>Backdrop blur добавляет современный эффект</TipItem>
+                    </ul>
+                  </div>
+                </div>
+              </div>
             )}
             {activeTab === 'text' && (
               <TextTemplateForm
@@ -286,89 +323,113 @@ export function CookieGeneratorClient() {
         </div>
       </div>
 
-      {/* Right Column - Preview */}
-      <aside className="lg:sticky lg:top-24 lg:h-fit" aria-label="Предпросмотр и подсказки">
-        {/* Preview Card */}
-        <div className="overflow-hidden rounded-2xl border border-border/60 bg-card/80 p-5 shadow-sm backdrop-blur-sm">
-          <BannerPreview
-            config={config}
-            selectedTemplate={selectedTemplate}
-            customText={customText}
-            screenshotUrl={screenshotUrl}
-            isScreenshotLoading={isScreenshotLoading}
-          />
-        </div>
-
-        {/* Context Tips - Premium Style */}
-        <div className="mt-4 rounded-2xl border border-border/40 bg-gradient-to-b from-card/60 to-card/40 p-5 backdrop-blur-sm">
-          <h4 className="flex items-center gap-2.5 text-sm font-medium text-foreground">
-            <div className="flex size-6 items-center justify-center rounded-lg bg-primary/10">
-              <svg className="size-3.5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 18v-5.25m0 0a6.01 6.01 0 001.5-.189m-1.5.189a6.01 6.01 0 01-1.5-.189m3.75 7.478a12.06 12.06 0 01-4.5 0m3.75 2.383a14.406 14.406 0 01-3 0M14.25 18v-.192c0-.983.658-1.823 1.508-2.316a7.5 7.5 0 10-7.517 0c.85.493 1.509 1.333 1.509 2.316V18" />
-              </svg>
-            </div>
-            {activeTab === 'company' && 'Зачем это нужно?'}
-            {activeTab === 'cookies' && 'Какие cookie выбрать?'}
-            {activeTab === 'design' && 'Советы по дизайну'}
-            {activeTab === 'text' && 'Про текст'}
-            {activeTab === 'document' && 'Про документ'}
-          </h4>
-          <ul className="mt-4 space-y-2.5">
+      {/* Right Column - Sidebar (hidden on design step) */}
+      {!isDesignStep && (
+        <aside className="lg:sticky lg:top-24 lg:h-fit" aria-label="Предпросмотр и подсказки">
+          <div key={activeTab} className="animate-fade-in space-y-4">
+            {/* Step 1: Wizard Progress Card */}
             {activeTab === 'company' && (
-              <>
-                <TipItem>Название компании появится в тексте баннера</TipItem>
-                <TipItem>Email позволит пользователям связаться по вопросам приватности</TipItem>
-                <TipItem>Ссылка на политику — для тех, кто хочет узнать больше</TipItem>
-              </>
-            )}
-            {activeTab === 'cookies' && (
-              <>
-                <TipItem>Включите только те cookie, которые реально используете</TipItem>
-                <TipItem>Аналитические — Google Analytics, Яндекс.Метрика</TipItem>
-                <TipItem>Маркетинговые — ретаргетинг, рекламные пиксели</TipItem>
-              </>
-            )}
-            {activeTab === 'design' && (
-              <>
-                <TipItem>Плавающая позиция меньше мешает контенту</TipItem>
-                <TipItem>Кнопка «Отклонить» повышает доверие пользователей</TipItem>
-                <TipItem>Backdrop blur добавляет современный эффект</TipItem>
-              </>
-            )}
-            {activeTab === 'text' && (
-              <>
-                <TipItem>Используйте понятный язык без юридических терминов</TipItem>
-                <TipItem>Шаблон «Юридический» подходит для B2B-сайтов</TipItem>
-                <TipItem>Можете написать свой текст, если шаблоны не подходят</TipItem>
-              </>
-            )}
-            {activeTab === 'document' && (
-              <>
-                <TipItem>Этот текст можно разместить на отдельной странице</TipItem>
-                <TipItem>Формат Markdown поддерживается большинством CMS</TipItem>
-                <TipItem>Скопируйте или скачайте файл для вашего сайта</TipItem>
-              </>
-            )}
-          </ul>
-        </div>
-
-        {/* Quick Actions - Success State */}
-        {activeTab === 'document' && isConfigValid && (
-          <div className="mt-4 overflow-hidden rounded-2xl border border-success/20 bg-gradient-to-br from-success/[0.08] to-success/[0.03] p-5">
-            <h4 className="flex items-center gap-2.5 text-sm font-medium text-foreground">
-              <div className="flex size-6 items-center justify-center rounded-lg bg-success/15">
-                <svg className="size-3.5 text-success" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
+              <div className="overflow-hidden rounded-2xl border border-border/60 bg-card/80 p-5 shadow-sm backdrop-blur-sm">
+                <WizardProgressCard activeTab={activeTab} />
               </div>
-              Всё готово!
-            </h4>
-            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-              Нажмите «Получить код», чтобы скопировать код для вставки на сайт
-            </p>
+            )}
+
+            {/* Step 2: Cookie Impact Card */}
+            {activeTab === 'cookies' && (
+              <div className="overflow-hidden rounded-2xl border border-border/60 bg-card/80 p-5 shadow-sm backdrop-blur-sm">
+                <CookieImpactCard cookieTypes={config.cookieTypes} />
+              </div>
+            )}
+
+            {/* Step 4: Banner Preview */}
+            {activeTab === 'text' && (
+              <div className="overflow-hidden rounded-2xl border border-border/60 bg-card/80 p-5 shadow-sm backdrop-blur-sm">
+                <BannerPreview
+                  config={config}
+                  selectedTemplate={selectedTemplate}
+                  customText={customText}
+                  screenshotUrl={screenshotUrl}
+                  isScreenshotLoading={isScreenshotLoading}
+                />
+              </div>
+            )}
+
+            {/* Step 5: Success Card */}
+            {activeTab === 'document' && isConfigValid && (
+              <div className="overflow-hidden rounded-2xl border border-success/20 bg-gradient-to-br from-success/[0.08] to-success/[0.03] p-5">
+                <h4 className="flex items-center gap-2.5 text-sm font-medium text-foreground">
+                  <div className="flex size-6 items-center justify-center rounded-lg bg-success/15">
+                    <svg className="size-3.5 text-success" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  Всё готово!
+                </h4>
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                  Проверьте документ и нажмите «Получить код», чтобы скопировать код для вставки на сайт.
+                </p>
+                <div className="mt-4 flex items-center gap-2 rounded-lg bg-success/[0.06] px-3 py-2">
+                  <svg className="size-4 shrink-0 text-success" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <span className="text-xs text-muted-foreground">Баннер настроен</span>
+                </div>
+                <div className="mt-2 flex items-center gap-2 rounded-lg bg-success/[0.06] px-3 py-2">
+                  <svg className="size-4 shrink-0 text-success" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <span className="text-xs text-muted-foreground">Документ сформирован</span>
+                </div>
+              </div>
+            )}
+
+            {/* Context Tips */}
+            <div className="rounded-2xl border border-border/40 bg-gradient-to-b from-card/60 to-card/40 p-5 backdrop-blur-sm">
+              <h4 className="flex items-center gap-2.5 text-sm font-medium text-foreground">
+                <div className="flex size-6 items-center justify-center rounded-lg bg-primary/10">
+                  <svg className="size-3.5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 18v-5.25m0 0a6.01 6.01 0 001.5-.189m-1.5.189a6.01 6.01 0 01-1.5-.189m3.75 7.478a12.06 12.06 0 01-4.5 0m3.75 2.383a14.406 14.406 0 01-3 0M14.25 18v-.192c0-.983.658-1.823 1.508-2.316a7.5 7.5 0 10-7.517 0c.85.493 1.509 1.333 1.509 2.316V18" />
+                  </svg>
+                </div>
+                {activeTab === 'company' && 'Зачем это нужно?'}
+                {activeTab === 'cookies' && 'Какие cookie выбрать?'}
+                {activeTab === 'text' && 'Про текст'}
+                {activeTab === 'document' && 'Про документ'}
+              </h4>
+              <ul className="mt-4 space-y-2.5">
+                {activeTab === 'company' && (
+                  <>
+                    <TipItem>Название компании появится в тексте баннера</TipItem>
+                    <TipItem>Email позволит пользователям связаться по вопросам приватности</TipItem>
+                    <TipItem>Ссылка на политику — для тех, кто хочет узнать больше</TipItem>
+                  </>
+                )}
+                {activeTab === 'cookies' && (
+                  <>
+                    <TipItem>Включите только те cookie, которые реально используете</TipItem>
+                    <TipItem>Аналитические — Google Analytics, Яндекс.Метрика</TipItem>
+                    <TipItem>Маркетинговые — ретаргетинг, рекламные пиксели</TipItem>
+                  </>
+                )}
+                {activeTab === 'text' && (
+                  <>
+                    <TipItem>Используйте понятный язык без юридических терминов</TipItem>
+                    <TipItem>Шаблон «Юридический» подходит для B2B-сайтов</TipItem>
+                    <TipItem>Можете написать свой текст, если шаблоны не подходят</TipItem>
+                  </>
+                )}
+                {activeTab === 'document' && (
+                  <>
+                    <TipItem>Этот текст можно разместить на отдельной странице</TipItem>
+                    <TipItem>Формат Markdown поддерживается большинством CMS</TipItem>
+                    <TipItem>Скопируйте или скачайте файл для вашего сайта</TipItem>
+                  </>
+                )}
+              </ul>
+            </div>
           </div>
-        )}
-      </aside>
+        </aside>
+      )}
 
       {/* Code Modal */}
       {showCodeModal && (

@@ -42,7 +42,7 @@ export function useSiteScreenshot(websiteInput: string) {
     const timer = setTimeout(async () => {
       try {
         const response = await fetch(
-          `https://api.microlink.io?url=${encodeURIComponent(url)}&screenshot=true`
+          `https://api.microlink.io?url=${encodeURIComponent(url)}&screenshot=true&screenshot.width=1280&screenshot.height=800&viewport.width=1280&viewport.height=800`
         )
 
         if (currentId !== requestIdRef.current) return

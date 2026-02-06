@@ -131,13 +131,13 @@ export function BannerPreview({
         </div>
 
         {/* Website Preview */}
-        <div className="relative aspect-[4/3] overflow-hidden bg-gradient-to-b from-background via-background to-muted/20">
+        <div className="relative aspect-[16/10] overflow-hidden bg-gradient-to-b from-background via-background to-muted/20">
           {/* Screenshot background */}
           {screenshotUrl && (
             <img
               src={screenshotUrl}
               alt="Превью сайта"
-              className="absolute inset-0 w-full h-full object-cover"
+              className="absolute inset-0 w-full h-full object-cover object-top"
             />
           )}
 
