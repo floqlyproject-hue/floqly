@@ -1,0 +1,76 @@
+# ============================================
+# .claudeignore — Исключения для Claude Code
+# ============================================
+# Этот файл управляет тем, какие файлы и директории
+# Claude Code НЕ должен сканировать при поиске и анализе.
+# Экономит токены и ускоряет работу.
+
+# Build outputs and caches (КРИТИЧНО для экономии токенов!)
+# ~1 GB экономии
+.next/
+dist/
+build/
+out/
+.turbo/
+apps/*/dist/
+apps/widget/dist/
+apps/web/.next/
+*.tsbuildinfo
+
+# Dependencies (КРИТИЧНО! ~650 MB)
+node_modules/
+.pnpm-store/
+pnpm-store/
+*/node_modules/
+pnpm-lock.yaml
+
+# Logs and temp files
+logs/
+*.log
+.next/dev/logs/
+nul
+*.tmp
+.cache/
+*.map
+
+# Environment variables (безопасность)
+.env
+.env.local
+.env.*.local
+.env.production.local
+
+# IDE/OS (не нужны для работы)
+.idea/
+.vscode/
+.DS_Store
+*.swp
+*.swo
+
+# Testing
+coverage/
+.nyc_output/
+
+# Git (не нужно сканировать)
+.git/
+.github/workflows/
+
+# Temporary/Debug
+.debug/
+.turbopack/
+.netlify/
+
+# Archived documents (старые логи)
+docs/archived/
+
+# Design references (картинки/статика)
+design-references/
+
+# ============================================
+# Разрешённые файлы (НЕ игнорировать):
+# ============================================
+# .env.example — нужен для reference
+!.env.example
+# CLAUDE.md — инструкции проекта
+!CLAUDE.md
+# README.md — документация
+!README.md

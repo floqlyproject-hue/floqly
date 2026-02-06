@@ -120,8 +120,10 @@ pnpm db:migrate   # Миграции Supabase
 
 ## Контакты и ресурсы
 
-- **Спецификация:** `SPECIFICATION.md`
-- **PRD:** `prd.md`
+- **Спецификация:** `docs/SPECIFICATION.md`
+- **PRD:** `docs/prd.md`
+- **Прогресс:** `docs/PROGRESS.md`
+- **План виджета:** `docs/WIDGET-CONSTRUCTOR-PLAN.md`
 - **GitHub:** (настроить)
 - **Supabase:** (настроить)
 
