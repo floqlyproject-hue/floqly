@@ -4,6 +4,8 @@ export type BannerPosition = 'bottom' | 'top' | 'floating' | 'corner'
 
 export type ColorScheme = 'light' | 'dark' | 'brand' | 'custom'
 
+export type DocumentTone = 'legal' | 'friendly' | 'minimal'
+
 export interface CookieType {
   id: string
   name: string
@@ -35,6 +37,33 @@ export interface BannerSettings {
   animation: 'none' | 'slide' | 'fade'
 }
 
+export interface BusinessScenario {
+  ecommerce: boolean
+  authService: boolean
+  paidContent: boolean
+}
+
+export interface AnalyticsTool {
+  id: string
+  name: string
+  enabled: boolean
+  isCrossBorder: boolean
+  country?: string
+}
+
+export interface MarketingSettings {
+  showAds: boolean
+  retargeting: boolean
+}
+
+export interface DocumentSettings {
+  tone: DocumentTone
+  businessScenario: BusinessScenario
+  analyticsTools: AnalyticsTool[]
+  marketing: MarketingSettings
+  customAnalytics: string
+}
+
 export interface CookieConfig {
   company: CompanyInfo
   cookieTypes: CookieType[]
@@ -46,6 +75,7 @@ export interface CookieConfig {
     acceptAll: string
     saveSettings: string
   }
+  documentSettings: DocumentSettings
 }
 
 export const DEFAULT_COOKIE_TYPES: CookieType[] = [
@@ -79,6 +109,45 @@ export const DEFAULT_COOKIE_TYPES: CookieType[] = [
   },
 ]
 
+export const DEFAULT_ANALYTICS_TOOLS: AnalyticsTool[] = [
+  {
+    id: 'yandex-metrika',
+    name: 'Яндекс.Метрика',
+    enabled: true,
+    isCrossBorder: false,
+    country: 'RU',
+  },
+  {
+    id: 'google-analytics',
+    name: 'Google Analytics',
+    enabled: false,
+    isCrossBorder: true,
+    country: 'US',
+  },
+  {
+    id: 'vk-pixel',
+    name: 'VK Пиксель / myTarget',
+    enabled: false,
+    isCrossBorder: false,
+    country: 'RU',
+  },
+]
+
+export const DEFAULT_DOCUMENT_SETTINGS: DocumentSettings = {
+  tone: 'friendly',
+  businessScenario: {
+    ecommerce: false,
+    authService: false,
+    paidContent: false,
+  },
+  analyticsTools: DEFAULT_ANALYTICS_TOOLS,
+  marketing: {
+    showAds: false,
+    retargeting: false,
+  },
+  customAnalytics: '',
+}
+
 export const DEFAULT_CONFIG: CookieConfig = {
   company: {
     name: '',
@@ -103,4 +172,5 @@ export const DEFAULT_CONFIG: CookieConfig = {
     acceptAll: 'Принять все',
     saveSettings: 'Сохранить настройки',
   },
+  documentSettings: DEFAULT_DOCUMENT_SETTINGS,
 }

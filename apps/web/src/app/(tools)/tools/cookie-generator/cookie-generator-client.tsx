@@ -3,7 +3,7 @@
 import { useState, useCallback, useMemo, useEffect } from 'react'
 import {
   CompanyForm,
-  CookieTypesForm,
+  CookieConfigForm,
   BannerSettingsForm,
   TextTemplateForm,
   BannerPreview,
@@ -11,13 +11,13 @@ import {
   WizardProgressCard,
   CookieImpactCard,
 } from './components'
-import { DEFAULT_CONFIG, type CookieConfig } from './types'
+import { DEFAULT_CONFIG, type CookieConfig, type DocumentSettings } from './types'
 import { type BannerTemplateId } from './templates'
 import { AuthModal } from '@/app/auth/components'
 import { createClient } from '@/lib/supabase/client'
 import { useSiteScreenshot } from '@/lib/hooks/use-site-screenshot'
 
-export type ActiveTab = 'company' | 'cookies' | 'design' | 'text' | 'document'
+export type ActiveTab = 'company' | 'cookies' | 'document' | 'design' | 'result'
 
 const TABS: { id: ActiveTab; label: string; shortLabel: string; icon: React.ReactNode }[] = [
   {
@@ -32,32 +32,12 @@ const TABS: { id: ActiveTab; label: string; shortLabel: string; icon: React.Reac
   },
   {
     id: 'cookies',
-    label: 'Типы cookie',
+    label: 'Настройка cookie',
     shortLabel: 'Cookie',
     icon: (
       <svg className="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.325.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.241-.438.613-.43.992a7.723 7.723 0 010 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.955.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 010-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28z" />
         <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-      </svg>
-    ),
-  },
-  {
-    id: 'design',
-    label: 'Дизайн',
-    shortLabel: 'Дизайн',
-    icon: (
-      <svg className="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M4.098 19.902a3.75 3.75 0 005.304 0l6.401-6.402M6.75 21A3.75 3.75 0 013 17.25V4.125C3 3.504 3.504 3 4.125 3h5.25c.621 0 1.125.504 1.125 1.125v4.072M6.75 21a3.75 3.75 0 003.75-3.75V8.197M6.75 21h13.125c.621 0 1.125-.504 1.125-1.125v-5.25c0-.621-.504-1.125-1.125-1.125h-4.072M10.5 8.197l2.88-2.88c.438-.439 1.15-.439 1.59 0l3.712 3.713c.44.44.44 1.152 0 1.59l-2.879 2.88M6.75 17.25h.008v.008H6.75v-.008z" />
-      </svg>
-    ),
-  },
-  {
-    id: 'text',
-    label: 'Текст баннера',
-    shortLabel: 'Текст',
-    icon: (
-      <svg className="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25H12" />
       </svg>
     ),
   },
@@ -71,6 +51,26 @@ const TABS: { id: ActiveTab; label: string; shortLabel: string; icon: React.Reac
       </svg>
     ),
   },
+  {
+    id: 'design',
+    label: 'Оформление',
+    shortLabel: 'Оформление',
+    icon: (
+      <svg className="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M4.098 19.902a3.75 3.75 0 005.304 0l6.401-6.402M6.75 21A3.75 3.75 0 013 17.25V4.125C3 3.504 3.504 3 4.125 3h5.25c.621 0 1.125.504 1.125 1.125v4.072M6.75 21a3.75 3.75 0 003.75-3.75V8.197M6.75 21h13.125c.621 0 1.125-.504 1.125-1.125v-5.25c0-.621-.504-1.125-1.125-1.125h-4.072M10.5 8.197l2.88-2.88c.438-.439 1.15-.439 1.59 0l3.712 3.713c.44.44.44 1.152 0 1.59l-2.879 2.88M6.75 17.25h.008v.008H6.75v-.008z" />
+      </svg>
+    ),
+  },
+  {
+    id: 'result',
+    label: 'Результат',
+    shortLabel: 'Результат',
+    icon: (
+      <svg className="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+    ),
+  },
 ]
 
 export function CookieGeneratorClient() {
@@ -78,6 +78,8 @@ export function CookieGeneratorClient() {
   const [activeTab, setActiveTab] = useState<ActiveTab>('company')
   const [selectedTemplate, setSelectedTemplate] = useState<BannerTemplateId | 'custom'>('standard')
   const [customText, setCustomText] = useState('')
+  const [documentMode, setDocumentMode] = useState<'generate' | 'custom'>('generate')
+  const [customDocument, setCustomDocument] = useState('')
   const [showCodeModal, setShowCodeModal] = useState(false)
   const [showAuthModal, setShowAuthModal] = useState(false)
   const [isAuthenticated, setIsAuthenticated] = useState(false)
@@ -111,6 +113,10 @@ export function CookieGeneratorClient() {
 
   const handleCookieTypesChange = useCallback((cookieTypes: CookieConfig['cookieTypes']) => {
     setConfig((prev) => ({ ...prev, cookieTypes }))
+  }, [])
+
+  const handleDocumentSettingsChange = useCallback((documentSettings: DocumentSettings) => {
+    setConfig((prev) => ({ ...prev, documentSettings }))
   }, [])
 
   const handleBannerChange = useCallback((banner: CookieConfig['banner']) => {
@@ -224,13 +230,38 @@ export function CookieGeneratorClient() {
               <CompanyForm data={config.company} onChange={handleCompanyChange} />
             )}
             {activeTab === 'cookies' && (
-              <CookieTypesForm data={config.cookieTypes} onChange={handleCookieTypesChange} />
+              <CookieConfigForm
+                documentSettings={config.documentSettings}
+                cookieTypes={config.cookieTypes}
+                onDocumentSettingsChange={handleDocumentSettingsChange}
+                onCookieTypesChange={handleCookieTypesChange}
+              />
+            )}
+            {activeTab === 'document' && (
+              <DocumentPreview
+                config={config}
+                mode={documentMode}
+                onModeChange={setDocumentMode}
+                customDocument={customDocument}
+                onCustomDocumentChange={setCustomDocument}
+              />
             )}
             {activeTab === 'design' && (
               <div className="grid gap-6 lg:grid-cols-2">
-                {/* Design controls */}
-                <div className="lg:max-h-[500px] lg:overflow-y-auto lg:pr-4">
+                {/* Design + Text controls */}
+                <div className="space-y-8 lg:max-h-[600px] lg:overflow-y-auto lg:pr-4">
                   <BannerSettingsForm data={config.banner} onChange={handleBannerChange} />
+                  <div className="border-t border-border/40 pt-6">
+                    <TextTemplateForm
+                      selectedTemplate={selectedTemplate}
+                      onTemplateChange={setSelectedTemplate}
+                      customText={customText}
+                      onCustomTextChange={setCustomText}
+                      config={config}
+                      buttonText={config.buttonText}
+                      onButtonTextChange={handleButtonTextChange}
+                    />
+                  </div>
                 </div>
                 {/* Live preview inline */}
                 <div className="lg:sticky lg:top-0">
@@ -247,30 +278,92 @@ export function CookieGeneratorClient() {
                       <svg className="size-3.5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M12 18v-5.25m0 0a6.01 6.01 0 001.5-.189m-1.5.189a6.01 6.01 0 01-1.5-.189m3.75 7.478a12.06 12.06 0 01-4.5 0m3.75 2.383a14.406 14.406 0 01-3 0M14.25 18v-.192c0-.983.658-1.823 1.508-2.316a7.5 7.5 0 10-7.517 0c.85.493 1.509 1.333 1.509 2.316V18" />
                       </svg>
-                      Советы по дизайну
+                      Советы по оформлению
                     </h4>
                     <ul className="mt-2.5 space-y-1.5">
                       <TipItem>Плавающая позиция меньше мешает контенту</TipItem>
                       <TipItem>Кнопка «Отклонить» повышает доверие</TipItem>
-                      <TipItem>Backdrop blur добавляет современный эффект</TipItem>
+                      <TipItem>Используйте понятный язык без юридических терминов</TipItem>
                     </ul>
                   </div>
                 </div>
               </div>
             )}
-            {activeTab === 'text' && (
-              <TextTemplateForm
-                selectedTemplate={selectedTemplate}
-                onTemplateChange={setSelectedTemplate}
-                customText={customText}
-                onCustomTextChange={setCustomText}
-                config={config}
-                buttonText={config.buttonText}
-                onButtonTextChange={handleButtonTextChange}
-              />
-            )}
-            {activeTab === 'document' && (
-              <DocumentPreview config={config} />
+            {activeTab === 'result' && (
+              <div className="space-y-6">
+                {/* Section Header */}
+                <div className="flex items-center gap-3">
+                  <div className="flex size-8 items-center justify-center rounded-xl bg-gradient-to-br from-success/15 to-success/5 text-sm font-semibold text-success ring-1 ring-success/10">
+                    <svg className="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 className="text-base font-medium text-foreground">Всё готово!</h3>
+                    <p className="text-sm text-muted-foreground">Проверьте настройки и получите код</p>
+                  </div>
+                </div>
+
+                {/* Summary Card */}
+                <div className="overflow-hidden rounded-2xl border border-success/20 bg-gradient-to-br from-success/[0.06] to-success/[0.02] p-5">
+                  <h4 className="text-sm font-medium text-foreground">Ваш баннер cookie готов к установке</h4>
+                  <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
+                    Вы настроили все параметры. Нажмите «Получить код», чтобы скопировать код для вставки на сайт.
+                  </p>
+
+                  {/* Checklist */}
+                  <div className="mt-4 space-y-2">
+                    <div className="flex items-center gap-2 rounded-lg bg-success/[0.06] px-3 py-2">
+                      <svg className="size-4 shrink-0 text-success" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      <span className="text-sm text-foreground/80">Данные компании заполнены</span>
+                    </div>
+                    <div className="flex items-center gap-2 rounded-lg bg-success/[0.06] px-3 py-2">
+                      <svg className="size-4 shrink-0 text-success" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      <span className="text-sm text-foreground/80">Документ сформирован</span>
+                    </div>
+                    <div className="flex items-center gap-2 rounded-lg bg-success/[0.06] px-3 py-2">
+                      <svg className="size-4 shrink-0 text-success" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      <span className="text-sm text-foreground/80">Баннер настроен</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Mini Banner Preview */}
+                <div className="overflow-hidden rounded-2xl border border-border/60">
+                  <div className="border-b border-border/40 bg-muted/30 px-4 py-2.5">
+                    <span className="text-xs font-medium text-muted-foreground">Предпросмотр баннера</span>
+                  </div>
+                  <div className="p-4">
+                    <BannerPreview
+                      config={config}
+                      selectedTemplate={selectedTemplate}
+                      customText={customText}
+                      screenshotUrl={screenshotUrl}
+                      isScreenshotLoading={isScreenshotLoading}
+                    />
+                  </div>
+                </div>
+
+                {/* Get Code CTA */}
+                <button
+                  onClick={handleGetCode}
+                  disabled={!isConfigValid}
+                  aria-label="Получить код для вставки"
+                  className="group relative flex w-full cursor-pointer items-center justify-center gap-2 overflow-hidden rounded-xl bg-primary px-6 py-3.5 text-sm font-medium text-primary-foreground shadow-md transition-all duration-200 hover:shadow-lg hover:shadow-primary/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-40"
+                >
+                  <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/10 to-transparent transition-transform duration-500 group-hover:translate-x-full" />
+                  <svg className="relative size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5" />
+                  </svg>
+                  <span className="relative">Получить код</span>
+                </button>
+              </div>
             )}
           </div>
         </div>
@@ -290,22 +383,6 @@ export function CookieGeneratorClient() {
           </button>
 
           <div className="flex items-center gap-3">
-            {activeTab === 'document' && (
-              <button
-                onClick={handleGetCode}
-                disabled={!isConfigValid}
-                aria-label="Получить код для вставки"
-                className="group relative flex cursor-pointer items-center gap-2 overflow-hidden rounded-xl bg-primary px-6 py-2.5 text-sm font-medium text-primary-foreground shadow-md transition-all duration-200 hover:shadow-lg hover:shadow-primary/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-40"
-              >
-                {/* Hover effect */}
-                <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/10 to-transparent transition-transform duration-500 group-hover:translate-x-full" />
-                <svg className="relative size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5" />
-                </svg>
-                <span className="relative">Получить код</span>
-              </button>
-            )}
-
             {currentTabIndex < TABS.length - 1 && (
               <button
                 onClick={goToNextTab}
@@ -334,28 +411,15 @@ export function CookieGeneratorClient() {
               </div>
             )}
 
-            {/* Step 2: Cookie Impact Card */}
+            {/* Step 2: Cookie Config Summary Card */}
             {activeTab === 'cookies' && (
               <div className="overflow-hidden rounded-2xl border border-border/60 bg-card/80 p-5 shadow-sm backdrop-blur-sm">
-                <CookieImpactCard cookieTypes={config.cookieTypes} />
+                <CookieImpactCard cookieTypes={config.cookieTypes} documentSettings={config.documentSettings} />
               </div>
             )}
 
-            {/* Step 4: Banner Preview */}
-            {activeTab === 'text' && (
-              <div className="overflow-hidden rounded-2xl border border-border/60 bg-card/80 p-5 shadow-sm backdrop-blur-sm">
-                <BannerPreview
-                  config={config}
-                  selectedTemplate={selectedTemplate}
-                  customText={customText}
-                  screenshotUrl={screenshotUrl}
-                  isScreenshotLoading={isScreenshotLoading}
-                />
-              </div>
-            )}
-
-            {/* Step 5: Success Card */}
-            {activeTab === 'document' && isConfigValid && (
+            {/* Step 5 (result): Banner Preview in sidebar */}
+            {activeTab === 'result' && (
               <div className="overflow-hidden rounded-2xl border border-success/20 bg-gradient-to-br from-success/[0.08] to-success/[0.03] p-5">
                 <h4 className="flex items-center gap-2.5 text-sm font-medium text-foreground">
                   <div className="flex size-6 items-center justify-center rounded-lg bg-success/15">
@@ -363,23 +427,11 @@ export function CookieGeneratorClient() {
                       <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                   </div>
-                  Всё готово!
+                  Готово к установке
                 </h4>
                 <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                  Проверьте документ и нажмите «Получить код», чтобы скопировать код для вставки на сайт.
+                  Скопируйте код и вставьте перед закрывающим тегом &lt;/body&gt; на вашем сайте.
                 </p>
-                <div className="mt-4 flex items-center gap-2 rounded-lg bg-success/[0.06] px-3 py-2">
-                  <svg className="size-4 shrink-0 text-success" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                  <span className="text-xs text-muted-foreground">Баннер настроен</span>
-                </div>
-                <div className="mt-2 flex items-center gap-2 rounded-lg bg-success/[0.06] px-3 py-2">
-                  <svg className="size-4 shrink-0 text-success" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                  <span className="text-xs text-muted-foreground">Документ сформирован</span>
-                </div>
               </div>
             )}
 
@@ -392,9 +444,9 @@ export function CookieGeneratorClient() {
                   </svg>
                 </div>
                 {activeTab === 'company' && 'Как это работает'}
-                {activeTab === 'cookies' && 'Какие cookie выбрать?'}
-                {activeTab === 'text' && 'Про текст'}
+                {activeTab === 'cookies' && 'Настройка документа'}
                 {activeTab === 'document' && 'Про документ'}
+                {activeTab === 'result' && 'Что дальше?'}
               </h4>
               <ul className="mt-4 space-y-2.5">
                 {activeTab === 'company' && (
@@ -406,23 +458,23 @@ export function CookieGeneratorClient() {
                 )}
                 {activeTab === 'cookies' && (
                   <>
-                    <TipItem>Включите только те cookie, которые реально используете</TipItem>
-                    <TipItem>Аналитические — Google Analytics, Яндекс.Метрика</TipItem>
-                    <TipItem>Маркетинговые — ретаргетинг, рекламные пиксели</TipItem>
-                  </>
-                )}
-                {activeTab === 'text' && (
-                  <>
-                    <TipItem>Используйте понятный язык без юридических терминов</TipItem>
-                    <TipItem>Шаблон «Юридический» подходит для B2B-сайтов</TipItem>
-                    <TipItem>Можете написать свой текст, если шаблоны не подходят</TipItem>
+                    <TipItem>Выберите тон — от юридического до дружелюбного</TipItem>
+                    <TipItem>Google Analytics добавляет раздел о трансграничной передаче</TipItem>
+                    <TipItem>Cookie типы синхронизируются с аналитикой и маркетингом</TipItem>
                   </>
                 )}
                 {activeTab === 'document' && (
                   <>
-                    <TipItem>Этот текст можно разместить на отдельной странице</TipItem>
+                    <TipItem>Можете сгенерировать текст или вставить свой</TipItem>
                     <TipItem>Формат Markdown поддерживается большинством CMS</TipItem>
                     <TipItem>Скопируйте или скачайте файл для вашего сайта</TipItem>
+                  </>
+                )}
+                {activeTab === 'result' && (
+                  <>
+                    <TipItem>Вставьте код перед &lt;/body&gt; на каждой странице</TipItem>
+                    <TipItem>Настройки можно менять в личном кабинете</TipItem>
+                    <TipItem>Обновления применяются автоматически</TipItem>
                   </>
                 )}
               </ul>

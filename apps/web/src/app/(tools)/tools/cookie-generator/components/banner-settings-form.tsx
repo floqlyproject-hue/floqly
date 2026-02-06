@@ -75,7 +75,7 @@ export function BannerSettingsForm({ data, onChange }: BannerSettingsFormProps) 
       {/* Section Header */}
       <div className="flex items-center gap-3">
         <div className="flex size-8 items-center justify-center rounded-xl bg-gradient-to-br from-primary/15 to-primary/5 text-sm font-semibold text-primary ring-1 ring-primary/10">
-          3
+          4
         </div>
         <div>
           <h3 className="text-base font-medium text-foreground">Внешний вид</h3>

@@ -1,40 +1,46 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useMemo, useState, useEffect } from 'react'
 import type { CookieConfig } from '../types'
-import { generateDetailedText } from '../templates'
+import { generateCookieDocument } from '../document-generator'
 
 interface DocumentPreviewProps {
   config: CookieConfig
+  mode: 'generate' | 'custom'
+  onModeChange: (mode: 'generate' | 'custom') => void
+  customDocument: string
+  onCustomDocumentChange: (text: string) => void
 }
 
-export function DocumentPreview({ config }: DocumentPreviewProps) {
+export function DocumentPreview({
+  config,
+  mode,
+  onModeChange,
+  customDocument,
+  onCustomDocumentChange,
+}: DocumentPreviewProps) {
   const [copied, setCopied] = useState(false)
+  const [editableGenerated, setEditableGenerated] = useState('')
 
-  const documentText = useMemo(() => {
-    return generateDetailedText(config)
+  const generatedText = useMemo(() => {
+    return generateCookieDocument(config)
   }, [config])
 
-  // Convert markdown to simple HTML for preview
-  const htmlContent = useMemo(() => {
-    return documentText
-      .replace(/^## (.+)$/gm, '<h2 class="text-base font-semibold text-foreground mt-6 mb-3 first:mt-0">$1</h2>')
-      .replace(/^### (.+)$/gm, '<h3 class="text-sm font-medium text-foreground mt-4 mb-2">$1</h3>')
-      .replace(/\*\*(.+?)\*\*/g, '<strong class="font-medium text-foreground">$1</strong>')
-      .replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2" class="text-primary hover:underline">$1</a>')
-      .replace(/\n\n/g, '</p><p class="text-sm text-muted-foreground mb-3 leading-relaxed">')
-      .replace(/^/, '<p class="text-sm text-muted-foreground mb-3 leading-relaxed">')
-      .replace(/$/, '</p>')
-  }, [documentText])
+  // Sync generated text into editable state when config changes
+  useEffect(() => {
+    setEditableGenerated(generatedText)
+  }, [generatedText])
+
+  const activeText = mode === 'generate' ? editableGenerated : customDocument
 
   const handleCopy = async () => {
-    await navigator.clipboard.writeText(documentText)
+    await navigator.clipboard.writeText(activeText)
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
   }
 
   const handleDownload = () => {
-    const blob = new Blob([documentText], { type: 'text/markdown' })
+    const blob = new Blob([activeText], { type: 'text/markdown' })
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
@@ -45,22 +51,52 @@ export function DocumentPreview({ config }: DocumentPreviewProps) {
     URL.revokeObjectURL(url)
   }
 
-  const isEmpty = !config.company.name
+  const isEmpty = !config.company.name && mode === 'generate'
 
   return (
     <div className="space-y-6">
       {/* Section Header */}
       <div className="flex items-center gap-3">
         <div className="flex size-8 items-center justify-center rounded-xl bg-gradient-to-br from-primary/15 to-primary/5 text-sm font-semibold text-primary ring-1 ring-primary/10">
-          5
+          3
         </div>
         <div>
-          <h3 className="text-base font-medium text-foreground">Полный текст документа</h3>
+          <h3 className="text-base font-medium text-foreground">Текст документа</h3>
           <p className="text-sm text-muted-foreground">Политика использования cookie</p>
         </div>
       </div>
 
-      {isEmpty ? (
+      {/* Mode Toggle */}
+      <div className="flex gap-1 rounded-xl border border-border/50 bg-muted/30 p-1">
+        <button
+          onClick={() => onModeChange('generate')}
+          className={`flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200 ${
+            mode === 'generate'
+              ? 'bg-background text-foreground shadow-sm ring-1 ring-border/50'
+              : 'text-muted-foreground hover:text-foreground'
+          }`}
+        >
+          <svg className="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" />
+          </svg>
+          Сгенерировать
+        </button>
+        <button
+          onClick={() => onModeChange('custom')}
+          className={`flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200 ${
+            mode === 'custom'
+              ? 'bg-background text-foreground shadow-sm ring-1 ring-border/50'
+              : 'text-muted-foreground hover:text-foreground'
+          }`}
+        >
+          <svg className="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931z" />
+          </svg>
+          Вставить свой
+        </button>
+      </div>
+
+      {mode === 'generate' && isEmpty ? (
         /* Empty State */
         <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border/60 bg-muted/20 px-6 py-12 text-center">
           <div className="flex size-14 items-center justify-center rounded-2xl bg-muted/60">
@@ -116,8 +152,9 @@ export function DocumentPreview({ config }: DocumentPreviewProps) {
               <div className="flex items-center gap-2">
                 <button
                   onClick={handleCopy}
+                  disabled={!activeText}
                   aria-label="Копировать текст документа"
-                  className={`flex cursor-pointer items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
+                  className={`flex cursor-pointer items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-40 ${
                     copied
                       ? 'bg-success/10 text-success'
                       : 'bg-background text-foreground hover:bg-muted'
@@ -141,8 +178,9 @@ export function DocumentPreview({ config }: DocumentPreviewProps) {
                 </button>
                 <button
                   onClick={handleDownload}
+                  disabled={!activeText}
                   aria-label="Скачать документ"
-                  className="flex cursor-pointer items-center gap-1.5 rounded-lg bg-background px-3 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  className="flex cursor-pointer items-center gap-1.5 rounded-lg bg-background px-3 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-40"
                 >
                   <svg className="size-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
@@ -152,10 +190,18 @@ export function DocumentPreview({ config }: DocumentPreviewProps) {
               </div>
             </div>
 
-            {/* Document Content */}
-            <div
-              className="max-h-80 overflow-y-auto bg-background p-5"
-              dangerouslySetInnerHTML={{ __html: htmlContent }}
+            {/* Editable Document Content */}
+            <textarea
+              value={activeText}
+              onChange={(e) => {
+                if (mode === 'generate') {
+                  setEditableGenerated(e.target.value)
+                } else {
+                  onCustomDocumentChange(e.target.value)
+                }
+              }}
+              placeholder={mode === 'custom' ? 'Вставьте текст вашей политики cookie...' : ''}
+              className="min-h-[320px] w-full resize-y bg-background p-5 font-mono text-sm leading-relaxed text-foreground placeholder:text-muted-foreground/60 focus:outline-none"
             />
           </div>
 
@@ -167,8 +213,11 @@ export function DocumentPreview({ config }: DocumentPreviewProps) {
               </svg>
             </div>
             <p className="text-sm leading-relaxed text-foreground/80">
-              Этот текст можно использовать как <span className="font-medium text-foreground">отдельную страницу</span> политики cookie на вашем сайте.
-              Формат Markdown поддерживается большинством CMS.
+              {mode === 'generate' ? (
+                <>Текст сгенерирован автоматически. Вы можете <span className="font-medium text-foreground">отредактировать</span> его прямо здесь или скачать файл.</>
+              ) : (
+                <>Вставьте текст вашей политики cookie. Формат <span className="font-medium text-foreground">Markdown</span> поддерживается большинством CMS.</>
+              )}
             </p>
           </div>
         </div>

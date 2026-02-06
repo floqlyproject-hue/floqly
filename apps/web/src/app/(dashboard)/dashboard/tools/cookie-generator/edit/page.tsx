@@ -4,18 +4,18 @@ import { useState, useCallback, useMemo } from 'react'
 import { MicroEditorLayout } from '@/components/tools/micro-editor-layout'
 import {
   CompanyForm,
-  CookieTypesForm,
+  CookieConfigForm,
   BannerSettingsForm,
   TextTemplateForm,
   BannerPreview,
   DocumentPreview,
 } from '@/app/(tools)/tools/cookie-generator/components'
-import { DEFAULT_CONFIG, type CookieConfig } from '@/app/(tools)/tools/cookie-generator/types'
+import { DEFAULT_CONFIG, type CookieConfig, type DocumentSettings } from '@/app/(tools)/tools/cookie-generator/types'
 import { type BannerTemplateId } from '@/app/(tools)/tools/cookie-generator/templates'
 import { useCurrentProject } from '@/lib/hooks/use-current-project'
 import { useSiteScreenshot } from '@/lib/hooks/use-site-screenshot'
 
-type ActiveTab = 'company' | 'cookies' | 'design' | 'text' | 'document'
+type ActiveTab = 'company' | 'cookies' | 'document' | 'design' | 'result'
 
 const TABS: { id: ActiveTab; label: string; icon: React.ReactNode }[] = [
   {
@@ -38,8 +38,17 @@ const TABS: { id: ActiveTab; label: string; icon: React.ReactNode }[] = [
     ),
   },
   {
+    id: 'document',
+    label: 'Документ',
+    icon: (
+      <svg className="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+      </svg>
+    ),
+  },
+  {
     id: 'design',
-    label: 'Дизайн',
+    label: 'Оформление',
     icon: (
       <svg className="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M4.098 19.902a3.75 3.75 0 005.304 0l6.401-6.402M6.75 21A3.75 3.75 0 013 17.25V4.125C3 3.504 3.504 3 4.125 3h5.25c.621 0 1.125.504 1.125 1.125v4.072M6.75 21a3.75 3.75 0 003.75-3.75V8.197M6.75 21h13.125c.621 0 1.125-.504 1.125-1.125v-5.25c0-.621-.504-1.125-1.125-1.125h-4.072M10.5 8.197l2.88-2.88c.438-.439 1.15-.439 1.59 0l3.712 3.713c.44.44.44 1.152 0 1.59l-2.879 2.88M6.75 17.25h.008v.008H6.75v-.008z" />
@@ -47,20 +56,11 @@ const TABS: { id: ActiveTab; label: string; icon: React.ReactNode }[] = [
     ),
   },
   {
-    id: 'text',
-    label: 'Текст',
+    id: 'result',
+    label: 'Результат',
     icon: (
       <svg className="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25H12" />
-      </svg>
-    ),
-  },
-  {
-    id: 'document',
-    label: 'Документ',
-    icon: (
-      <svg className="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
       </svg>
     ),
   },
@@ -72,6 +72,8 @@ export default function CookieGeneratorEditPage() {
   const [activeTab, setActiveTab] = useState<ActiveTab>('company')
   const [selectedTemplate, setSelectedTemplate] = useState<BannerTemplateId | 'custom'>('standard')
   const [customText, setCustomText] = useState('')
+  const [documentMode, setDocumentMode] = useState<'generate' | 'custom'>('generate')
+  const [customDocument, setCustomDocument] = useState('')
   const [isSaving, setIsSaving] = useState(false)
   const [isDirty, setIsDirty] = useState(false)
   const [showCodeModal, setShowCodeModal] = useState(false)
@@ -84,6 +86,11 @@ export default function CookieGeneratorEditPage() {
 
   const handleCookieTypesChange = useCallback((cookieTypes: CookieConfig['cookieTypes']) => {
     setConfig((prev) => ({ ...prev, cookieTypes }))
+    setIsDirty(true)
+  }, [])
+
+  const handleDocumentSettingsChange = useCallback((documentSettings: DocumentSettings) => {
+    setConfig((prev) => ({ ...prev, documentSettings }))
     setIsDirty(true)
   }, [])
 
@@ -160,24 +167,45 @@ export default function CookieGeneratorEditPage() {
           <CompanyForm data={config.company} onChange={handleCompanyChange} />
         )}
         {activeTab === 'cookies' && (
-          <CookieTypesForm data={config.cookieTypes} onChange={handleCookieTypesChange} />
-        )}
-        {activeTab === 'design' && (
-          <BannerSettingsForm data={config.banner} onChange={handleBannerChange} />
-        )}
-        {activeTab === 'text' && (
-          <TextTemplateForm
-            selectedTemplate={selectedTemplate}
-            onTemplateChange={setSelectedTemplate}
-            customText={customText}
-            onCustomTextChange={setCustomText}
-            config={config}
-            buttonText={config.buttonText}
-            onButtonTextChange={handleButtonTextChange}
+          <CookieConfigForm
+            documentSettings={config.documentSettings}
+            cookieTypes={config.cookieTypes}
+            onDocumentSettingsChange={handleDocumentSettingsChange}
+            onCookieTypesChange={handleCookieTypesChange}
           />
         )}
         {activeTab === 'document' && (
-          <DocumentPreview config={config} />
+          <DocumentPreview
+            config={config}
+            mode={documentMode}
+            onModeChange={setDocumentMode}
+            customDocument={customDocument}
+            onCustomDocumentChange={setCustomDocument}
+          />
+        )}
+        {activeTab === 'design' && (
+          <div className="space-y-6">
+            <BannerSettingsForm data={config.banner} onChange={handleBannerChange} />
+            <div className="border-t border-border/40 pt-6">
+              <TextTemplateForm
+                selectedTemplate={selectedTemplate}
+                onTemplateChange={setSelectedTemplate}
+                customText={customText}
+                onCustomTextChange={setCustomText}
+                config={config}
+                buttonText={config.buttonText}
+                onButtonTextChange={handleButtonTextChange}
+              />
+            </div>
+          </div>
+        )}
+        {activeTab === 'result' && (
+          <div className="space-y-4">
+            <div className="rounded-xl border border-success/20 bg-success/[0.06] p-4">
+              <h4 className="text-sm font-medium text-foreground">Всё готово!</h4>
+              <p className="mt-1 text-sm text-muted-foreground">Нажмите «Получить код» для экспорта.</p>
+            </div>
+          </div>
         )}
       </div>
 
