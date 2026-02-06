@@ -56,23 +56,18 @@ export function DocumentPreview({
   return (
     <div className="space-y-6">
       {/* Section Header */}
-      <div className="flex items-center gap-3">
-        <div className="flex size-8 items-center justify-center rounded-xl bg-gradient-to-br from-primary/15 to-primary/5 text-sm font-semibold text-primary ring-1 ring-primary/10">
-          3
-        </div>
-        <div>
-          <h3 className="text-base font-medium text-foreground">Текст документа</h3>
-          <p className="text-sm text-muted-foreground">Политика использования cookie</p>
-        </div>
+      <div>
+        <h3 className="text-[15px] font-medium text-foreground">Текст документа</h3>
+        <p className="mt-1 text-[13px] text-muted-foreground">Политика использования cookie</p>
       </div>
 
       {/* Mode Toggle */}
-      <div className="flex gap-1 rounded-xl border border-border/50 bg-muted/30 p-1">
+      <div className="-mb-px flex gap-0 border-b border-border">
         <button
           onClick={() => onModeChange('generate')}
-          className={`flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200 ${
+          className={`relative flex cursor-pointer items-center gap-2 px-4 py-2.5 text-[13px] font-medium transition-colors duration-150 ${
             mode === 'generate'
-              ? 'bg-background text-foreground shadow-sm ring-1 ring-border/50'
+              ? 'text-foreground'
               : 'text-muted-foreground hover:text-foreground'
           }`}
         >
@@ -80,12 +75,13 @@ export function DocumentPreview({
             <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" />
           </svg>
           Сгенерировать
+          {mode === 'generate' && <span className="absolute inset-x-0 -bottom-px h-[2px] bg-foreground" />}
         </button>
         <button
           onClick={() => onModeChange('custom')}
-          className={`flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200 ${
+          className={`relative flex cursor-pointer items-center gap-2 px-4 py-2.5 text-[13px] font-medium transition-colors duration-150 ${
             mode === 'custom'
-              ? 'bg-background text-foreground shadow-sm ring-1 ring-border/50'
+              ? 'text-foreground'
               : 'text-muted-foreground hover:text-foreground'
           }`}
         >
@@ -93,13 +89,14 @@ export function DocumentPreview({
             <path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931z" />
           </svg>
           Вставить свой
+          {mode === 'custom' && <span className="absolute inset-x-0 -bottom-px h-[2px] bg-foreground" />}
         </button>
       </div>
 
       {mode === 'generate' && isEmpty ? (
         /* Empty State */
-        <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border/60 bg-muted/20 px-6 py-12 text-center">
-          <div className="flex size-14 items-center justify-center rounded-2xl bg-muted/60">
+        <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border bg-background px-6 py-12 text-center">
+          <div className="flex size-14 items-center justify-center rounded-xl bg-foreground/[0.05]">
             <svg
               className="size-7 text-muted-foreground/60"
               fill="none"
@@ -124,27 +121,25 @@ export function DocumentPreview({
       ) : (
         <div className="space-y-4">
           {/* Document Card */}
-          <div className="overflow-hidden rounded-2xl border border-border/60">
+          <div className="overflow-hidden rounded-xl border border-border">
             {/* Header with Actions */}
-            <div className="flex items-center justify-between border-b border-border/40 bg-muted/30 px-4 py-3">
-              <div className="flex items-center gap-3">
-                <div className="flex size-8 items-center justify-center rounded-lg bg-primary/10">
-                  <svg
-                    className="size-4 text-primary"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={1.5}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"
-                    />
-                  </svg>
-                </div>
+            <div className="flex items-center justify-between border-b border-border bg-background px-4 py-3">
+              <div className="flex items-center gap-2">
+                <svg
+                  className="size-4 text-muted-foreground"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={1.5}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"
+                  />
+                </svg>
                 <div>
-                  <span className="text-sm font-medium text-foreground">cookie-policy.md</span>
+                  <span className="text-[13px] font-medium text-foreground">cookie-policy.md</span>
                   <span className="ml-2 text-xs text-muted-foreground">Markdown</span>
                 </div>
               </div>
@@ -206,13 +201,11 @@ export function DocumentPreview({
           </div>
 
           {/* Info Card */}
-          <div className="flex items-start gap-3 rounded-xl border border-primary/10 bg-primary/[0.04] p-4">
-            <div className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-primary/10">
-              <svg className="size-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
-              </svg>
-            </div>
-            <p className="text-sm leading-relaxed text-foreground/80">
+          <div className="flex items-start gap-3 rounded-xl border border-border bg-card p-4">
+            <svg className="size-4 shrink-0 text-muted-foreground mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
+            </svg>
+            <p className="text-[13px] leading-relaxed text-foreground/80">
               {mode === 'generate' ? (
                 <>Текст сгенерирован автоматически. Вы можете <span className="font-medium text-foreground">отредактировать</span> его прямо здесь или скачать файл.</>
               ) : (

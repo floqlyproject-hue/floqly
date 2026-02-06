@@ -10,9 +10,9 @@
      Semantic Color Tokens (OKLCH)
      ───────────────────────────────────────── */
 
-  /* Background & Foreground - Warm cream theme */
-  --color-background: oklch(98.5% 0.008 85);
-  --color-foreground: oklch(14.5% 0.025 264);
+  /* Background & Foreground - Refined warm neutral */
+  --color-background: oklch(97.5% 0.004 90);
+  --color-foreground: oklch(15% 0.02 264);
 
   /* Primary - основной акцент */
   --color-primary: oklch(55% 0.22 260);
@@ -43,13 +43,13 @@
   --color-warning-foreground: oklch(14.5% 0.025 264);
 
   /* Border & Ring */
-  --color-border: oklch(91% 0.01 264);
+  --color-border: oklch(90% 0.006 264);
   --color-ring: oklch(55% 0.22 260);
-  --color-ring-offset: oklch(100% 0 0);
+  --color-ring-offset: oklch(97.5% 0.004 90);
 
-  /* Card - Slightly lighter than background */
-  --color-card: oklch(99.5% 0.005 85);
-  --color-card-foreground: oklch(14.5% 0.025 264);
+  /* Card - Clean white surface on warm background */
+  --color-card: oklch(100% 0 0);
+  --color-card-foreground: oklch(15% 0.02 264);
 
   /* Input */
   --color-input: oklch(91% 0.01 264);
@@ -118,6 +118,19 @@
 
   @keyframes pulse {
     50% { opacity: 0.5; }
+  }
+
+  --animate-enter: enter 0.35s ease-out both;
+
+  @keyframes enter {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 }
 

@@ -28,8 +28,8 @@ export function CookieImpactCard({ cookieTypes, documentSettings }: CookieImpact
   return (
     <div className="space-y-4">
       <div>
-        <h3 className="text-sm font-medium text-foreground">Сводка настроек</h3>
-        <p className="mt-1 text-xs text-muted-foreground">
+        <h3 className="text-[11px] font-medium uppercase tracking-[0.1em] text-muted-foreground/60">Сводка настроек</h3>
+        <p className="mt-1 text-[12px] text-muted-foreground">
           Документ формируется автоматически
         </p>
       </div>
@@ -37,7 +37,7 @@ export function CookieImpactCard({ cookieTypes, documentSettings }: CookieImpact
       {/* Tone badge */}
       <div className="space-y-1.5">
         <p className="text-xs font-medium text-muted-foreground">Тон документа</p>
-        <span className="inline-flex items-center gap-1.5 rounded-lg bg-primary/[0.08] px-2.5 py-1.5 text-xs font-medium text-primary ring-1 ring-primary/15">
+        <span className="inline-flex items-center gap-1.5 rounded-lg bg-foreground/[0.05] px-2.5 py-1.5 text-xs font-medium text-foreground/70">
           {TONE_LABELS[documentSettings.tone]}
         </span>
       </div>
@@ -48,17 +48,17 @@ export function CookieImpactCard({ cookieTypes, documentSettings }: CookieImpact
           <p className="text-xs font-medium text-muted-foreground">Сценарии ({scenarioCount})</p>
           <div className="flex flex-wrap gap-1.5">
             {documentSettings.businessScenario.ecommerce && (
-              <span className="inline-flex items-center rounded-lg bg-muted/50 px-2 py-1 text-xs text-foreground/80 ring-1 ring-border/50">
+              <span className="inline-flex items-center rounded-lg bg-foreground/[0.05] px-2 py-1 text-xs text-foreground/70">
                 Магазин
               </span>
             )}
             {documentSettings.businessScenario.authService && (
-              <span className="inline-flex items-center rounded-lg bg-muted/50 px-2 py-1 text-xs text-foreground/80 ring-1 ring-border/50">
+              <span className="inline-flex items-center rounded-lg bg-foreground/[0.05] px-2 py-1 text-xs text-foreground/70">
                 Личный кабинет
               </span>
             )}
             {documentSettings.businessScenario.paidContent && (
-              <span className="inline-flex items-center rounded-lg bg-muted/50 px-2 py-1 text-xs text-foreground/80 ring-1 ring-border/50">
+              <span className="inline-flex items-center rounded-lg bg-foreground/[0.05] px-2 py-1 text-xs text-foreground/70">
                 Платный контент
               </span>
             )}
@@ -74,10 +74,10 @@ export function CookieImpactCard({ cookieTypes, documentSettings }: CookieImpact
             {enabledAnalytics.map((tool) => (
               <span
                 key={tool.id}
-                className={`inline-flex items-center gap-1 rounded-lg px-2 py-1 text-xs font-medium ring-1 ${
+                className={`inline-flex items-center gap-1 rounded-lg px-2 py-1 text-xs font-medium ${
                   tool.isCrossBorder
-                    ? 'bg-amber-500/[0.08] text-amber-600 ring-amber-500/20'
-                    : 'bg-emerald-500/[0.08] text-emerald-600 ring-emerald-500/20'
+                    ? 'bg-amber-500/[0.08] text-amber-600'
+                    : 'bg-emerald-500/[0.08] text-emerald-600'
                 }`}
               >
                 {tool.name}
@@ -103,12 +103,12 @@ export function CookieImpactCard({ cookieTypes, documentSettings }: CookieImpact
           <p className="text-xs font-medium text-muted-foreground">Маркетинг</p>
           <div className="flex flex-wrap gap-1.5">
             {documentSettings.marketing.showAds && (
-              <span className="inline-flex items-center rounded-lg bg-muted/50 px-2 py-1 text-xs text-foreground/80 ring-1 ring-border/50">
+              <span className="inline-flex items-center rounded-lg bg-foreground/[0.05] px-2 py-1 text-xs text-foreground/70">
                 Реклама
               </span>
             )}
             {documentSettings.marketing.retargeting && (
-              <span className="inline-flex items-center rounded-lg bg-muted/50 px-2 py-1 text-xs text-foreground/80 ring-1 ring-border/50">
+              <span className="inline-flex items-center rounded-lg bg-foreground/[0.05] px-2 py-1 text-xs text-foreground/70">
                 Ретаргетинг
               </span>
             )}
@@ -120,9 +120,9 @@ export function CookieImpactCard({ cookieTypes, documentSettings }: CookieImpact
       <div className="space-y-1.5">
         <p className="text-xs font-medium text-muted-foreground">Cookie</p>
         <div className="flex items-center gap-2">
-          <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-muted/60">
+          <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-border">
             <div
-              className="h-full rounded-full bg-primary transition-all duration-300"
+              className="h-full rounded-full bg-foreground transition-all duration-300"
               style={{ width: `${(enabledCookies / totalCookies) * 100}%` }}
             />
           </div>
@@ -133,9 +133,9 @@ export function CookieImpactCard({ cookieTypes, documentSettings }: CookieImpact
       </div>
 
       {/* Info */}
-      <div className="rounded-lg bg-muted/30 px-3 py-2.5">
+      <div className="rounded-lg border border-border bg-background px-3 py-2.5">
         <p className="flex items-center gap-1.5 text-xs leading-relaxed text-muted-foreground">
-          <svg className="size-3.5 shrink-0 text-primary/60" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+          <svg className="size-3.5 shrink-0 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" />
           </svg>
           Документ формируется автоматически на основе ваших настроек

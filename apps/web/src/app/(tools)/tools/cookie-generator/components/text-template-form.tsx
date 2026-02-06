@@ -41,13 +41,13 @@ export function TextTemplateForm({
     <div className="space-y-6">
       {/* Section Header */}
       <div>
-        <h3 className="text-base font-medium text-foreground">Текст баннера</h3>
-        <p className="text-sm text-muted-foreground">Выберите шаблон или напишите свой</p>
+        <h3 className="text-[15px] font-medium text-foreground">Текст баннера</h3>
+        <p className="mt-1 text-[13px] text-muted-foreground">Выберите шаблон или напишите свой</p>
       </div>
 
       {/* Template Selection */}
       <div className="space-y-3">
-        <label className="text-sm font-medium text-foreground">Шаблон текста</label>
+        <label className="text-[13px] font-medium text-foreground">Шаблон текста</label>
         <div className="space-y-2" role="radiogroup" aria-label="Шаблон текста">
           {templates.map((template) => (
             <button
@@ -56,22 +56,22 @@ export function TextTemplateForm({
               role="radio"
               aria-checked={selectedTemplate === template.id}
               onClick={() => onTemplateChange(template.id as BannerTemplateId)}
-              className={`group flex w-full items-start gap-4 rounded-xl border p-4 text-left transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
+              className={`group flex w-full items-start gap-4 rounded-lg border p-4 text-left transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
                 selectedTemplate === template.id
-                  ? 'border-primary/40 bg-primary/[0.04]'
-                  : 'border-border/60 bg-card/40 hover:border-border hover:bg-card/60'
+                  ? 'border-foreground/30 bg-foreground/[0.03]'
+                  : 'border-border bg-card hover:border-border'
               }`}
             >
               {/* Radio indicator */}
               <div
                 className={`mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full border-2 transition-colors ${
                   selectedTemplate === template.id
-                    ? 'border-primary bg-primary'
+                    ? 'border-foreground bg-foreground'
                     : 'border-muted-foreground/40 group-hover:border-muted-foreground'
                 }`}
               >
                 {selectedTemplate === template.id && (
-                  <svg className="size-3 text-primary-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                  <svg className="size-3 text-background" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
                   </svg>
                 )}
@@ -94,16 +94,16 @@ export function TextTemplateForm({
             role="radio"
             aria-checked={selectedTemplate === 'custom'}
             onClick={() => onTemplateChange('custom')}
-            className={`group flex w-full items-start gap-4 rounded-xl border p-4 text-left transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
+            className={`group flex w-full items-start gap-4 rounded-lg border p-4 text-left transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
               selectedTemplate === 'custom'
-                ? 'border-primary/40 bg-primary/[0.04]'
-                : 'border-border/60 bg-card/40 hover:border-border hover:bg-card/60'
+                ? 'border-foreground/30 bg-foreground/[0.03]'
+                : 'border-border bg-card hover:border-border'
             }`}
           >
             <div
               className={`mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full border-2 transition-colors ${
                 selectedTemplate === 'custom'
-                  ? 'border-primary bg-primary'
+                  ? 'border-foreground bg-foreground'
                   : 'border-muted-foreground/40 group-hover:border-muted-foreground'
               }`}
             >
@@ -126,7 +126,7 @@ export function TextTemplateForm({
 
       {/* Preview / Custom Input */}
       <div className="space-y-2">
-        <label htmlFor="banner-text-preview" className="text-sm font-medium text-foreground">
+        <label htmlFor="banner-text-preview" className="text-[13px] font-medium text-foreground">
           {selectedTemplate === 'custom' ? 'Ваш текст' : 'Предпросмотр текста'}
         </label>
         {selectedTemplate === 'custom' ? (
@@ -136,12 +136,12 @@ export function TextTemplateForm({
             onChange={(e) => onCustomTextChange(e.target.value)}
             rows={4}
             placeholder="Введите текст баннера…"
-            className="w-full rounded-xl border border-input bg-background px-4 py-3 text-sm leading-relaxed text-foreground transition-all duration-200 placeholder:text-muted-foreground/60 hover:border-muted-foreground/30 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+            className="w-full rounded-lg border border-border bg-background px-4 py-3 text-[13px] leading-relaxed text-foreground transition-colors duration-150 placeholder:text-muted-foreground/60 focus:border-foreground/30 focus:outline-none focus:ring-1 focus:ring-foreground/10"
           />
         ) : (
           <div
             id="banner-text-preview"
-            className="min-h-[80px] rounded-xl border border-dashed border-border/60 bg-muted/20 p-4 text-sm leading-relaxed text-muted-foreground"
+            className="min-h-[80px] rounded-lg border border-dashed border-border bg-background p-4 text-[13px] leading-relaxed text-muted-foreground"
           >
             {previewText || (
               <span className="italic">Заполните информацию о компании, чтобы увидеть текст</span>
@@ -156,8 +156,8 @@ export function TextTemplateForm({
       </div>
 
       {/* Button Text Customization */}
-      <div className="space-y-4 border-t border-border/40 pt-6">
-        <label className="text-sm font-medium text-foreground">Текст кнопок</label>
+      <div className="space-y-4 border-t border-border pt-6">
+        <label className="text-[13px] font-medium text-foreground">Текст кнопок</label>
         <div className="grid gap-4 sm:grid-cols-3">
           <div className="space-y-2">
             <label htmlFor="btn-accept" className="text-xs font-medium text-muted-foreground">
@@ -168,7 +168,7 @@ export function TextTemplateForm({
               type="text"
               value={buttonText.accept}
               onChange={(e) => onButtonTextChange({ ...buttonText, accept: e.target.value })}
-              className="w-full rounded-xl border border-input bg-background px-4 py-2.5 text-sm text-foreground transition-all duration-200 hover:border-muted-foreground/30 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+              className="w-full rounded-lg border border-border bg-background px-4 py-2.5 text-[13px] text-foreground transition-colors duration-150 focus:border-foreground/30 focus:outline-none focus:ring-1 focus:ring-foreground/10"
             />
           </div>
           <div className="space-y-2">
@@ -180,7 +180,7 @@ export function TextTemplateForm({
               type="text"
               value={buttonText.decline}
               onChange={(e) => onButtonTextChange({ ...buttonText, decline: e.target.value })}
-              className="w-full rounded-xl border border-input bg-background px-4 py-2.5 text-sm text-foreground transition-all duration-200 hover:border-muted-foreground/30 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+              className="w-full rounded-lg border border-border bg-background px-4 py-2.5 text-[13px] text-foreground transition-colors duration-150 focus:border-foreground/30 focus:outline-none focus:ring-1 focus:ring-foreground/10"
             />
           </div>
           <div className="space-y-2">
@@ -192,7 +192,7 @@ export function TextTemplateForm({
               type="text"
               value={buttonText.settings}
               onChange={(e) => onButtonTextChange({ ...buttonText, settings: e.target.value })}
-              className="w-full rounded-xl border border-input bg-background px-4 py-2.5 text-sm text-foreground transition-all duration-200 hover:border-muted-foreground/30 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+              className="w-full rounded-lg border border-border bg-background px-4 py-2.5 text-[13px] text-foreground transition-colors duration-150 focus:border-foreground/30 focus:outline-none focus:ring-1 focus:ring-foreground/10"
             />
           </div>
         </div>

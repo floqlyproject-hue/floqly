@@ -298,7 +298,7 @@ export function BannerPreview({
   )
 
   const backdropOverlay = banner.backdropBlur && (
-    <div className="pointer-events-none absolute inset-0 bg-background/10 backdrop-blur-[1px]" />
+    <div className="pointer-events-none absolute inset-0 bg-background/10" />
   )
 
   return (
@@ -308,12 +308,12 @@ export function BannerPreview({
         <h3 className="text-sm font-medium text-foreground">Предпросмотр</h3>
         <div className="flex items-center gap-2">
           {/* Device Toggle */}
-          <div className="flex items-center rounded-lg border border-border/60 bg-muted/40 p-0.5">
+          <div className="flex items-center rounded-lg border border-border bg-card p-0.5">
             <button
               onClick={() => setViewMode('desktop')}
-              className={`flex items-center justify-center rounded-md p-1 transition-colors ${
+              className={`flex items-center justify-center rounded-md p-1 transition-colors duration-150 ${
                 !isMobile
-                  ? 'bg-background text-foreground shadow-sm'
+                  ? 'bg-foreground/[0.05] text-foreground'
                   : 'text-muted-foreground hover:text-foreground'
               }`}
               title="Десктоп"
@@ -326,9 +326,9 @@ export function BannerPreview({
             </button>
             <button
               onClick={() => setViewMode('mobile')}
-              className={`flex items-center justify-center rounded-md p-1 transition-colors ${
+              className={`flex items-center justify-center rounded-md p-1 transition-colors duration-150 ${
                 isMobile
-                  ? 'bg-background text-foreground shadow-sm'
+                  ? 'bg-foreground/[0.05] text-foreground'
                   : 'text-muted-foreground hover:text-foreground'
               }`}
               title="Мобильный"
@@ -341,7 +341,7 @@ export function BannerPreview({
           </div>
 
           {/* Live Badge */}
-          <div className="flex items-center gap-1.5 rounded-full bg-muted/60 px-2 py-0.5">
+          <div className="flex items-center gap-1.5 rounded-full bg-foreground/[0.05] px-2 py-0.5">
             <div className="size-1.5 rounded-full bg-success" />
             <span className="text-[10px] font-medium text-muted-foreground">Live</span>
           </div>
@@ -350,9 +350,9 @@ export function BannerPreview({
 
       {/* Desktop Preview */}
       {!isMobile && (
-        <div className="overflow-hidden rounded-xl border border-border/60 bg-muted/30 shadow-sm">
+        <div className="overflow-hidden rounded-xl border border-border bg-card">
           {/* Browser Chrome */}
-          <div className="flex items-center gap-2 border-b border-border/40 bg-muted/50 px-3 py-2">
+          <div className="flex items-center gap-2 border-b border-border bg-background px-3 py-2">
             <div className="flex gap-1.5">
               <div className="size-2.5 rounded-full bg-red-400/60" />
               <div className="size-2.5 rounded-full bg-yellow-400/60" />

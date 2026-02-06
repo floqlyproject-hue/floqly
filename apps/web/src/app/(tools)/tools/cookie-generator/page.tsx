@@ -42,57 +42,30 @@ const FAQ_ITEMS = [
 export default function CookieGeneratorPage() {
   return (
     <main className="min-h-screen">
-      {/* Subtle background gradient */}
-      <div className="pointer-events-none fixed inset-0 bg-gradient-to-b from-primary/[0.02] via-transparent to-transparent" />
-
-      <div className="relative mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
+      <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
         {/* Header */}
         <header className="mb-12">
-          <div className="flex items-start gap-4 sm:items-center">
-            {/* Icon with refined gradient */}
-            <div className="relative flex size-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-primary/15 via-primary/10 to-primary/5 ring-1 ring-primary/10 sm:size-16">
-              <svg
-                className="size-7 text-primary sm:size-8"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={1.5}
-                aria-hidden="true"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
-                />
-              </svg>
-              {/* Subtle glow */}
-              <div className="absolute inset-0 -z-10 rounded-2xl bg-primary/20 blur-xl" />
-            </div>
+          <h1 className="text-balance text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
+            Генератор Cookie-баннера
+          </h1>
+          <p className="mt-2 max-w-lg text-pretty text-[15px] text-muted-foreground">
+            Создайте стильный баннер согласия на использование cookie за пару минут
+          </p>
 
-            <div className="space-y-1">
-              <h1 className="text-balance text-2xl font-semibold tracking-tight text-foreground sm:text-3xl lg:text-4xl">
-                Генератор Cookie-баннера
-              </h1>
-              <p className="max-w-xl text-pretty text-base text-muted-foreground sm:text-lg">
-                Создайте стильный баннер согласия на использование cookie за пару минут
-              </p>
-            </div>
-          </div>
-
-          {/* Features - refined badges */}
-          <div className="mt-8 flex flex-wrap gap-2" role="list" aria-label="Особенности генератора">
+          {/* Features */}
+          <div className="mt-6 flex flex-wrap gap-x-5 gap-y-1.5" role="list" aria-label="Особенности генератора">
             {FEATURES.map((feature) => (
               <div
                 key={feature.text}
                 role="listitem"
-                className="inline-flex items-center gap-1.5 rounded-full border border-primary/10 bg-primary/[0.04] px-3 py-1.5 text-sm font-medium text-primary transition-colors hover:bg-primary/[0.08]"
+                className="flex items-center gap-1.5 text-[13px] text-muted-foreground"
               >
                 <svg
-                  className="size-3.5"
+                  className="size-3 text-foreground/30"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
-                  strokeWidth={2.5}
+                  strokeWidth={3}
                   aria-hidden="true"
                 >
                   <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
@@ -107,35 +80,40 @@ export default function CookieGeneratorPage() {
         <CookieGeneratorClient />
 
         {/* FAQ Section */}
-        <section className="mt-20 pt-12" aria-labelledby="faq-heading">
-          {/* Divider with gradient */}
-          <div className="absolute left-0 right-0 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
-
+        <section className="mt-20 border-t border-border pt-12" aria-labelledby="faq-heading">
           <h2
             id="faq-heading"
-            className="text-balance text-xl font-semibold tracking-tight text-foreground sm:text-2xl"
+            className="text-[15px] font-semibold text-foreground"
           >
-            Часто задаваемые вопросы
+            Частые вопросы
           </h2>
 
-          <div className="mt-8 grid gap-4 sm:grid-cols-2">
-            {FAQ_ITEMS.map((item, index) => (
-              <article
-                key={item.q}
-                className="group relative rounded-2xl border border-border/60 bg-card/40 p-5 backdrop-blur-sm transition-all duration-300 hover:border-border hover:bg-card/60 hover:shadow-lg hover:shadow-primary/[0.02]"
-                style={{ animationDelay: `${index * 50}ms` }}
-              >
-                {/* Subtle corner accent */}
-                <div className="absolute right-4 top-4 size-8 rounded-full bg-gradient-to-br from-primary/[0.06] to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+          <div className="relative mt-8">
+            {/* Cross dividers — desktop only */}
+            <div className="pointer-events-none absolute inset-y-0 left-1/2 hidden w-px bg-border sm:block" aria-hidden="true" />
+            <div className="pointer-events-none absolute inset-x-0 top-1/2 hidden h-px bg-border sm:block" aria-hidden="true" />
 
-                <h3 className="text-pretty font-medium leading-snug text-foreground">
-                  {item.q}
-                </h3>
-                <p className="mt-2.5 text-pretty text-sm leading-relaxed text-muted-foreground">
-                  {item.a}
-                </p>
-              </article>
-            ))}
+            <div className="divide-y divide-border sm:grid sm:grid-cols-2 sm:divide-y-0">
+              {FAQ_ITEMS.map((item, i) => {
+                const isLeft = i % 2 === 0
+                const isTop = i < 2
+                return (
+                  <article
+                    key={item.q}
+                    className={`py-5 first:pt-0 last:pb-0 sm:py-0 ${
+                      isLeft ? 'sm:pr-8' : 'sm:pl-8'
+                    } ${isTop ? 'sm:pb-7' : 'sm:pt-7'}`}
+                  >
+                    <h3 className="text-[14px] font-medium leading-snug text-foreground">
+                      {item.q}
+                    </h3>
+                    <p className="mt-2 text-pretty text-[13px] leading-relaxed text-muted-foreground">
+                      {item.a}
+                    </p>
+                  </article>
+                )
+              })}
+            </div>
           </div>
         </section>
       </div>

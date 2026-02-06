@@ -73,19 +73,14 @@ export function BannerSettingsForm({ data, onChange }: BannerSettingsFormProps) 
   return (
     <div className="space-y-6">
       {/* Section Header */}
-      <div className="flex items-center gap-3">
-        <div className="flex size-8 items-center justify-center rounded-xl bg-gradient-to-br from-primary/15 to-primary/5 text-sm font-semibold text-primary ring-1 ring-primary/10">
-          4
-        </div>
-        <div>
-          <h3 className="text-base font-medium text-foreground">Внешний вид</h3>
-          <p className="text-sm text-muted-foreground">Настройте дизайн баннера</p>
-        </div>
+      <div>
+        <h3 className="text-[15px] font-medium text-foreground">Внешний вид</h3>
+        <p className="mt-1 text-[13px] text-muted-foreground">Настройте дизайн баннера</p>
       </div>
 
       {/* Position Selection */}
       <div className="space-y-3">
-        <label className="text-sm font-medium text-foreground">Позиция баннера</label>
+        <label className="text-[13px] font-medium text-foreground">Позиция баннера</label>
         <div className="grid grid-cols-4 gap-2" role="radiogroup" aria-label="Позиция баннера">
           {POSITIONS.map(({ value, label, icon }) => (
             <button
@@ -94,10 +89,10 @@ export function BannerSettingsForm({ data, onChange }: BannerSettingsFormProps) 
               role="radio"
               aria-checked={data.position === value}
               onClick={() => handleChange('position', value)}
-              className={`group flex flex-col items-center gap-2 rounded-xl border p-3 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
+              className={`group flex flex-col items-center gap-2 rounded-lg border p-3 transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
                 data.position === value
-                  ? 'border-primary/40 bg-primary/[0.06] text-primary'
-                  : 'border-border/60 bg-card/40 text-muted-foreground hover:border-border hover:bg-card/60 hover:text-foreground'
+                  ? 'border-foreground/30 bg-foreground/[0.03] text-foreground'
+                  : 'border-border bg-card text-muted-foreground hover:border-border hover:text-foreground'
               }`}
             >
               {icon}
@@ -109,7 +104,7 @@ export function BannerSettingsForm({ data, onChange }: BannerSettingsFormProps) 
 
       {/* Color Scheme */}
       <div className="space-y-3">
-        <label className="text-sm font-medium text-foreground">Цветовая схема</label>
+        <label className="text-[13px] font-medium text-foreground">Цветовая схема</label>
         <div className="flex gap-3" role="radiogroup" aria-label="Цветовая схема">
           {COLOR_SCHEMES.map(({ value, label, colors }) => (
             <button
@@ -118,22 +113,22 @@ export function BannerSettingsForm({ data, onChange }: BannerSettingsFormProps) 
               role="radio"
               aria-checked={data.colorScheme === value}
               onClick={() => handleChange('colorScheme', value)}
-              className={`group flex flex-col items-center gap-2.5 rounded-xl border p-3 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
+              className={`group flex flex-col items-center gap-2.5 rounded-lg border p-3 transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
                 data.colorScheme === value
-                  ? 'border-primary/40 bg-primary/[0.04]'
-                  : 'border-border/60 bg-card/40 hover:border-border hover:bg-card/60'
+                  ? 'border-foreground/30 bg-foreground/[0.03]'
+                  : 'border-border bg-card hover:border-border'
               }`}
             >
               <div className="flex -space-x-1.5">
                 {colors.map((color, i) => (
                   <div
                     key={i}
-                    className="size-6 rounded-full border border-border/40 shadow-sm"
+                    className="size-6 rounded-full border border-border"
                     style={{ backgroundColor: color, zIndex: 3 - i }}
                   />
                 ))}
               </div>
-              <span className={`text-xs font-medium ${data.colorScheme === value ? 'text-primary' : 'text-muted-foreground group-hover:text-foreground'}`}>
+              <span className={`text-xs font-medium ${data.colorScheme === value ? 'text-foreground' : 'text-muted-foreground group-hover:text-foreground'}`}>
                 {label}
               </span>
             </button>
@@ -143,7 +138,7 @@ export function BannerSettingsForm({ data, onChange }: BannerSettingsFormProps) 
 
       {/* Buttons Section */}
       <div className="space-y-3">
-        <label className="text-sm font-medium text-foreground">Кнопки</label>
+        <label className="text-[13px] font-medium text-foreground">Кнопки</label>
         <div className="space-y-2">
           <ToggleOption
             checked={data.showDeclineButton}
@@ -162,7 +157,7 @@ export function BannerSettingsForm({ data, onChange }: BannerSettingsFormProps) 
 
       {/* Effects Section */}
       <div className="space-y-3">
-        <label className="text-sm font-medium text-foreground">Эффекты</label>
+        <label className="text-[13px] font-medium text-foreground">Эффекты</label>
         <div className="space-y-2">
           <ToggleOption
             checked={data.backdropBlur}
@@ -174,7 +169,7 @@ export function BannerSettingsForm({ data, onChange }: BannerSettingsFormProps) 
 
         {/* Animation Selection */}
         <div className="pt-2">
-          <label className="mb-2.5 block text-sm text-foreground">Анимация появления</label>
+          <label className="mb-2.5 block text-[13px] text-foreground">Анимация появления</label>
           <div className="grid grid-cols-3 gap-2" role="radiogroup" aria-label="Анимация появления">
             {ANIMATIONS.map(({ value, label, icon }) => (
               <button
@@ -183,10 +178,10 @@ export function BannerSettingsForm({ data, onChange }: BannerSettingsFormProps) 
                 role="radio"
                 aria-checked={data.animation === value}
                 onClick={() => handleChange('animation', value)}
-                className={`flex items-center justify-center gap-2 rounded-xl border px-3 py-2.5 text-xs font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
+                className={`flex items-center justify-center gap-2 rounded-lg border px-3 py-2.5 text-xs font-medium transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
                   data.animation === value
-                    ? 'border-primary/40 bg-primary/[0.06] text-primary'
-                    : 'border-border/60 bg-card/40 text-muted-foreground hover:border-border hover:bg-card/60 hover:text-foreground'
+                    ? 'border-foreground/30 bg-foreground/[0.03] text-foreground'
+                    : 'border-border bg-card text-muted-foreground hover:border-border hover:text-foreground'
                 }`}
               >
                 <span className="text-sm opacity-60">{icon}</span>
@@ -199,7 +194,7 @@ export function BannerSettingsForm({ data, onChange }: BannerSettingsFormProps) 
 
       {/* Hide Days */}
       <div className="space-y-2">
-        <label htmlFor="hide-days" className="text-sm font-medium text-foreground">
+        <label htmlFor="hide-days" className="text-[13px] font-medium text-foreground">
           Срок скрытия после принятия
         </label>
         <div className="relative">
@@ -210,9 +205,9 @@ export function BannerSettingsForm({ data, onChange }: BannerSettingsFormProps) 
             onChange={(e) => handleChange('hideAfterDays', parseInt(e.target.value) || 365)}
             min={1}
             max={365}
-            className="w-full rounded-xl border border-input bg-background px-4 py-3 pr-16 text-sm tabular-nums text-foreground transition-all duration-200 hover:border-muted-foreground/30 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+            className="w-full rounded-lg border border-border bg-background px-4 py-3 pr-16 text-[13px] tabular-nums text-foreground transition-colors duration-150 focus:border-foreground/30 focus:outline-none focus:ring-1 focus:ring-foreground/10"
           />
-          <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">
+          <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-[13px] text-muted-foreground">
             дней
           </span>
         </div>
@@ -234,15 +229,15 @@ interface ToggleOptionProps {
 function ToggleOption({ checked, onChange, title, description }: ToggleOptionProps) {
   return (
     <div
-      className={`flex cursor-pointer items-center justify-between rounded-xl border p-4 transition-all duration-200 ${
+      className={`flex cursor-pointer items-center justify-between rounded-lg border p-4 transition-colors duration-150 ${
         checked
-          ? 'border-primary/30 bg-primary/[0.04]'
-          : 'border-border/60 bg-card/40 hover:border-border hover:bg-card/60'
+          ? 'border-foreground/30 bg-foreground/[0.03]'
+          : 'border-border bg-card hover:border-border'
       }`}
       onClick={onChange}
     >
       <div className="space-y-0.5">
-        <div className="text-sm font-medium text-foreground">{title}</div>
+        <div className="text-[13px] font-medium text-foreground">{title}</div>
         <div className="text-xs text-muted-foreground">{description}</div>
       </div>
       <button
@@ -255,7 +250,7 @@ function ToggleOption({ checked, onChange, title, description }: ToggleOptionPro
           onChange()
         }}
         className={`relative h-6 w-11 shrink-0 cursor-pointer rounded-full transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${
-          checked ? 'bg-primary' : 'bg-input'
+          checked ? 'bg-foreground' : 'bg-input'
         }`}
       >
         <span

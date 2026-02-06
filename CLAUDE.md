@@ -87,13 +87,20 @@ pnpm db:migrate   # Миграции Supabase
 
 ## Дизайн
 
-**Референсы** складываются в `/design-references/`
+### Инструментальные страницы и ЛК (ВСЁ кроме главной)
+**Обязательно следовать:** [`docs/DESIGN_SYSTEM.md`](docs/DESIGN_SYSTEM.md)
+- Стиль: precision minimalism (Linear, Vercel, Raycast)
+- Три инструмента: тонкие бордеры, белые поверхности, типографская иерархия
+- Никаких backdrop-blur, inner-градиентов, shadow на статике, rounded-2xl
+- Кнопки CTA: `bg-foreground text-background`, не `bg-primary`
+- Анимации: только micro-interactions (transition 150ms), без entry-анимаций
+- Правая часть экрана свободна — зарезервирована под Умный Виджет
 
-**Вдохновение:**
-- Студии: Locomotive, Cuberto, Unseen Studio
-- Технологии: Lenis Scroll, GSAP ScrollTrigger
-
-**Цель:** Site of the Day на Awwwards
+### Главная страница (landing)
+Отдельный дизайн — допускаются GSAP, Framer Motion, scroll-triggered анимации, creative layouts.
+- Вдохновение: Locomotive, Cuberto, Unseen Studio
+- Цель: Site of the Day на Awwwards
+- Референсы: `/design-references/`
 
 ---
 
