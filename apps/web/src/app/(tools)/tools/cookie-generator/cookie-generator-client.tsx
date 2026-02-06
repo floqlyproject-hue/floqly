@@ -8,7 +8,6 @@ import {
   TextTemplateForm,
   BannerPreview,
   DocumentPreview,
-  WizardProgressCard,
   CookieImpactCard,
 } from './components'
 import { DEFAULT_CONFIG, type CookieConfig, type DocumentSettings } from './types'
@@ -151,11 +150,11 @@ export function CookieGeneratorClient() {
     }
   }, [currentTabIndex])
 
-  const isDesignStep = activeTab === 'design'
+  const isFullWidthStep = activeTab === 'design' || activeTab === 'company'
 
   return (
     <div className={`grid gap-8 transition-all duration-300 ${
-      isDesignStep
+      isFullWidthStep
         ? 'lg:grid-cols-1'
         : 'lg:grid-cols-[1fr,420px] xl:grid-cols-[1fr,480px]'
     }`}>
@@ -398,19 +397,56 @@ export function CookieGeneratorClient() {
             )}
           </div>
         </div>
+
+        {/* Step 1: Compact "What you'll get" section — left-aligned, right side stays free for smart widget */}
+        {activeTab === 'company' && (
+          <div className="max-w-md pt-4">
+            <p className="mb-3 text-xs font-medium tracking-wide text-muted-foreground/70 uppercase">
+              За 5 минут вы получите
+            </p>
+            <div className="space-y-2.5">
+              <div className="flex items-center gap-3 rounded-xl border border-border/40 bg-card/60 px-4 py-3 backdrop-blur-sm">
+                <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary/10">
+                  <svg className="size-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+                  </svg>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-foreground">Политику cookie</p>
+                  <p className="text-xs text-muted-foreground">Готовый документ по 152-ФЗ</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3 rounded-xl border border-border/40 bg-card/60 px-4 py-3 backdrop-blur-sm">
+                <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary/10">
+                  <svg className="size-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 7.125C2.25 6.504 2.754 6 3.375 6h6c.621 0 1.125.504 1.125 1.125v3.75c0 .621-.504 1.125-1.125 1.125h-6a1.125 1.125 0 01-1.125-1.125v-3.75zM14.25 8.625c0-.621.504-1.125 1.125-1.125h5.25c.621 0 1.125.504 1.125 1.125v8.25c0 .621-.504 1.125-1.125 1.125h-5.25a1.125 1.125 0 01-1.125-1.125v-8.25zM3.75 16.125c0-.621.504-1.125 1.125-1.125h5.25c.621 0 1.125.504 1.125 1.125v2.25c0 .621-.504 1.125-1.125 1.125h-5.25a1.125 1.125 0 01-1.125-1.125v-2.25z" />
+                  </svg>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-foreground">Баннер согласия</p>
+                  <p className="text-xs text-muted-foreground">С настраиваемым дизайном</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3 rounded-xl border border-border/40 bg-card/60 px-4 py-3 backdrop-blur-sm">
+                <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary/10">
+                  <svg className="size-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5" />
+                  </svg>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-foreground">Код для вставки</p>
+                  <p className="text-xs text-muted-foreground">Одна строка — и готово</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
-      {/* Right Column - Sidebar (hidden on design step) */}
-      {!isDesignStep && (
+      {/* Right Column - Sidebar (hidden on full-width steps: company & design) */}
+      {!isFullWidthStep && (
         <aside className="lg:sticky lg:top-24 lg:h-fit" aria-label="Предпросмотр и подсказки">
           <div key={activeTab} className="animate-fade-in space-y-4">
-            {/* Step 1: Wizard Progress Card */}
-            {activeTab === 'company' && (
-              <div className="overflow-hidden rounded-2xl border border-border/60 bg-card/80 p-5 shadow-sm backdrop-blur-sm">
-                <WizardProgressCard activeTab={activeTab} />
-              </div>
-            )}
-
             {/* Step 2: Cookie Config Summary Card */}
             {activeTab === 'cookies' && (
               <div className="overflow-hidden rounded-2xl border border-border/60 bg-card/80 p-5 shadow-sm backdrop-blur-sm">
@@ -443,19 +479,11 @@ export function CookieGeneratorClient() {
                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 18v-5.25m0 0a6.01 6.01 0 001.5-.189m-1.5.189a6.01 6.01 0 01-1.5-.189m3.75 7.478a12.06 12.06 0 01-4.5 0m3.75 2.383a14.406 14.406 0 01-3 0M14.25 18v-.192c0-.983.658-1.823 1.508-2.316a7.5 7.5 0 10-7.517 0c.85.493 1.509 1.333 1.509 2.316V18" />
                   </svg>
                 </div>
-                {activeTab === 'company' && 'Как это работает'}
                 {activeTab === 'cookies' && 'Настройка документа'}
                 {activeTab === 'document' && 'Про документ'}
                 {activeTab === 'result' && 'Что дальше?'}
               </h4>
               <ul className="mt-4 space-y-2.5">
-                {activeTab === 'company' && (
-                  <>
-                    <TipItem>Заполните данные — мы автоматически создадим баннер и документ</TipItem>
-                    <TipItem>Документ формируется по требованиям 152-ФЗ</TipItem>
-                    <TipItem>Все настройки можно будет изменить на любом шаге</TipItem>
-                  </>
-                )}
                 {activeTab === 'cookies' && (
                   <>
                     <TipItem>Выберите тон — от юридического до дружелюбного</TipItem>
