@@ -41,8 +41,8 @@ export function TextTemplateForm({
     <div className="space-y-6">
       {/* Section Header */}
       <div>
-        <h3 className="text-[15px] font-medium text-foreground">Текст баннера</h3>
-        <p className="mt-1 text-[13px] text-muted-foreground">Выберите шаблон или напишите свой</p>
+        <h3 className="text-[15px] font-semibold tracking-tight text-foreground">Текст баннера</h3>
+        <p className="mt-1.5 text-[13px] leading-relaxed text-muted-foreground">Выберите шаблон или напишите свой</p>
       </div>
 
       {/* Template Selection */}
@@ -126,7 +126,7 @@ export function TextTemplateForm({
 
       {/* Preview / Custom Input */}
       <div className="space-y-2">
-        <label htmlFor="banner-text-preview" className="text-[13px] font-medium text-foreground">
+        <label htmlFor="banner-text-preview" className="mb-2 block text-[13px] font-medium text-foreground">
           {selectedTemplate === 'custom' ? 'Ваш текст' : 'Предпросмотр текста'}
         </label>
         {selectedTemplate === 'custom' ? (
@@ -136,7 +136,7 @@ export function TextTemplateForm({
             onChange={(e) => onCustomTextChange(e.target.value)}
             rows={4}
             placeholder="Введите текст баннера…"
-            className="w-full rounded-lg border border-border bg-background px-4 py-3 text-[13px] leading-relaxed text-foreground transition-colors duration-150 placeholder:text-muted-foreground/60 focus:border-foreground/30 focus:outline-none focus:ring-1 focus:ring-foreground/10"
+            className="w-full rounded-lg border border-border bg-background px-4 py-3 text-[15px] leading-relaxed text-foreground transition-colors duration-150 placeholder:text-muted-foreground/50 focus:border-foreground/30 focus:outline-none focus:ring-1 focus:ring-foreground/10"
           />
         ) : (
           <div
@@ -149,7 +149,7 @@ export function TextTemplateForm({
           </div>
         )}
         {selectedTemplate !== 'custom' && (
-          <p className="text-xs leading-relaxed text-muted-foreground">
+          <p className="mt-2 text-[12px] leading-relaxed text-muted-foreground">
             Текст автоматически генерируется на основе ваших данных
           </p>
         )}
@@ -160,7 +160,7 @@ export function TextTemplateForm({
         <label className="text-[13px] font-medium text-foreground">Текст кнопок</label>
         <div className="grid gap-4 sm:grid-cols-3">
           <div className="space-y-2">
-            <label htmlFor="btn-accept" className="text-xs font-medium text-muted-foreground">
+            <label htmlFor="btn-accept" className="mb-2 block text-[12px] font-medium text-muted-foreground">
               Принять
             </label>
             <input
@@ -168,11 +168,11 @@ export function TextTemplateForm({
               type="text"
               value={buttonText.accept}
               onChange={(e) => onButtonTextChange({ ...buttonText, accept: e.target.value })}
-              className="w-full rounded-lg border border-border bg-background px-4 py-2.5 text-[13px] text-foreground transition-colors duration-150 focus:border-foreground/30 focus:outline-none focus:ring-1 focus:ring-foreground/10"
+              className="w-full rounded-lg border border-border bg-background px-4 py-2.5 text-[15px] text-foreground transition-colors duration-150 focus:border-foreground/30 focus:outline-none focus:ring-1 focus:ring-foreground/10"
             />
           </div>
           <div className="space-y-2">
-            <label htmlFor="btn-decline" className="text-xs font-medium text-muted-foreground">
+            <label htmlFor="btn-decline" className="mb-2 block text-[12px] font-medium text-muted-foreground">
               Отклонить
             </label>
             <input
@@ -180,11 +180,11 @@ export function TextTemplateForm({
               type="text"
               value={buttonText.decline}
               onChange={(e) => onButtonTextChange({ ...buttonText, decline: e.target.value })}
-              className="w-full rounded-lg border border-border bg-background px-4 py-2.5 text-[13px] text-foreground transition-colors duration-150 focus:border-foreground/30 focus:outline-none focus:ring-1 focus:ring-foreground/10"
+              className="w-full rounded-lg border border-border bg-background px-4 py-2.5 text-[15px] text-foreground transition-colors duration-150 focus:border-foreground/30 focus:outline-none focus:ring-1 focus:ring-foreground/10"
             />
           </div>
           <div className="space-y-2">
-            <label htmlFor="btn-settings" className="text-xs font-medium text-muted-foreground">
+            <label htmlFor="btn-settings" className="mb-2 block text-[12px] font-medium text-muted-foreground">
               Настройки
             </label>
             <input
@@ -192,7 +192,7 @@ export function TextTemplateForm({
               type="text"
               value={buttonText.settings}
               onChange={(e) => onButtonTextChange({ ...buttonText, settings: e.target.value })}
-              className="w-full rounded-lg border border-border bg-background px-4 py-2.5 text-[13px] text-foreground transition-colors duration-150 focus:border-foreground/30 focus:outline-none focus:ring-1 focus:ring-foreground/10"
+              className="w-full rounded-lg border border-border bg-background px-4 py-2.5 text-[15px] text-foreground transition-colors duration-150 focus:border-foreground/30 focus:outline-none focus:ring-1 focus:ring-foreground/10"
             />
           </div>
         </div>

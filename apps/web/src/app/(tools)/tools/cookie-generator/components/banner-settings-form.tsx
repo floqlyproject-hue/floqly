@@ -74,8 +74,8 @@ export function BannerSettingsForm({ data, onChange }: BannerSettingsFormProps) 
     <div className="space-y-6">
       {/* Section Header */}
       <div>
-        <h3 className="text-[15px] font-medium text-foreground">Внешний вид</h3>
-        <p className="mt-1 text-[13px] text-muted-foreground">Настройте дизайн баннера</p>
+        <h3 className="text-[15px] font-semibold tracking-tight text-foreground">Внешний вид</h3>
+        <p className="mt-1.5 text-[13px] leading-relaxed text-muted-foreground">Настройте дизайн баннера</p>
       </div>
 
       {/* Position Selection */}
@@ -194,7 +194,7 @@ export function BannerSettingsForm({ data, onChange }: BannerSettingsFormProps) 
 
       {/* Hide Days */}
       <div className="space-y-2">
-        <label htmlFor="hide-days" className="text-[13px] font-medium text-foreground">
+        <label htmlFor="hide-days" className="mb-2 block text-[13px] font-medium text-foreground">
           Срок скрытия после принятия
         </label>
         <div className="relative">
@@ -205,13 +205,13 @@ export function BannerSettingsForm({ data, onChange }: BannerSettingsFormProps) 
             onChange={(e) => handleChange('hideAfterDays', parseInt(e.target.value) || 365)}
             min={1}
             max={365}
-            className="w-full rounded-lg border border-border bg-background px-4 py-3 pr-16 text-[13px] tabular-nums text-foreground transition-colors duration-150 focus:border-foreground/30 focus:outline-none focus:ring-1 focus:ring-foreground/10"
+            className="w-full rounded-lg border border-border bg-background px-4 py-3 pr-16 text-[15px] tabular-nums text-foreground transition-colors duration-150 focus:border-foreground/30 focus:outline-none focus:ring-1 focus:ring-foreground/10"
           />
           <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-[13px] text-muted-foreground">
             дней
           </span>
         </div>
-        <p className="text-xs leading-relaxed text-muted-foreground">
+        <p className="mt-2 text-[12px] leading-relaxed text-muted-foreground">
           Через сколько дней баннер появится снова после принятия
         </p>
       </div>

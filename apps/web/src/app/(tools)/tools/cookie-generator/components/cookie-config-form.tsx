@@ -49,8 +49,8 @@ export function CookieConfigForm({
     <div className="space-y-8">
       {/* Section Header */}
       <div>
-        <h3 className="text-[15px] font-medium text-foreground">Настройка cookie и документа</h3>
-        <p className="mt-1 text-[13px] text-muted-foreground">Выберите параметры — документ сформируется автоматически</p>
+        <h3 className="text-[15px] font-semibold tracking-tight text-foreground">Настройка cookie и документа</h3>
+        <p className="mt-1.5 text-[13px] leading-relaxed text-muted-foreground">Выберите параметры — документ сформируется автоматически</p>
       </div>
 
       {/* Block 1: Cookie Types */}
@@ -119,7 +119,7 @@ export function CookieConfigForm({
       {/* Block 2: Business Scenario */}
       <div className="space-y-3">
         <label className="text-[13px] font-medium text-foreground">Сценарий использования</label>
-        <p className="text-[12px] text-muted-foreground">Выберите, что есть на вашем сайте — это добавит нужные разделы в документ</p>
+        <p className="text-[12px] leading-relaxed text-muted-foreground">Выберите, что есть на вашем сайте — это добавит нужные разделы в документ</p>
         <div className="space-y-2">
           {([
             {
@@ -273,8 +273,8 @@ export function CookieConfigForm({
                 type="text"
                 value={documentSettings.customAnalytics}
                 onChange={(e) => onDocumentSettingsChange({ ...documentSettings, customAnalytics: e.target.value })}
-                placeholder="Название системы аналитики..."
-                className="w-full rounded-lg border border-border bg-background px-3 py-2 text-[13px] text-foreground placeholder:text-muted-foreground/60 focus:border-foreground/30 focus:outline-none focus:ring-1 focus:ring-foreground/10"
+                placeholder="Название системы аналитики…"
+                className="w-full rounded-lg border border-border bg-background px-3 py-2 text-[15px] text-foreground placeholder:text-muted-foreground/50 focus:border-foreground/30 focus:outline-none focus:ring-1 focus:ring-foreground/10"
               />
             )}
           </div>
@@ -342,7 +342,7 @@ export function CookieConfigForm({
       <div className="space-y-3">
         <div className="border-t border-border pt-8">
           <label className="text-[13px] font-medium text-foreground">Тон документа</label>
-          <p className="mt-1 text-[12px] text-muted-foreground">Влияет на стиль текста в сгенерированном документе</p>
+          <p className="mt-1.5 text-[12px] leading-relaxed text-muted-foreground">Влияет на стиль текста в сгенерированном документе</p>
         </div>
         <div className="grid grid-cols-3 gap-2" role="radiogroup" aria-label="Тон документа">
           {([
@@ -405,7 +405,7 @@ function CrossBorderTooltip({ country }: { country: string }) {
     <span className="group/cb relative inline-flex">
       <button
         type="button"
-        className="flex size-4 cursor-help items-center justify-center rounded-full border border-border text-[9px] font-bold leading-none text-muted-foreground/60 transition-colors duration-150 hover:border-foreground/20 hover:text-foreground/60 focus:border-foreground/20 focus:text-foreground/60 focus:outline-none"
+        className="flex size-[18px] cursor-help items-center justify-center rounded-full border border-border text-[10px] font-bold leading-none text-muted-foreground/60 transition-colors duration-150 hover:border-foreground/20 hover:text-foreground/60 focus-visible:border-foreground/30 focus-visible:text-foreground/80 focus-visible:ring-1 focus-visible:ring-foreground/20 focus-visible:outline-none"
         aria-label="Трансграничная передача данных"
         onClick={(e) => e.preventDefault()}
       >
@@ -413,13 +413,13 @@ function CrossBorderTooltip({ country }: { country: string }) {
       </button>
       <span
         role="tooltip"
-        className="pointer-events-none absolute bottom-full left-1/2 z-50 mb-2 w-[260px] -translate-x-1/2 rounded-lg border border-zinc-700 bg-zinc-900 px-3 py-2.5 text-[12px] font-normal leading-relaxed text-zinc-300 opacity-0 shadow-xl transition-all duration-150 group-hover/cb:pointer-events-auto group-hover/cb:opacity-100 group-focus-within/cb:pointer-events-auto group-focus-within/cb:opacity-100"
+        className="pointer-events-none absolute bottom-full left-1/2 z-50 mb-2 w-[260px] -translate-x-1/2 rounded-lg border border-border bg-popover px-3 py-2.5 text-[12px] font-normal leading-relaxed text-popover-foreground opacity-0 shadow-xl transition-opacity duration-150 group-hover/cb:pointer-events-auto group-hover/cb:opacity-100 group-focus-within/cb:pointer-events-auto group-focus-within/cb:opacity-100"
       >
-        <p className="mb-1 font-medium text-zinc-100">Трансграничная передача ({country})</p>
+        <p className="mb-1 font-medium text-popover-foreground">Трансграничная передача ({country})</p>
         <p>
           Данные передаются за пределы РФ. По 152-ФЗ это требует отдельного раздела в документе — мы добавим его автоматически.
         </p>
-        <span className="absolute left-1/2 top-full -translate-x-1/2 border-[5px] border-transparent border-t-zinc-900" />
+        <span className="absolute left-1/2 top-full -translate-x-1/2 border-[5px] border-transparent border-t-popover" />
       </span>
     </span>
   )

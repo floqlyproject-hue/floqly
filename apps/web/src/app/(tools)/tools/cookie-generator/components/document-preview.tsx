@@ -57,8 +57,8 @@ export function DocumentPreview({
     <div className="space-y-6">
       {/* Section Header */}
       <div>
-        <h3 className="text-[15px] font-medium text-foreground">Текст документа</h3>
-        <p className="mt-1 text-[13px] text-muted-foreground">Политика использования cookie</p>
+        <h3 className="text-[15px] font-semibold tracking-tight text-foreground">Текст документа</h3>
+        <p className="mt-1.5 text-[13px] leading-relaxed text-muted-foreground">Политика использования cookie</p>
       </div>
 
       {/* Mode Toggle */}
@@ -195,8 +195,8 @@ export function DocumentPreview({
                   onCustomDocumentChange(e.target.value)
                 }
               }}
-              placeholder={mode === 'custom' ? 'Вставьте текст вашей политики cookie...' : ''}
-              className="min-h-[320px] w-full resize-y bg-background p-5 font-mono text-sm leading-relaxed text-foreground placeholder:text-muted-foreground/60 focus:outline-none"
+              placeholder={mode === 'custom' ? 'Вставьте текст вашей политики cookie…' : ''}
+              className="min-h-[320px] w-full resize-y bg-background p-5 font-mono text-[15px] leading-relaxed text-foreground placeholder:text-muted-foreground/50 focus:outline-none"
             />
           </div>
 
