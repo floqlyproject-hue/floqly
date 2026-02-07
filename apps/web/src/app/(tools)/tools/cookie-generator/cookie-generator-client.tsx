@@ -336,31 +336,30 @@ export function CookieGeneratorClient() {
           )}
         </div>
 
-        {/* Step 1: What you'll get — compact, left-aligned */}
+        {/* Step 1: What you'll get */}
         {activeTab === 'company' && (
-          <div className="mt-10 max-w-sm">
-            <p className="text-[11px] font-medium uppercase tracking-[0.15em] text-muted-foreground/60">
+          <div className="mt-12 max-w-md">
+            <h3 className="text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
               За 5 минут вы получите
-            </p>
-            <div className="mt-4 space-y-3">
+            </h3>
+            <ul className="mt-5 space-y-4">
               {[
                 { label: 'Политику cookie', desc: 'Готовый документ по 152-ФЗ' },
                 { label: 'Баннер согласия', desc: 'С настраиваемым дизайном' },
                 { label: 'Код для вставки', desc: 'Одна строка — и готово' },
-              ].map((item, i) => (
-                <div
+              ].map((item) => (
+                <li
                   key={item.label}
-                  className="animate-enter flex items-baseline gap-3"
-                  style={{ animationDelay: `${i * 80}ms` }}
+                  className="flex items-start gap-3"
                 >
-                  <span className="mt-0.5 block size-1.5 shrink-0 rounded-full bg-foreground/25" />
-                  <div>
-                    <span className="text-[13px] font-medium text-foreground">{item.label}</span>
-                    <span className="ml-2 text-[12px] text-muted-foreground">{item.desc}</span>
+                  <span className="mt-1 block size-1.5 shrink-0 rounded-full bg-foreground" aria-hidden="true" />
+                  <div className="space-y-0.5">
+                    <div className="text-[13px] font-semibold text-foreground">{item.label}</div>
+                    <div className="text-[13px] leading-relaxed text-muted-foreground">{item.desc}</div>
                   </div>
-                </div>
+                </li>
               ))}
-            </div>
+            </ul>
           </div>
         )}
 

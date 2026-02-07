@@ -79,15 +79,15 @@ export default function CookieGeneratorPage() {
         <CookieGeneratorClient />
 
         {/* FAQ Section */}
-        <section className="mt-20 border-t border-border pt-12" aria-labelledby="faq-heading">
+        <section className="mt-16 border-t border-border pt-12" aria-labelledby="faq-heading">
           <h2
             id="faq-heading"
-            className="text-[15px] font-semibold text-foreground"
+            className="text-[15px] font-semibold tracking-tight text-foreground"
           >
             Частые вопросы
           </h2>
 
-          <div className="relative mt-8">
+          <div className="relative mt-6">
             {/* Cross dividers — desktop only */}
             <div className="pointer-events-none absolute inset-y-0 left-1/2 hidden w-px bg-border sm:block" aria-hidden="true" />
             <div className="pointer-events-none absolute inset-x-0 top-1/2 hidden h-px bg-border sm:block" aria-hidden="true" />
@@ -99,14 +99,14 @@ export default function CookieGeneratorPage() {
                 return (
                   <article
                     key={item.q}
-                    className={`py-5 first:pt-0 last:pb-0 sm:py-0 ${
+                    className={`py-6 first:pt-0 last:pb-0 sm:py-0 ${
                       isLeft ? 'sm:pr-8' : 'sm:pl-8'
-                    } ${isTop ? 'sm:pb-7' : 'sm:pt-7'}`}
+                    } ${isTop ? 'sm:pb-8' : 'sm:pt-8'}`}
                   >
-                    <h3 className="text-[14px] font-medium leading-snug text-foreground">
+                    <h3 className="text-[13px] font-semibold leading-relaxed text-foreground">
                       {item.q}
                     </h3>
-                    <p className="mt-2 text-pretty text-[13px] leading-relaxed text-muted-foreground">
+                    <p className="mt-1.5 text-[13px] leading-relaxed text-muted-foreground">
                       {item.a}
                     </p>
                   </article>
