@@ -166,7 +166,7 @@ export function CookieGeneratorClient() {
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
                   aria-current={isActive ? 'step' : undefined}
-                  className={`relative flex cursor-pointer items-center gap-2 whitespace-nowrap px-5 py-3 text-[13px] font-medium tracking-tight transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
+                  className={`relative whitespace-nowrap px-5 py-3 text-[13px] font-medium tracking-tight transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
                     isActive
                       ? 'text-foreground'
                       : isCompleted
@@ -174,12 +174,7 @@ export function CookieGeneratorClient() {
                         : 'text-muted-foreground hover:text-foreground/70'
                   }`}
                 >
-                  {isCompleted && (
-                    <svg className="size-4 shrink-0 text-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5} aria-hidden="true">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-                    </svg>
-                  )}
-                  <span>{tab.shortLabel}</span>
+                  {tab.shortLabel}
                   {isActive && (
                     <span className="absolute inset-x-0 -bottom-px h-[2px] bg-foreground" aria-hidden="true" />
                   )}
