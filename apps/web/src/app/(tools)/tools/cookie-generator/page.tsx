@@ -45,35 +45,34 @@ export default function CookieGeneratorPage() {
       <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
         {/* Header */}
         <header className="mb-12">
-          <h1 className="text-balance text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
+          <h1 className="text-balance text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
             Генератор Cookie-баннера
           </h1>
-          <p className="mt-2 max-w-lg text-pretty text-[15px] text-muted-foreground">
+          <p className="mt-3 max-w-2xl text-[15px] leading-relaxed text-muted-foreground">
             Создайте стильный баннер согласия на использование cookie за пару минут
           </p>
 
           {/* Features */}
-          <div className="mt-6 flex flex-wrap gap-x-5 gap-y-1.5" role="list" aria-label="Особенности генератора">
+          <ul className="mt-8 flex flex-wrap gap-x-6 gap-y-2">
             {FEATURES.map((feature) => (
-              <div
+              <li
                 key={feature.text}
-                role="listitem"
-                className="flex items-center gap-1.5 text-[13px] text-muted-foreground"
+                className="flex items-center gap-2 text-[13px] font-medium text-foreground"
               >
                 <svg
-                  className="size-3 text-foreground/30"
+                  className="size-4 shrink-0 text-foreground"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
-                  strokeWidth={3}
+                  strokeWidth={2.5}
                   aria-hidden="true"
                 >
                   <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
                 </svg>
                 <span>{feature.text}</span>
-              </div>
+              </li>
             ))}
-          </div>
+          </ul>
         </header>
 
         {/* Generator */}
