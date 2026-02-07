@@ -352,7 +352,7 @@ export function CookieGeneratorClient() {
                   key={item.label}
                   className="flex items-start gap-3"
                 >
-                  <span className="mt-1 block size-1.5 shrink-0 rounded-full bg-foreground" aria-hidden="true" />
+                  <span className="mt-[5px] block size-1.5 shrink-0 rounded-full bg-foreground" aria-hidden="true" />
                   <div className="space-y-0.5">
                     <div className="text-[13px] font-semibold text-foreground">{item.label}</div>
                     <div className="text-[13px] leading-relaxed text-muted-foreground">{item.desc}</div>
