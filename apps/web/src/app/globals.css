@@ -188,6 +188,25 @@
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 
+  /* Cursor behaviour: text cursor only on input fields */
+  * {
+    cursor: default;
+  }
+
+  input,
+  textarea,
+  select,
+  [contenteditable="true"] {
+    cursor: text;
+  }
+
+  button,
+  a,
+  [role="button"],
+  [role="link"] {
+    cursor: pointer;
+  }
+
   /* Улучшенные стили для accessibility */
   :focus-visible {
     @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
