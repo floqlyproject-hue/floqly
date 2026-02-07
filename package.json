@@ -5,7 +5,9 @@
   "description": "Floqly - Widget ecosystem for websites with AI chat",
   "scripts": {
     "dev": "pnpm --filter @floqly/web dev",
+    "dev:all": "pnpm -r --parallel dev",
     "build": "pnpm --filter @floqly/web build",
+    "build:all": "pnpm -r build",
     "start": "pnpm --filter @floqly/web start",
     "lint": "pnpm -r lint",
     "type-check": "pnpm -r type-check",
@@ -15,6 +17,7 @@
     "admin:dev": "pnpm --filter @floqly/admin dev",
     "db:migrate": "pnpm --filter @floqly/database migrate",
     "db:generate": "pnpm --filter @floqly/database generate",
+    "postinstall": "pnpm db:generate",
     "clean": "pnpm -r clean && rm -rf node_modules",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\""
   },
