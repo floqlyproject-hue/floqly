@@ -57,14 +57,14 @@ export default function CookieGeneratorPage() {
             {FEATURES.map((feature) => (
               <li
                 key={feature.text}
-                className="flex items-center gap-2 text-[13px] font-medium text-foreground"
+                className="flex items-center gap-2 text-[13px] text-muted-foreground"
               >
                 <svg
-                  className="size-4 shrink-0 text-foreground"
+                  className="size-4 shrink-0"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
-                  strokeWidth={2.5}
+                  strokeWidth={2}
                   aria-hidden="true"
                 >
                   <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
