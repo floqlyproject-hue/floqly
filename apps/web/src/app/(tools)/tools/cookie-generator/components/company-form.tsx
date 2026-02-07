@@ -34,7 +34,7 @@ export function CompanyForm({ data, onChange }: CompanyFormProps) {
             type="text"
             value={data.name}
             onChange={(e) => handleChange('name', e.target.value)}
-            placeholder="ООО «Компания» или Мой сайт"
+            placeholder="ООО «Компания» или example.ru…"
             autoComplete="organization"
             className="w-full rounded-lg border border-border bg-background px-3.5 py-2.5 text-sm text-foreground transition-colors duration-150 placeholder:text-muted-foreground/40 focus:border-foreground/30 focus:outline-none focus:ring-1 focus:ring-foreground/10"
           />
@@ -54,10 +54,10 @@ export function CompanyForm({ data, onChange }: CompanyFormProps) {
             </span>
             <input
               id="company-website"
-              type="text"
+              type="url"
               value={data.website}
               onChange={(e) => handleChange('website', e.target.value)}
-              placeholder="example.ru"
+              placeholder="example.ru…"
               autoComplete="url"
               className="w-full rounded-lg border border-border bg-background py-2.5 pl-[4.25rem] pr-3.5 text-sm text-foreground transition-colors duration-150 placeholder:text-muted-foreground/40 focus:border-foreground/30 focus:outline-none focus:ring-1 focus:ring-foreground/10"
             />
@@ -74,13 +74,13 @@ export function CompanyForm({ data, onChange }: CompanyFormProps) {
             type="email"
             value={data.email}
             onChange={(e) => handleChange('email', e.target.value)}
-            placeholder="privacy@example.ru"
+            placeholder="privacy@example.ru…"
             autoComplete="email"
             spellCheck={false}
             className="w-full rounded-lg border border-border bg-background px-3.5 py-2.5 text-sm text-foreground transition-colors duration-150 placeholder:text-muted-foreground/40 focus:border-foreground/30 focus:outline-none focus:ring-1 focus:ring-foreground/10"
           />
           <div className="mt-2 flex items-start gap-2 text-[12px] leading-relaxed text-muted-foreground/70">
-            <svg className="mt-0.5 size-3 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+            <svg aria-hidden="true" className="mt-0.5 size-3 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
             </svg>
             <p>
@@ -100,7 +100,7 @@ export function CompanyForm({ data, onChange }: CompanyFormProps) {
             type="url"
             value={data.privacyPolicyUrl}
             onChange={(e) => handleChange('privacyPolicyUrl', e.target.value)}
-            placeholder="https://example.ru/privacy"
+            placeholder="https://example.ru/privacy…"
             autoComplete="url"
             className="w-full rounded-lg border border-border bg-background px-3.5 py-2.5 text-sm text-foreground transition-colors duration-150 placeholder:text-muted-foreground/40 focus:border-foreground/30 focus:outline-none focus:ring-1 focus:ring-foreground/10"
           />
@@ -118,21 +118,21 @@ function InfoTooltip() {
     <span className="group/tip relative inline-flex">
       <button
         type="button"
-        className="flex size-4 cursor-help items-center justify-center rounded-full border border-border text-[9px] font-bold leading-none text-muted-foreground/60 transition-colors duration-150 hover:border-foreground/20 hover:text-foreground/60 focus:border-foreground/20 focus:text-foreground/60 focus:outline-none"
+        className="flex size-4 cursor-help items-center justify-center rounded-full border border-border text-[9px] font-bold leading-none text-muted-foreground/60 transition-colors duration-150 hover:border-foreground/20 hover:text-foreground/60 focus-visible:border-foreground/30 focus-visible:text-foreground/80 focus-visible:ring-1 focus-visible:ring-foreground/20 focus-visible:outline-none"
         aria-label="Подробнее о политике конфиденциальности"
       >
         ?
       </button>
       <span
         role="tooltip"
-        className="pointer-events-none absolute bottom-full left-1/2 z-50 mb-2 w-[260px] -translate-x-1/2 rounded-lg border border-zinc-700 bg-zinc-900 px-3 py-2.5 text-[12px] font-normal leading-relaxed text-zinc-300 opacity-0 shadow-xl transition-all duration-150 group-hover/tip:pointer-events-auto group-hover/tip:opacity-100 group-focus-within/tip:pointer-events-auto group-focus-within/tip:opacity-100"
+        className="pointer-events-none absolute bottom-full left-1/2 z-50 mb-2 w-[260px] -translate-x-1/2 rounded-lg border border-border bg-popover px-3 py-2.5 text-[12px] font-normal leading-relaxed text-popover-foreground opacity-0 shadow-xl transition-all duration-150 group-hover/tip:pointer-events-auto group-hover/tip:opacity-100 group-focus-within/tip:pointer-events-auto group-focus-within/tip:opacity-100"
       >
-        <p className="mb-1 font-medium text-zinc-100">Зачем это нужно?</p>
+        <p className="mb-1 font-medium text-popover-foreground">Зачем это нужно?</p>
         <p>
           По закону (152-ФЗ) рекомендуется размещать политику конфиденциальности.
           Если укажете ссылку — добавим в баннер. Если нет — сгенерируем документ на следующем шаге.
         </p>
-        <span className="absolute left-1/2 top-full -translate-x-1/2 border-[5px] border-transparent border-t-zinc-900" />
+        <span className="absolute left-1/2 top-full -translate-x-1/2 border-[5px] border-transparent border-t-popover" />
       </span>
     </span>
   )
