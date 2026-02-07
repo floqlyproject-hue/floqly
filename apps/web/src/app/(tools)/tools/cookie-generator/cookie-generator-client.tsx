@@ -342,21 +342,21 @@ export function CookieGeneratorClient() {
             <h3 className="text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
               За 5 минут вы получите
             </h3>
-            <ul className="mt-5 space-y-4">
+            <ul className="mt-5 space-y-3">
               {[
-                { label: 'Политику cookie', desc: 'Готовый документ по 152-ФЗ' },
-                { label: 'Баннер согласия', desc: 'С настраиваемым дизайном' },
-                { label: 'Код для вставки', desc: 'Одна строка — и готово' },
+                { label: 'Политику cookie', desc: 'готовый документ по 152-ФЗ' },
+                { label: 'Баннер согласия', desc: 'с настраиваемым дизайном' },
+                { label: 'Код для вставки', desc: 'одна строка — и готово' },
               ].map((item) => (
                 <li
                   key={item.label}
-                  className="flex items-start gap-3"
+                  className="flex items-baseline gap-3"
                 >
-                  <span className="mt-[5px] block size-1.5 shrink-0 rounded-full bg-foreground" aria-hidden="true" />
-                  <div className="space-y-0.5">
-                    <div className="text-[13px] font-semibold text-foreground">{item.label}</div>
-                    <div className="text-[13px] leading-relaxed text-muted-foreground">{item.desc}</div>
-                  </div>
+                  <span className="mt-px block size-[3px] shrink-0 rounded-full bg-foreground" aria-hidden="true" />
+                  <span className="text-[13px] leading-relaxed text-foreground">
+                    <span className="font-semibold">{item.label}</span>
+                    <span className="text-muted-foreground"> — {item.desc}</span>
+                  </span>
                 </li>
               ))}
             </ul>
