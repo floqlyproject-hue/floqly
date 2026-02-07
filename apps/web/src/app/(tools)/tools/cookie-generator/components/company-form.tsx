@@ -26,11 +26,8 @@ export function CompanyForm({ data, onChange }: CompanyFormProps) {
       <div className="space-y-5">
         {/* Company Name */}
         <fieldset>
-          <label htmlFor="company-name" className="mb-1.5 flex items-center gap-2 text-[13px] font-medium text-foreground">
+          <label htmlFor="company-name" className="mb-1.5 block text-[13px] font-medium text-foreground">
             Название компании или сайта
-            <span className="rounded-md bg-foreground/[0.06] px-1.5 py-px text-[10px] font-medium text-muted-foreground dark:bg-foreground/10">
-              Обязательно
-            </span>
           </label>
           <input
             id="company-name"
@@ -69,11 +66,8 @@ export function CompanyForm({ data, onChange }: CompanyFormProps) {
 
         {/* Email */}
         <fieldset>
-          <label htmlFor="company-email" className="mb-1.5 flex items-center gap-2 text-[13px] font-medium text-foreground">
+          <label htmlFor="company-email" className="mb-1.5 block text-[13px] font-medium text-foreground">
             Контактный email
-            <span className="rounded-md bg-amber-500/8 px-1.5 py-px text-[10px] font-medium text-amber-600 dark:bg-amber-400/10 dark:text-amber-400">
-              Рекомендуется
-            </span>
           </label>
           <input
             id="company-email"
