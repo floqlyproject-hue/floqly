@@ -17,7 +17,6 @@
     "admin:dev": "pnpm --filter @floqly/admin dev",
     "db:migrate": "pnpm --filter @floqly/database migrate",
     "db:generate": "pnpm --filter @floqly/database generate",
-    "postinstall": "pnpm db:generate",
     "clean": "pnpm -r clean && rm -rf node_modules",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\""
   },
