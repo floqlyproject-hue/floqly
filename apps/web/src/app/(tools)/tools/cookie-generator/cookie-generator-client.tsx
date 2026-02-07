@@ -350,9 +350,9 @@ export function CookieGeneratorClient() {
               ].map((item) => (
                 <li
                   key={item.label}
-                  className="flex items-baseline gap-3"
+                  className="flex items-center gap-3"
                 >
-                  <span className="mt-px block size-[3px] shrink-0 rounded-full bg-foreground" aria-hidden="true" />
+                  <span className="block size-[3px] shrink-0 rounded-full bg-foreground" aria-hidden="true" />
                   <span className="text-[13px] leading-relaxed text-foreground">
                     <span className="font-semibold">{item.label}</span>
                     <span className="text-muted-foreground"> — {item.desc}</span>
