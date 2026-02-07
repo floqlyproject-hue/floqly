@@ -739,7 +739,7 @@ const name = validated.name  // гарантированно строка!
 - [ ] SEO оптимизация для генераторов
 
 ### ✅ Выполнено (последние 3-5):
+- [x] Cookie Generator Steps 2-5: применён Precision Minimalism (консистентность со Step 1) (2026-02-07)
 - [x] Cookie Generator Step 1: применён Precision Minimalism (typography, spacing, visual hierarchy) (2026-02-07)
 - [x] Cookie Generator Step 1: улучшена доступность и UX по Web Interface Guidelines (2026-02-07)
 - [x] Убраны плашки "Обязательно"/"Рекомендуется" из Step 1 (2026-02-07)
-- [x] Убран MCP Figma из планов (не планируется в ближайшее время) (2026-02-07)
