@@ -358,9 +358,90 @@ export function CookieGeneratorClient() {
           </div>
         )}
 
-        {/* Step 2: Config summary — compact, left-aligned */}
+        {/* Step 2: Config summary */}
         {activeTab === 'cookies' && (
           <CookieStepSummary cookieTypes={config.cookieTypes} documentSettings={config.documentSettings} />
+        )}
+
+        {/* Step 3: Document info */}
+        {activeTab === 'document' && (
+          <div className="mt-12 max-w-md">
+            <h3 className="text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+              Форматы документа
+            </h3>
+            <ul className="mt-5 space-y-3">
+              {[
+                { label: 'Markdown (.md)', desc: 'для GitHub, документации, CMS' },
+                { label: 'HTML', desc: 'готовая страница для вашего сайта' },
+                { label: 'PDF (скоро)', desc: 'печать и официальная публикация' },
+              ].map((item) => (
+                <li
+                  key={item.label}
+                  className="flex items-center gap-3"
+                >
+                  <span className="block size-[3px] shrink-0 rounded-full bg-foreground" aria-hidden="true" />
+                  <span className="text-[13px] leading-relaxed text-foreground">
+                    <span className="font-semibold">{item.label}</span>
+                    <span className="text-muted-foreground"> — {item.desc}</span>
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {/* Step 4: Design tips */}
+        {activeTab === 'design' && (
+          <div className="mt-12 max-w-md">
+            <h3 className="text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+              Рекомендации по дизайну
+            </h3>
+            <ul className="mt-5 space-y-3">
+              {[
+                { label: 'Плавающая позиция', desc: 'не перекрывает важный контент' },
+                { label: 'Кнопка «Отклонить»', desc: 'повышает доверие пользователей' },
+                { label: 'Простой язык', desc: 'без юридических терминов' },
+              ].map((item) => (
+                <li
+                  key={item.label}
+                  className="flex items-center gap-3"
+                >
+                  <span className="block size-[3px] shrink-0 rounded-full bg-foreground" aria-hidden="true" />
+                  <span className="text-[13px] leading-relaxed text-foreground">
+                    <span className="font-semibold">{item.label}</span>
+                    <span className="text-muted-foreground"> — {item.desc}</span>
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {/* Step 5: Ready to use */}
+        {activeTab === 'result' && (
+          <div className="mt-12 max-w-md">
+            <h3 className="text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+              Что дальше
+            </h3>
+            <ul className="mt-5 space-y-3">
+              {[
+                { label: 'Вставьте код', desc: 'перед закрывающим тегом &lt;/body&gt;' },
+                { label: 'Управление в ЛК', desc: 'изменения применятся автоматически' },
+                { label: 'Соответствие 152-ФЗ', desc: 'документ защищает ваш бизнес' },
+              ].map((item) => (
+                <li
+                  key={item.label}
+                  className="flex items-center gap-3"
+                >
+                  <span className="block size-[3px] shrink-0 rounded-full bg-foreground" aria-hidden="true" />
+                  <span className="text-[13px] leading-relaxed text-foreground">
+                    <span className="font-semibold">{item.label}</span>
+                    <span className="text-muted-foreground" dangerouslySetInnerHTML={{ __html: ` — ${item.desc}` }} />
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
         )}
       </div>
 
@@ -439,60 +520,30 @@ export function CookieGeneratorClient() {
 function CookieStepSummary({ cookieTypes, documentSettings }: { cookieTypes: CookieConfig['cookieTypes']; documentSettings: DocumentSettings }) {
   const enabledCookies = cookieTypes.filter((c) => c.enabled)
   const enabledAnalytics = documentSettings.analyticsTools.filter((t) => t.enabled)
-  const hasCrossBorder = enabledAnalytics.some((t) => t.isCrossBorder)
-  const hasMarketing = documentSettings.marketing.showAds || documentSettings.marketing.retargeting
-
-  // Build list of document sections that will be generated
-  const sections: { label: string; active: boolean }[] = [
-    { label: 'Общие положения', active: true },
-    { label: `Типы cookie (${enabledCookies.length})`, active: enabledCookies.length > 0 },
-    { label: 'Сбор и обработка данных', active: true },
-    {
-      label: 'Интернет-магазин',
-      active: documentSettings.businessScenario.ecommerce,
-    },
-    {
-      label: 'Авторизация и личный кабинет',
-      active: documentSettings.businessScenario.authService,
-    },
-    {
-      label: 'Платный контент',
-      active: documentSettings.businessScenario.paidContent,
-    },
-    {
-      label: `Аналитика (${enabledAnalytics.map((t) => t.name).join(', ')})`,
-      active: enabledAnalytics.length > 0,
-    },
-    { label: 'Трансграничная передача данных', active: hasCrossBorder },
-    { label: 'Маркетинг и реклама', active: hasMarketing },
-    { label: 'Управление согласием', active: true },
-    { label: 'Контакты оператора', active: true },
-  ]
-
-  const activeSections = sections.filter((s) => s.active)
 
   return (
-    <div className="mt-10 max-w-md">
-      <p className="text-[11px] font-medium uppercase tracking-[0.15em] text-muted-foreground/60">
-        Структура документа
-      </p>
-      <p className="mt-1 text-[12px] text-muted-foreground">
-        {activeSections.length} {activeSections.length >= 5 ? 'разделов' : activeSections.length >= 2 ? 'раздела' : 'раздел'} сформируются на основе ваших настроек
-      </p>
-      <div className="mt-4 space-y-1">
-        {activeSections.map((section, i) => (
-          <div
-            key={section.label}
-            className="animate-enter flex items-center gap-2.5 py-0.5"
-            style={{ animationDelay: `${i * 40}ms` }}
+    <div className="mt-12 max-w-md">
+      <h3 className="text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+        Что входит в документ
+      </h3>
+      <ul className="mt-5 space-y-3">
+        {[
+          { label: `${enabledCookies.length} типов cookie`, desc: 'технические, аналитические, маркетинговые' },
+          { label: 'Сценарии использования', desc: 'персонализация, авторизация, e-commerce' },
+          { label: `Аналитика: ${enabledAnalytics.map((t) => t.name).join(', ') || 'не указана'}`, desc: 'правовые основания и цели обработки' },
+        ].map((item) => (
+          <li
+            key={item.label}
+            className="flex items-center gap-3"
           >
-            <span className="w-4 text-right text-[11px] tabular-nums text-muted-foreground/40">
-              {i + 1}
+            <span className="block size-[3px] shrink-0 rounded-full bg-foreground" aria-hidden="true" />
+            <span className="text-[13px] leading-relaxed text-foreground">
+              <span className="font-semibold">{item.label}</span>
+              <span className="text-muted-foreground"> — {item.desc}</span>
             </span>
-            <span className="text-[13px] text-foreground/80">{section.label}</span>
-          </div>
+          </li>
         ))}
-      </div>
+      </ul>
     </div>
   )
 }
