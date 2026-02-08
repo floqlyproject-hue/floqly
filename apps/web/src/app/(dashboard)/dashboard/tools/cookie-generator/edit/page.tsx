@@ -4,14 +4,15 @@ import { useState, useCallback, useMemo } from 'react'
 import { MicroEditorLayout } from '@/components/tools/micro-editor-layout'
 import {
   CompanyForm,
-  CookieConfigForm,
   BannerSettingsForm,
   TextTemplateForm,
   BannerPreview,
   DocumentPreview,
 } from '@/app/(tools)/tools/cookie-generator/components'
-import { DEFAULT_CONFIG, type CookieConfig, type DocumentSettings } from '@/app/(tools)/tools/cookie-generator/types'
+import { CookiePolicyForm } from '@/app/(tools)/tools/cookie-generator/components/cookie-policy-form'
+import { DEFAULT_CONFIG, type CookieConfig } from '@/app/(tools)/tools/cookie-generator/types'
 import { type BannerTemplateId } from '@/app/(tools)/tools/cookie-generator/templates'
+import { type CookiePolicyData } from '@/lib/templates/cookie-policy'
 import { useCurrentProject } from '@/lib/hooks/use-current-project'
 import { useSiteScreenshot } from '@/lib/hooks/use-site-screenshot'
 
@@ -79,18 +80,43 @@ export default function CookieGeneratorEditPage() {
   const [showCodeModal, setShowCodeModal] = useState(false)
   const { screenshotUrl, isLoading: isScreenshotLoading } = useSiteScreenshot(config.company.website)
 
+  // Cookie policy data (for new document template)
+  const [cookiePolicyData, setCookiePolicyData] = useState<Partial<CookiePolicyData>>({
+    technicalFeatures: {
+      cart: false,
+      auth: false,
+      payment: false,
+      preferences: false,
+      externalServices: [],
+    },
+    analytics: {
+      yandexMetrika: false,
+      googleAnalytics: false,
+      liveInternet: false,
+      mailRu: false,
+      topMailRu: false,
+      matomo: false,
+      other: [],
+    },
+    crossBorder: {
+      googleServices: false,
+      facebookPixel: false,
+      other: [],
+    },
+    marketing: {
+      yandexDirect: false,
+      yandexAudiences: false,
+      vkAds: false,
+      googleAds: false,
+      facebookAds: false,
+      telegramAds: false,
+      okAds: false,
+      other: [],
+    },
+  })
+
   const handleCompanyChange = useCallback((company: CookieConfig['company']) => {
     setConfig((prev) => ({ ...prev, company }))
-    setIsDirty(true)
-  }, [])
-
-  const handleCookieTypesChange = useCallback((cookieTypes: CookieConfig['cookieTypes']) => {
-    setConfig((prev) => ({ ...prev, cookieTypes }))
-    setIsDirty(true)
-  }, [])
-
-  const handleDocumentSettingsChange = useCallback((documentSettings: DocumentSettings) => {
-    setConfig((prev) => ({ ...prev, documentSettings }))
     setIsDirty(true)
   }, [])
 
@@ -167,16 +193,18 @@ export default function CookieGeneratorEditPage() {
           <CompanyForm data={config.company} onChange={handleCompanyChange} />
         )}
         {activeTab === 'cookies' && (
-          <CookieConfigForm
-            documentSettings={config.documentSettings}
-            cookieTypes={config.cookieTypes}
-            onDocumentSettingsChange={handleDocumentSettingsChange}
-            onCookieTypesChange={handleCookieTypesChange}
+          <CookiePolicyForm
+            data={cookiePolicyData}
+            onChange={(data) => {
+              setCookiePolicyData(data)
+              setIsDirty(true)
+            }}
           />
         )}
         {activeTab === 'document' && (
           <DocumentPreview
             config={config}
+            cookiePolicyData={cookiePolicyData}
             mode={documentMode}
             onModeChange={setDocumentMode}
             customDocument={customDocument}
