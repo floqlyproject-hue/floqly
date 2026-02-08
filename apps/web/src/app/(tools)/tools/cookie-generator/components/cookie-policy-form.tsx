@@ -167,12 +167,12 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
 
           <div className="space-y-2">
             {/* Cart */}
-            <label className="group flex cursor-pointer items-center gap-2.5 py-1.5 transition-colors duration-150 hover:text-foreground">
+            <label className="group flex cursor-pointer items-start gap-2.5 py-1.5 transition-colors duration-150 hover:text-foreground">
               <input
                 type="checkbox"
                 checked={data.technicalFeatures?.cart || false}
                 onChange={() => handleTechnicalFeatureToggle('cart')}
-                className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-foreground/20 focus:ring-offset-2"
+                className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
               />
               <div className="flex-1">
                 <span className="text-[13px] font-medium text-foreground/90 group-hover:text-foreground">
@@ -185,12 +185,12 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
             </label>
 
             {/* Auth */}
-            <label className="group flex cursor-pointer items-center gap-2.5 py-1.5 transition-colors duration-150 hover:text-foreground">
+            <label className="group flex cursor-pointer items-start gap-2.5 py-1.5 transition-colors duration-150 hover:text-foreground">
               <input
                 type="checkbox"
                 checked={data.technicalFeatures?.auth || false}
                 onChange={() => handleTechnicalFeatureToggle('auth')}
-                className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-foreground/20 focus:ring-offset-2"
+                className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
               />
               <div className="flex-1">
                 <span className="text-[13px] font-medium text-foreground/90 group-hover:text-foreground">
@@ -203,12 +203,12 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
             </label>
 
             {/* Payment */}
-            <label className="group flex cursor-pointer items-center gap-2.5 py-1.5 transition-colors duration-150 hover:text-foreground">
+            <label className="group flex cursor-pointer items-start gap-2.5 py-1.5 transition-colors duration-150 hover:text-foreground">
               <input
                 type="checkbox"
                 checked={data.technicalFeatures?.payment || false}
                 onChange={() => handleTechnicalFeatureToggle('payment')}
-                className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-foreground/20 focus:ring-offset-2"
+                className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
               />
               <div className="flex-1">
                 <span className="text-[13px] font-medium text-foreground/90 group-hover:text-foreground">
@@ -221,12 +221,12 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
             </label>
 
             {/* Preferences */}
-            <label className="group flex cursor-pointer items-center gap-2.5 py-1.5 transition-colors duration-150 hover:text-foreground">
+            <label className="group flex cursor-pointer items-start gap-2.5 py-1.5 transition-colors duration-150 hover:text-foreground">
               <input
                 type="checkbox"
                 checked={data.technicalFeatures?.preferences || false}
                 onChange={() => handleTechnicalFeatureToggle('preferences')}
-                className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-foreground/20 focus:ring-offset-2"
+                className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
               />
               <div className="flex-1">
                 <span className="text-[13px] font-medium text-foreground/90 group-hover:text-foreground">
@@ -243,7 +243,7 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
               <button
                 type="button"
                 onClick={() => setShowExternalServicesForm(!showExternalServicesForm)}
-                className="group flex w-full cursor-pointer items-center gap-2.5 py-1.5 text-left transition-colors duration-150 hover:text-foreground"
+                className="group flex w-full cursor-pointer items-start gap-2.5 py-1.5 text-left transition-colors duration-150 hover:text-foreground focus-visible:outline-none"
               >
                 <div className="flex size-4 shrink-0 items-center justify-center">
                   <div
@@ -353,7 +353,7 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
                 type="checkbox"
                 checked={data.analytics?.yandexMetrika || false}
                 onChange={() => handleAnalyticsToggle('yandexMetrika')}
-                className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-foreground/20 focus:ring-offset-2"
+                className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
               />
               <span className="flex-1 text-[13px] font-medium text-foreground/90 group-hover:text-foreground">
                 Яндекс.Метрика
@@ -369,7 +369,7 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
                 type="checkbox"
                 checked={data.analytics?.googleAnalytics || false}
                 onChange={() => handleAnalyticsToggle('googleAnalytics')}
-                className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-foreground/20 focus:ring-offset-2"
+                className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
               />
               <span className="flex-1 text-[13px] font-medium text-foreground/90 group-hover:text-foreground">
                 Google Analytics
@@ -385,7 +385,7 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
                 type="checkbox"
                 checked={data.analytics?.liveInternet || false}
                 onChange={() => handleAnalyticsToggle('liveInternet')}
-                className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-foreground/20 focus:ring-offset-2"
+                className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
               />
               <span className="flex-1 text-[13px] font-medium text-foreground/90 group-hover:text-foreground">
                 LiveInternet
@@ -401,7 +401,7 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
                 type="checkbox"
                 checked={data.analytics?.mailRu || false}
                 onChange={() => handleAnalyticsToggle('mailRu')}
-                className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-foreground/20 focus:ring-offset-2"
+                className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
               />
               <span className="flex-1 text-[13px] font-medium text-foreground/90 group-hover:text-foreground">
                 Рейтинг Mail.ru
@@ -417,7 +417,7 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
                 type="checkbox"
                 checked={data.analytics?.topMailRu || false}
                 onChange={() => handleAnalyticsToggle('topMailRu')}
-                className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-foreground/20 focus:ring-offset-2"
+                className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
               />
               <span className="flex-1 text-[13px] font-medium text-foreground/90 group-hover:text-foreground">
                 Top@Mail.ru
@@ -433,7 +433,7 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
                 type="checkbox"
                 checked={data.analytics?.matomo || false}
                 onChange={() => handleAnalyticsToggle('matomo')}
-                className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-foreground/20 focus:ring-offset-2"
+                className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
               />
               <span className="flex-1 text-[13px] font-medium text-foreground/90 group-hover:text-foreground">
                 Matomo (Piwik)
@@ -474,7 +474,7 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
                 checked={data.crossBorder?.googleServices || false}
                 onChange={() => handleCrossBorderToggle('googleServices')}
                 disabled={data.marketing?.googleAds}
-                className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-foreground/20 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-30"
+                className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-30"
               />
               <span className="flex-1 text-[13px] font-medium text-foreground/90 group-hover:text-foreground">
                 Google Analytics / Google Ads
@@ -491,7 +491,7 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
                 checked={data.crossBorder?.facebookPixel || false}
                 onChange={() => handleCrossBorderToggle('facebookPixel')}
                 disabled={data.marketing?.facebookAds}
-                className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-foreground/20 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-30"
+                className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-30"
               />
               <span className="flex-1 text-[13px] font-medium text-foreground/90 group-hover:text-foreground">
                 Facebook Pixel / Meta Ads
@@ -521,7 +521,7 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
                 type="checkbox"
                 checked={data.marketing?.yandexDirect || false}
                 onChange={() => handleMarketingToggle('yandexDirect')}
-                className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-foreground/20 focus:ring-offset-2"
+                className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
               />
               <span className="flex-1 text-[13px] font-medium text-foreground/90 group-hover:text-foreground">
                 Яндекс.Директ
@@ -537,7 +537,7 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
                 type="checkbox"
                 checked={data.marketing?.yandexAudiences || false}
                 onChange={() => handleMarketingToggle('yandexAudiences')}
-                className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-foreground/20 focus:ring-offset-2"
+                className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
               />
               <span className="flex-1 text-[13px] font-medium text-foreground/90 group-hover:text-foreground">
                 Яндекс Аудитории
@@ -553,7 +553,7 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
                 type="checkbox"
                 checked={data.marketing?.vkAds || false}
                 onChange={() => handleMarketingToggle('vkAds')}
-                className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-foreground/20 focus:ring-offset-2"
+                className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
               />
               <span className="flex-1 text-[13px] font-medium text-foreground/90 group-hover:text-foreground">
                 VK Реклама (myTarget)
@@ -569,7 +569,7 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
                 type="checkbox"
                 checked={data.marketing?.okAds || false}
                 onChange={() => handleMarketingToggle('okAds')}
-                className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-foreground/20 focus:ring-offset-2"
+                className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
               />
               <span className="flex-1 text-[13px] font-medium text-foreground/90 group-hover:text-foreground">
                 Одноклассники (myTarget)
@@ -585,7 +585,7 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
                 type="checkbox"
                 checked={data.marketing?.telegramAds || false}
                 onChange={() => handleMarketingToggle('telegramAds')}
-                className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-foreground/20 focus:ring-offset-2"
+                className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
               />
               <span className="flex-1 text-[13px] font-medium text-foreground/90 group-hover:text-foreground">
                 Telegram Ads
@@ -601,7 +601,7 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
                 type="checkbox"
                 checked={data.marketing?.googleAds || false}
                 onChange={() => handleMarketingToggle('googleAds')}
-                className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-foreground/20 focus:ring-offset-2"
+                className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
               />
               <span className="flex-1 text-[13px] font-medium text-foreground/90 group-hover:text-foreground">
                 Google Ads
@@ -617,7 +617,7 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
                 type="checkbox"
                 checked={data.marketing?.facebookAds || false}
                 onChange={() => handleMarketingToggle('facebookAds')}
-                className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-foreground/20 focus:ring-offset-2"
+                className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
               />
               <span className="flex-1 text-[13px] font-medium text-foreground/90 group-hover:text-foreground">
                 Facebook Ads
