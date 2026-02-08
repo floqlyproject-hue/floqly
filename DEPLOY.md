@@ -40,35 +40,49 @@ https://supabase.com/dashboard/project/rhdvlmhcfdqbqjgmcgcc/settings/api
 
 ### 3. Переменные окружения (Environment Variables)
 
-Добавьте следующие переменные:
-
-```bash
-# 1. Supabase (обязательно!)
-NEXT_PUBLIC_SUPABASE_URL=https://rhdvlmhcfdqbqjgmcgcc.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=ваш-anon-key-с-Supabase
-SUPABASE_SERVICE_ROLE_KEY=ваш-service-role-key-с-Supabase
-
-# 2. Next.js (обязательно!)
-NODE_ENV=production
-NEXT_PUBLIC_SITE_URL=https://floqly.ru
-
-# 3. Build args (для Docker сборки)
-# Эти переменные также нужно добавить как Build Arguments в TimeWeb:
-NEXT_PUBLIC_SUPABASE_URL=https://rhdvlmhcfdqbqjgmcgcc.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=ваш-anon-key
-NEXT_PUBLIC_SITE_URL=https://floqly.ru
-```
-
 ⚠️ **ВАЖНО:** В TimeWeb нужно добавить переменные В ДВУХ МЕСТАХ:
 1. **Environment Variables** (для runtime)
 2. **Build Arguments** (для сборки Docker образа)
 
-### 4. Настройка домена
+**Минимальный набор (для первого деплоя):**
 
+```bash
+# ========================================
+# Environment Variables (runtime)
+# ========================================
+NEXT_PUBLIC_SUPABASE_URL=https://rhdvlmhcfdqbqjgmcgcc.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=ваш-anon-key-с-Supabase
+SUPABASE_SERVICE_ROLE_KEY=ваш-service-role-key-с-Supabase
+NODE_ENV=production
+
+# ========================================
+# Build Arguments (для сборки Docker)
+# ========================================
+NEXT_PUBLIC_SUPABASE_URL=https://rhdvlmhcfdqbqjgmcgcc.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=ваш-anon-key-с-Supabase
+```
+
+**Опциональные переменные (добавить ПОСЛЕ подключения домена):**
+
+```bash
+# Добавьте когда настроите домен floqly.ru:
+NEXT_PUBLIC_SITE_URL=https://floqly.ru
+```
+
+### 4. Настройка домена (опционально, можно сделать ПОТОМ)
+
+**Для первого деплоя:**
+- TimeWeb даст временный URL: `your-app-name.timeweb.cloud`
+- HTTPS уже будет работать (автоматический SSL от TimeWeb)
+- Можете протестировать приложение без домена
+
+**Когда будете готовы подключить floqly.ru:**
 1. В TimeWeb App Platform → Настройки → Домены
 2. Добавьте домен: `floqly.ru`
 3. Настройте DNS записи (A запись на IP TimeWeb)
 4. Подождите пропагации DNS (~24 часа)
+5. **SSL сертификат TimeWeb выпустит АВТОМАТИЧЕСКИ** (Let's Encrypt)
+6. Добавьте в Environment Variables: `NEXT_PUBLIC_SITE_URL=https://floqly.ru`
 
 ---
 
