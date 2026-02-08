@@ -167,15 +167,15 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
 
           <div className="space-y-2">
             {/* Cart */}
-            <label className="group flex cursor-pointer items-center gap-2.5 py-1.5 transition-colors duration-150 hover:text-foreground">
+            <label className="group flex cursor-pointer items-start gap-2.5 py-1.5 transition-colors duration-150 hover:text-foreground">
               <input
                 type="checkbox"
                 checked={data.technicalFeatures?.cart || false}
                 onChange={() => handleTechnicalFeatureToggle('cart')}
-                className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
+                className="mt-px size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
               />
               <div className="flex-1">
-                <span className="text-[13px] font-medium text-foreground/90 group-hover:text-foreground">
+                <span className="text-[13px] font-medium leading-[1.125rem] text-foreground/90 group-hover:text-foreground">
                   Корзина заказов
                 </span>
                 <p className="mt-0.5 text-[12px] leading-relaxed text-muted-foreground/70">
@@ -185,15 +185,15 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
             </label>
 
             {/* Auth */}
-            <label className="group flex cursor-pointer items-center gap-2.5 py-1.5 transition-colors duration-150 hover:text-foreground">
+            <label className="group flex cursor-pointer items-start gap-2.5 py-1.5 transition-colors duration-150 hover:text-foreground">
               <input
                 type="checkbox"
                 checked={data.technicalFeatures?.auth || false}
                 onChange={() => handleTechnicalFeatureToggle('auth')}
-                className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
+                className="mt-px size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
               />
               <div className="flex-1">
-                <span className="text-[13px] font-medium text-foreground/90 group-hover:text-foreground">
+                <span className="text-[13px] font-medium leading-[1.125rem] text-foreground/90 group-hover:text-foreground">
                   Личный кабинет / Регистрация
                 </span>
                 <p className="mt-0.5 text-[12px] leading-relaxed text-muted-foreground/70">
@@ -203,15 +203,15 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
             </label>
 
             {/* Payment */}
-            <label className="group flex cursor-pointer items-center gap-2.5 py-1.5 transition-colors duration-150 hover:text-foreground">
+            <label className="group flex cursor-pointer items-start gap-2.5 py-1.5 transition-colors duration-150 hover:text-foreground">
               <input
                 type="checkbox"
                 checked={data.technicalFeatures?.payment || false}
                 onChange={() => handleTechnicalFeatureToggle('payment')}
-                className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
+                className="mt-px size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
               />
               <div className="flex-1">
-                <span className="text-[13px] font-medium text-foreground/90 group-hover:text-foreground">
+                <span className="text-[13px] font-medium leading-[1.125rem] text-foreground/90 group-hover:text-foreground">
                   Онлайн-оплата
                 </span>
                 <p className="mt-0.5 text-[12px] leading-relaxed text-muted-foreground/70">
@@ -221,15 +221,15 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
             </label>
 
             {/* Preferences */}
-            <label className="group flex cursor-pointer items-center gap-2.5 py-1.5 transition-colors duration-150 hover:text-foreground">
+            <label className="group flex cursor-pointer items-start gap-2.5 py-1.5 transition-colors duration-150 hover:text-foreground">
               <input
                 type="checkbox"
                 checked={data.technicalFeatures?.preferences || false}
                 onChange={() => handleTechnicalFeatureToggle('preferences')}
-                className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
+                className="mt-px size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
               />
               <div className="flex-1">
-                <span className="text-[13px] font-medium text-foreground/90 group-hover:text-foreground">
+                <span className="text-[13px] font-medium leading-[1.125rem] text-foreground/90 group-hover:text-foreground">
                   Избранное / Сравнение / Выбор города
                 </span>
                 <p className="mt-0.5 text-[12px] leading-relaxed text-muted-foreground/70">
@@ -243,9 +243,9 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
               <button
                 type="button"
                 onClick={() => setShowExternalServicesForm(!showExternalServicesForm)}
-                className="group flex w-full cursor-pointer items-center gap-2.5 py-1.5 text-left transition-colors duration-150 hover:text-foreground focus-visible:outline-none"
+                className="group flex w-full cursor-pointer items-start gap-2.5 py-1.5 text-left transition-colors duration-150 hover:text-foreground focus-visible:outline-none"
               >
-                <div className="flex size-4 shrink-0 items-center justify-center">
+                <div className="mt-px flex size-4 shrink-0 items-center justify-center">
                   <div
                     className={`size-4 rounded border transition-colors duration-150 ${
                       showExternalServicesForm || (data.technicalFeatures?.externalServices?.length ?? 0) > 0
@@ -261,7 +261,7 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
                   </div>
                 </div>
                 <div className="flex-1">
-                  <span className="text-[13px] font-medium text-foreground/90 group-hover:text-foreground">
+                  <span className="text-[13px] font-medium leading-[1.125rem] text-foreground/90 group-hover:text-foreground">
                     Средства взаимодействия с посетителями
                   </span>
                   <p className="mt-0.5 text-[12px] leading-relaxed text-muted-foreground/70">
