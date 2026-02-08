@@ -15,6 +15,7 @@ import { type CookiePolicyData } from '@/lib/templates/cookie-policy'
 import { AuthModal } from '@/app/auth/components'
 import { createClient } from '@/lib/supabase/client'
 import { useSiteScreenshot } from '@/lib/hooks/use-site-screenshot'
+import { useSiteParser } from '@/lib/hooks/use-site-parser'
 
 export type ActiveTab = 'company' | 'cookies' | 'document' | 'design' | 'result'
 
@@ -81,6 +82,7 @@ export function CookieGeneratorClient() {
   const [showAuthModal, setShowAuthModal] = useState(false)
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const { screenshotUrl, isLoading: isScreenshotLoading } = useSiteScreenshot(config.company.website)
+  const { parserData, isLoading: isParserLoading } = useSiteParser(config.company.website, { mode: 'all' })
 
   // New cookie policy data (for new document template)
   const [cookiePolicyData, setCookiePolicyData] = useState<Partial<CookiePolicyData>>({
@@ -126,6 +128,17 @@ export function CookieGeneratorClient() {
 
     return () => subscription.unsubscribe()
   }, [])
+
+  // Debug: Log parser results
+  useEffect(() => {
+    if (parserData) {
+      console.log('🔍 Parser Results:', parserData)
+      console.log('📊 Detected Services:', parserData.detected)
+      console.log('💬 Chat Widgets:', parserData.chatWidgets)
+      console.log('📈 Analytics:', parserData.analytics)
+      console.log('📱 Messengers:', parserData.messengers)
+    }
+  }, [parserData])
 
   const handleGetCode = useCallback(() => {
     if (isAuthenticated) {
@@ -217,7 +230,12 @@ export function CookieGeneratorClient() {
         {/* Tab Content */}
         <div className="min-h-[400px] rounded-xl border border-border bg-card p-6 sm:p-8">
             {activeTab === 'company' && (
-              <CompanyForm data={config.company} onChange={handleCompanyChange} />
+              <CompanyForm
+                data={config.company}
+                onChange={handleCompanyChange}
+                isParserLoading={isParserLoading}
+                parserData={parserData}
+              />
             )}
             {activeTab === 'cookies' && (
               <CookiePolicyForm

@@ -1,13 +1,16 @@
 'use client'
 
 import type { CompanyInfo } from '../types'
+import type { ParserResult } from '@/lib/parser/types'
 
 interface CompanyFormProps {
   data: CompanyInfo
   onChange: (data: CompanyInfo) => void
+  isParserLoading?: boolean
+  parserData?: ParserResult | null
 }
 
-export function CompanyForm({ data, onChange }: CompanyFormProps) {
+export function CompanyForm({ data, onChange, isParserLoading, parserData }: CompanyFormProps) {
   const handleChange = (field: keyof CompanyInfo, value: string) => {
     onChange({ ...data, [field]: value })
   }
@@ -62,6 +65,52 @@ export function CompanyForm({ data, onChange }: CompanyFormProps) {
               className="w-full rounded-lg border border-border bg-background py-2.5 pl-[4.25rem] pr-3.5 text-[15px] text-foreground transition-colors duration-150 placeholder:text-muted-foreground/50 focus:border-foreground/30 focus:outline-none focus:ring-1 focus:ring-foreground/10"
             />
           </div>
+
+          {/* Parser Status Indicator */}
+          {isParserLoading && (
+            <div className="mt-2 flex items-center gap-2 text-[12px] text-muted-foreground/70">
+              <svg
+                className="size-3 animate-spin"
+                fill="none"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                />
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                />
+              </svg>
+              <span>Анализирую скрипты на вашем сайте...</span>
+            </div>
+          )}
+
+          {/* Parser Success Indicator */}
+          {!isParserLoading && parserData && parserData.detected.length > 0 && (
+            <div className="mt-2 flex items-center gap-2 text-[12px] text-foreground/60">
+              <svg
+                className="size-3.5 text-green-600 dark:text-green-500"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <span>
+                Найдено сервисов: {parserData.detected.length}
+                {parserData.chatWidgets.length > 0 && ` • ${parserData.chatWidgets.length} виджет(ов)`}
+              </span>
+            </div>
+          )}
         </fieldset>
 
         {/* Email */}
