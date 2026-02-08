@@ -819,6 +819,11 @@ const name = validated.name  // гарантированно строка!
 - [ ] SEO оптимизация для генераторов
 
 ### ✅ Выполнено (последние 3-5):
+- [x] **Git Recovery Guide + исправление TypeScript ошибки на деплое** (2026-02-08)
+  - Создана памятка `docs/git-recovery-guide.md` для восстановления с GitHub
+  - Исправлена TypeScript ошибка: Dashboard версия передавала устаревшие props в DocumentPreview
+  - Удалены неиспользуемые state: documentMode, customDocument
+  - Деплой теперь проходит без ошибок
 - [x] **Step 3 Cookie Generator: решена проблема двойных границ** (2026-02-08)
   - Применено "Решение 1: Растворение" (precision minimalism)
   - Убрана граница у preview документа — оставлена только у step container
@@ -847,6 +852,3 @@ const name = validated.name  // гарантированно строка!
   - Вместо Markdown textarea → красивый HTML preview (react-markdown)
   - Два режима: Preview (HTML рендер) и Edit (contentEditable)
   - Dropdown меню "Скачать" с двумя форматами: Markdown (.md) и HTML (.html)
-- [x] **Идеальное выравнивание чекбоксов в Step 2 Cookie Generator** (2026-02-08)
-  - Выровнены центры чекбоксов с центрами заголовков (оптическое выравнивание)
-  - Все чекбоксы на одном уровне с заголовками
