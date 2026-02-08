@@ -172,7 +172,7 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
                 type="checkbox"
                 checked={data.technicalFeatures?.cart || false}
                 onChange={() => handleTechnicalFeatureToggle('cart')}
-                className="mt-[0.3125rem] size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
+                className="mt-0.5 size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
               />
               <div className="flex-1">
                 <span className="block text-[13px] font-medium text-foreground/90 group-hover:text-foreground">
@@ -190,7 +190,7 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
                 type="checkbox"
                 checked={data.technicalFeatures?.auth || false}
                 onChange={() => handleTechnicalFeatureToggle('auth')}
-                className="mt-[0.3125rem] size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
+                className="mt-0.5 size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
               />
               <div className="flex-1">
                 <span className="block text-[13px] font-medium text-foreground/90 group-hover:text-foreground">
@@ -208,7 +208,7 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
                 type="checkbox"
                 checked={data.technicalFeatures?.payment || false}
                 onChange={() => handleTechnicalFeatureToggle('payment')}
-                className="mt-[0.3125rem] size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
+                className="mt-0.5 size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
               />
               <div className="flex-1">
                 <span className="block text-[13px] font-medium text-foreground/90 group-hover:text-foreground">
@@ -226,7 +226,7 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
                 type="checkbox"
                 checked={data.technicalFeatures?.preferences || false}
                 onChange={() => handleTechnicalFeatureToggle('preferences')}
-                className="mt-[0.3125rem] size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
+                className="mt-0.5 size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
               />
               <div className="flex-1">
                 <span className="block text-[13px] font-medium text-foreground/90 group-hover:text-foreground">
