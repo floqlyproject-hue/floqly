@@ -1,8 +1,9 @@
 'use client'
 
-import { useMemo, useState, useEffect } from 'react'
+import { useMemo, useState, useEffect, useRef } from 'react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
+import TurndownService from 'turndown'
 import type { CookieConfig } from '../types'
 import { generateCookiePolicy, type CookiePolicyData } from '@/lib/templates/cookie-policy'
 
@@ -29,6 +30,12 @@ export function DocumentPreview({
   const [editableGenerated, setEditableGenerated] = useState('')
   const [viewMode, setViewMode] = useState<ViewMode>('preview')
   const [downloadMenuOpen, setDownloadMenuOpen] = useState(false)
+  const [showResetConfirm, setShowResetConfirm] = useState(false)
+  const editableRef = useRef<HTMLDivElement>(null)
+  const turndownService = useRef(new TurndownService({
+    headingStyle: 'atx',
+    codeBlockStyle: 'fenced',
+  }))
 
   const generatedText = useMemo(() => {
     // Build full CookiePolicyData from Step 1 + Step 2
@@ -90,7 +97,15 @@ export function DocumentPreview({
   }
 
   const handleDownloadMarkdown = () => {
-    const blob = new Blob([activeText], { type: 'text/markdown' })
+    let markdownContent = activeText
+
+    // If in edit mode and contentEditable was used, convert HTML back to Markdown
+    if (viewMode === 'edit' && editableRef.current) {
+      const htmlContent = editableRef.current.innerHTML
+      markdownContent = turndownService.current.turndown(htmlContent)
+    }
+
+    const blob = new Blob([markdownContent], { type: 'text/markdown' })
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
@@ -100,6 +115,19 @@ export function DocumentPreview({
     document.body.removeChild(a)
     URL.revokeObjectURL(url)
     setDownloadMenuOpen(false)
+  }
+
+  const handleReset = () => {
+    if (mode === 'generate') {
+      setEditableGenerated(generatedText)
+      if (editableRef.current) {
+        editableRef.current.innerHTML = '' // Will be re-rendered by React
+      }
+    } else {
+      onCustomDocumentChange('')
+    }
+    setShowResetConfirm(false)
+    setViewMode('preview')
   }
 
   const handleDownloadHTML = () => {
@@ -273,7 +301,19 @@ ${activeText.split('\n').map(line => {
               <div className="flex items-center gap-2">
                 {/* Edit/Save Button */}
                 <button
-                  onClick={() => setViewMode(viewMode === 'preview' ? 'edit' : 'preview')}
+                  onClick={() => {
+                    if (viewMode === 'edit' && editableRef.current) {
+                      // Save HTML edits back to Markdown state
+                      const htmlContent = editableRef.current.innerHTML
+                      const markdownContent = turndownService.current.turndown(htmlContent)
+                      if (mode === 'generate') {
+                        setEditableGenerated(markdownContent)
+                      } else {
+                        onCustomDocumentChange(markdownContent)
+                      }
+                    }
+                    setViewMode(viewMode === 'preview' ? 'edit' : 'preview')
+                  }}
                   aria-label={viewMode === 'preview' ? 'Редактировать документ' : 'Сохранить изменения'}
                   className="flex cursor-pointer items-center gap-1.5 rounded-lg bg-background px-3 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 >
@@ -293,6 +333,53 @@ ${activeText.split('\n').map(line => {
                     </>
                   )}
                 </button>
+
+                {/* Reset Button - only show in edit mode */}
+                {viewMode === 'edit' && (
+                  <div className="relative">
+                    <button
+                      onClick={() => setShowResetConfirm(true)}
+                      aria-label="Сбросить к оригиналу"
+                      className="flex cursor-pointer items-center gap-1.5 rounded-lg bg-background px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                    >
+                      <svg className="size-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+                      </svg>
+                      Сбросить
+                    </button>
+
+                    {/* Confirmation Popup */}
+                    {showResetConfirm && (
+                      <>
+                        {/* Backdrop */}
+                        <div
+                          className="fixed inset-0 z-10"
+                          onClick={() => setShowResetConfirm(false)}
+                        />
+                        {/* Popup */}
+                        <div className="absolute right-0 top-full mt-1 z-20 w-64 rounded-lg border border-border bg-background p-3 shadow-lg">
+                          <p className="text-[13px] text-foreground mb-3">
+                            Вернуть документ к оригинальной версии? Все изменения будут потеряны.
+                          </p>
+                          <div className="flex gap-2">
+                            <button
+                              onClick={handleReset}
+                              className="flex-1 rounded-lg bg-foreground px-3 py-1.5 text-xs font-medium text-background transition-colors hover:bg-foreground/90"
+                            >
+                              Сбросить
+                            </button>
+                            <button
+                              onClick={() => setShowResetConfirm(false)}
+                              className="flex-1 rounded-lg border border-border px-3 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-muted"
+                            >
+                              Отмена
+                            </button>
+                          </div>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                )}
 
                 {/* Copy Button */}
                 <button
@@ -381,7 +468,7 @@ ${activeText.split('\n').map(line => {
 
             {/* Document Content: Preview or Edit Mode */}
             {viewMode === 'preview' ? (
-              /* Preview Mode: Beautiful HTML Render */
+              /* Preview Mode: ReactMarkdown */
               <div className="prose prose-slate max-w-none bg-background p-6">
                 <ReactMarkdown
                   remarkPlugins={[remarkGfm]}
@@ -447,19 +534,81 @@ ${activeText.split('\n').map(line => {
                 </ReactMarkdown>
               </div>
             ) : (
-              /* Edit Mode: Markdown Textarea */
-              <textarea
-                value={activeText}
-                onChange={(e) => {
-                  if (mode === 'generate') {
-                    setEditableGenerated(e.target.value)
-                  } else {
-                    onCustomDocumentChange(e.target.value)
-                  }
+              /* Edit Mode: ContentEditable HTML */
+              <div
+                ref={editableRef}
+                contentEditable
+                suppressContentEditableWarning
+                className="min-h-[480px] w-full bg-background p-6 focus:outline-none focus:ring-2 focus:ring-ring/20 focus:ring-inset rounded-b-xl"
+                style={{
+                  // Inline styles for contentEditable formatting
+                  wordWrap: 'break-word',
+                  whiteSpace: 'pre-wrap',
                 }}
-                placeholder={mode === 'custom' ? 'Вставьте текст вашей политики cookie…' : ''}
-                className="min-h-[480px] w-full resize-y bg-background p-6 font-mono text-[14px] leading-relaxed text-foreground placeholder:text-muted-foreground/50 focus:outline-none"
-              />
+              >
+                <ReactMarkdown
+                  remarkPlugins={[remarkGfm]}
+                  components={{
+                    h1: ({ children }) => (
+                      <h1 className="text-[24px] font-semibold tracking-tight text-foreground mb-4 mt-6 first:mt-0">
+                        {children}
+                      </h1>
+                    ),
+                    h2: ({ children }) => (
+                      <h2 className="text-[20px] font-semibold tracking-tight text-foreground mb-3 mt-6">
+                        {children}
+                      </h2>
+                    ),
+                    h3: ({ children }) => (
+                      <h3 className="text-[17px] font-semibold tracking-tight text-foreground mb-2 mt-5">
+                        {children}
+                      </h3>
+                    ),
+                    p: ({ children }) => (
+                      <p className="text-[15px] leading-relaxed text-foreground mb-4">
+                        {children}
+                      </p>
+                    ),
+                    ul: ({ children }) => (
+                      <ul className="space-y-2 mb-4 pl-6 list-disc marker:text-muted-foreground">
+                        {children}
+                      </ul>
+                    ),
+                    ol: ({ children }) => (
+                      <ol className="space-y-2 mb-4 pl-6 list-decimal marker:text-muted-foreground">
+                        {children}
+                      </ol>
+                    ),
+                    li: ({ children }) => (
+                      <li className="text-[15px] leading-relaxed text-foreground">
+                        {children}
+                      </li>
+                    ),
+                    blockquote: ({ children }) => (
+                      <blockquote className="border-l-4 border-border pl-4 italic text-muted-foreground mb-4">
+                        {children}
+                      </blockquote>
+                    ),
+                    strong: ({ children }) => (
+                      <strong className="font-semibold text-foreground">
+                        {children}
+                      </strong>
+                    ),
+                    a: ({ href, children }) => (
+                      <a
+                        href={href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-foreground underline decoration-muted-foreground hover:decoration-foreground transition-colors"
+                      >
+                        {children}
+                      </a>
+                    ),
+                  }}
+                >
+                  {activeText}
+                </ReactMarkdown>
+              </div>
             )}
           </div>
 
@@ -472,7 +621,7 @@ ${activeText.split('\n').map(line => {
               {viewMode === 'preview' ? (
                 <>Документ отображается так, как он будет выглядеть на вашем сайте. Нажмите <span className="font-medium text-foreground">«Редактировать»</span>, чтобы внести изменения.</>
               ) : (
-                <>Редактируйте текст в формате Markdown. Используйте <span className="font-medium text-foreground">**жирный**</span>, <span className="font-medium text-foreground"># Заголовок</span>, <span className="font-medium text-foreground">* списки</span>. Нажмите «Сохранить» для просмотра.</>
+                <>Редактируйте документ прямо в тексте — изменяйте заголовки, списки и параграфы. Нажмите <span className="font-medium text-foreground">«Сохранить»</span> когда закончите. Случайно удалили что-то? Используйте кнопку <span className="font-medium text-foreground">«Сбросить»</span>.</>
               )}
             </p>
           </div>
