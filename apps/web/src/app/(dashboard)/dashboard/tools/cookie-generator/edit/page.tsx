@@ -73,8 +73,6 @@ export default function CookieGeneratorEditPage() {
   const [activeTab, setActiveTab] = useState<ActiveTab>('company')
   const [selectedTemplate, setSelectedTemplate] = useState<BannerTemplateId | 'custom'>('standard')
   const [customText, setCustomText] = useState('')
-  const [documentMode, setDocumentMode] = useState<'generate' | 'custom'>('generate')
-  const [customDocument, setCustomDocument] = useState('')
   const [isSaving, setIsSaving] = useState(false)
   const [isDirty, setIsDirty] = useState(false)
   const [showCodeModal, setShowCodeModal] = useState(false)
@@ -201,10 +199,6 @@ export default function CookieGeneratorEditPage() {
           <DocumentPreview
             config={config}
             cookiePolicyData={cookiePolicyData}
-            mode={documentMode}
-            onModeChange={setDocumentMode}
-            customDocument={customDocument}
-            onCustomDocumentChange={setCustomDocument}
           />
         )}
         {activeTab === 'design' && (
