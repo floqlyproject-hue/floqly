@@ -8,10 +8,19 @@ RUN corepack enable && corepack prepare pnpm@latest --activate
 
 WORKDIR /app
 
-# Copy package files
+# Copy package files (workspace root)
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+
+# Copy all package.json files from apps/* (required by pnpm workspace)
 COPY apps/web/package.json ./apps/web/
-COPY packages/*/package.json ./packages/*/
+COPY apps/widget/package.json ./apps/widget/
+COPY apps/admin/package.json ./apps/admin/
+
+# Copy all package.json files from packages/* (required by pnpm workspace)
+COPY packages/ui/package.json ./packages/ui/
+COPY packages/config/package.json ./packages/config/
+COPY packages/database/package.json ./packages/database/
+COPY packages/analytics/package.json ./packages/analytics/
 
 # Install dependencies
 RUN pnpm install --frozen-lockfile
