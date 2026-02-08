@@ -2,10 +2,11 @@
 
 import { useMemo, useState, useEffect } from 'react'
 import type { CookieConfig } from '../types'
-import { generateCookieDocument } from '../document-generator'
+import { generateCookiePolicy, type CookiePolicyData } from '@/lib/templates/cookie-policy'
 
 interface DocumentPreviewProps {
   config: CookieConfig
+  cookiePolicyData: Partial<CookiePolicyData>
   mode: 'generate' | 'custom'
   onModeChange: (mode: 'generate' | 'custom') => void
   customDocument: string
@@ -14,6 +15,7 @@ interface DocumentPreviewProps {
 
 export function DocumentPreview({
   config,
+  cookiePolicyData,
   mode,
   onModeChange,
   customDocument,
@@ -23,8 +25,54 @@ export function DocumentPreview({
   const [editableGenerated, setEditableGenerated] = useState('')
 
   const generatedText = useMemo(() => {
-    return generateCookieDocument(config)
-  }, [config])
+    // Build full CookiePolicyData from Step 1 + Step 2
+    const fullData: CookiePolicyData = {
+      // From Step 1 (Company)
+      companyName: config.company.name || '',
+      siteUrl: config.company.website || '',
+      email: config.company.email || '',
+      currentDate: new Date().toLocaleDateString('ru-RU', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      }),
+
+      // From Step 2 (Cookie Policy Form)
+      technicalFeatures: cookiePolicyData.technicalFeatures || {
+        cart: false,
+        auth: false,
+        payment: false,
+        preferences: false,
+        externalServices: [],
+      },
+      analytics: cookiePolicyData.analytics || {
+        yandexMetrika: false,
+        googleAnalytics: false,
+        liveInternet: false,
+        mailRu: false,
+        topMailRu: false,
+        matomo: false,
+        other: [],
+      },
+      crossBorder: cookiePolicyData.crossBorder || {
+        googleServices: false,
+        facebookPixel: false,
+        other: [],
+      },
+      marketing: cookiePolicyData.marketing || {
+        yandexDirect: false,
+        yandexAudiences: false,
+        vkAds: false,
+        googleAds: false,
+        facebookAds: false,
+        telegramAds: false,
+        okAds: false,
+        other: [],
+      },
+    }
+
+    return generateCookiePolicy(fullData)
+  }, [config, cookiePolicyData])
 
   // Sync generated text into editable state when config changes
   useEffect(() => {

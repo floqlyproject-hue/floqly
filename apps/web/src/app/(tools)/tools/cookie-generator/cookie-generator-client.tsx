@@ -3,14 +3,15 @@
 import { useState, useCallback, useMemo, useEffect } from 'react'
 import {
   CompanyForm,
-  CookieConfigForm,
   BannerSettingsForm,
   TextTemplateForm,
   BannerPreview,
   DocumentPreview,
 } from './components'
+import { CookiePolicyForm } from './components/cookie-policy-form'
 import { DEFAULT_CONFIG, type CookieConfig, type DocumentSettings } from './types'
 import { type BannerTemplateId } from './templates'
+import { type CookiePolicyData } from '@/lib/templates/cookie-policy'
 import { AuthModal } from '@/app/auth/components'
 import { createClient } from '@/lib/supabase/client'
 import { useSiteScreenshot } from '@/lib/hooks/use-site-screenshot'
@@ -82,6 +83,41 @@ export function CookieGeneratorClient() {
   const [showAuthModal, setShowAuthModal] = useState(false)
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const { screenshotUrl, isLoading: isScreenshotLoading } = useSiteScreenshot(config.company.website)
+
+  // New cookie policy data (for new document template)
+  const [cookiePolicyData, setCookiePolicyData] = useState<Partial<CookiePolicyData>>({
+    technicalFeatures: {
+      cart: false,
+      auth: false,
+      payment: false,
+      preferences: false,
+      externalServices: [],
+    },
+    analytics: {
+      yandexMetrika: false,
+      googleAnalytics: false,
+      liveInternet: false,
+      mailRu: false,
+      topMailRu: false,
+      matomo: false,
+      other: [],
+    },
+    crossBorder: {
+      googleServices: false,
+      facebookPixel: false,
+      other: [],
+    },
+    marketing: {
+      yandexDirect: false,
+      yandexAudiences: false,
+      vkAds: false,
+      googleAds: false,
+      facebookAds: false,
+      telegramAds: false,
+      okAds: false,
+      other: [],
+    },
+  })
 
   // Check auth status
   useEffect(() => {
@@ -190,16 +226,15 @@ export function CookieGeneratorClient() {
               <CompanyForm data={config.company} onChange={handleCompanyChange} />
             )}
             {activeTab === 'cookies' && (
-              <CookieConfigForm
-                documentSettings={config.documentSettings}
-                cookieTypes={config.cookieTypes}
-                onDocumentSettingsChange={handleDocumentSettingsChange}
-                onCookieTypesChange={handleCookieTypesChange}
+              <CookiePolicyForm
+                data={cookiePolicyData}
+                onChange={setCookiePolicyData}
               />
             )}
             {activeTab === 'document' && (
               <DocumentPreview
                 config={config}
+                cookiePolicyData={cookiePolicyData}
                 mode={documentMode}
                 onModeChange={setDocumentMode}
                 customDocument={customDocument}
