@@ -270,9 +270,9 @@ ${activeText.split('\n').map(line => {
       ) : (
         <div className="space-y-4">
           {/* Document Card */}
-          <div className="overflow-hidden rounded-xl border border-border bg-background">
+          <div className="overflow-hidden rounded-xl border border-border">
             {/* Header with Actions */}
-            <div className="flex items-center justify-between border-b border-border bg-card/50 px-4 py-3">
+            <div className="flex items-center justify-between border-b border-border bg-muted/30 px-4 py-3">
               <div className="flex items-center gap-2">
                 <svg
                   className="size-4 text-muted-foreground"
