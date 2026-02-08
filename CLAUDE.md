@@ -819,9 +819,15 @@ const name = validated.name  // гарантированно строка!
 - [ ] SEO оптимизация для генераторов
 
 ### ✅ Выполнено (последние 3-5):
+- [x] **Step 3 Cookie Generator: WYSIWYG editing + кнопка "Сбросить"** (2026-02-08)
+  - WYSIWYG редактирование прямо в HTML preview (contentEditable)
+  - Не нужно знать Markdown — редактируешь как видишь
+  - Кнопка "Сбросить к оригиналу" с подтверждением
+  - Конвертация HTML → Markdown при скачивании .md (turndown)
+  - Обновлена подсказка: "Редактируйте прямо в тексте"
 - [x] **Step 3 Cookie Generator: Redesign документа с HTML preview** (2026-02-08)
   - Вместо Markdown textarea → красивый HTML preview (react-markdown)
-  - Два режима: Preview (HTML рендер) и Edit (Markdown textarea)
+  - Два режима: Preview (HTML рендер) и Edit (contentEditable)
   - Кнопка "Редактировать" / "Сохранить" для переключения
   - Dropdown меню "Скачать" с двумя форматами: Markdown (.md) и HTML (.html)
   - Контекстные подсказки (меняются в зависимости от режима)
