@@ -167,7 +167,7 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
 
           <div className="space-y-2">
             {/* Cart */}
-            <label className="group flex cursor-pointer items-start gap-2.5 py-1.5 transition-colors duration-150 hover:text-foreground">
+            <label className="group flex cursor-pointer items-center gap-2.5 py-1.5 transition-colors duration-150 hover:text-foreground">
               <input
                 type="checkbox"
                 checked={data.technicalFeatures?.cart || false}
@@ -185,7 +185,7 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
             </label>
 
             {/* Auth */}
-            <label className="group flex cursor-pointer items-start gap-2.5 py-1.5 transition-colors duration-150 hover:text-foreground">
+            <label className="group flex cursor-pointer items-center gap-2.5 py-1.5 transition-colors duration-150 hover:text-foreground">
               <input
                 type="checkbox"
                 checked={data.technicalFeatures?.auth || false}
@@ -203,7 +203,7 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
             </label>
 
             {/* Payment */}
-            <label className="group flex cursor-pointer items-start gap-2.5 py-1.5 transition-colors duration-150 hover:text-foreground">
+            <label className="group flex cursor-pointer items-center gap-2.5 py-1.5 transition-colors duration-150 hover:text-foreground">
               <input
                 type="checkbox"
                 checked={data.technicalFeatures?.payment || false}
@@ -221,7 +221,7 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
             </label>
 
             {/* Preferences */}
-            <label className="group flex cursor-pointer items-start gap-2.5 py-1.5 transition-colors duration-150 hover:text-foreground">
+            <label className="group flex cursor-pointer items-center gap-2.5 py-1.5 transition-colors duration-150 hover:text-foreground">
               <input
                 type="checkbox"
                 checked={data.technicalFeatures?.preferences || false}
@@ -243,7 +243,7 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
               <button
                 type="button"
                 onClick={() => setShowExternalServicesForm(!showExternalServicesForm)}
-                className="group flex w-full cursor-pointer items-start gap-2.5 py-1.5 text-left transition-colors duration-150 hover:text-foreground focus-visible:outline-none"
+                className="group flex w-full cursor-pointer items-center gap-2.5 py-1.5 text-left transition-colors duration-150 hover:text-foreground focus-visible:outline-none"
               >
                 <div className="flex size-4 shrink-0 items-center justify-center">
                   <div
@@ -355,7 +355,7 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
                 onChange={() => handleAnalyticsToggle('yandexMetrika')}
                 className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
               />
-              <span className="flex-1 text-[13px] font-medium text-foreground/90 group-hover:text-foreground">
+              <span className="flex-1 text-[13px] font-medium leading-[1.125rem] text-foreground/90 group-hover:text-foreground">
                 Яндекс.Метрика
               </span>
               <span className="rounded-md border border-border bg-background px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
@@ -371,7 +371,7 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
                 onChange={() => handleAnalyticsToggle('googleAnalytics')}
                 className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
               />
-              <span className="flex-1 text-[13px] font-medium text-foreground/90 group-hover:text-foreground">
+              <span className="flex-1 text-[13px] font-medium leading-[1.125rem] text-foreground/90 group-hover:text-foreground">
                 Google Analytics
               </span>
               <span className="rounded-md border border-warning/30 bg-warning/10 px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-warning">
@@ -387,7 +387,7 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
                 onChange={() => handleAnalyticsToggle('liveInternet')}
                 className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
               />
-              <span className="flex-1 text-[13px] font-medium text-foreground/90 group-hover:text-foreground">
+              <span className="flex-1 text-[13px] font-medium leading-[1.125rem] text-foreground/90 group-hover:text-foreground">
                 LiveInternet
               </span>
               <span className="rounded-md border border-border bg-background px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
@@ -403,7 +403,7 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
                 onChange={() => handleAnalyticsToggle('mailRu')}
                 className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
               />
-              <span className="flex-1 text-[13px] font-medium text-foreground/90 group-hover:text-foreground">
+              <span className="flex-1 text-[13px] font-medium leading-[1.125rem] text-foreground/90 group-hover:text-foreground">
                 Рейтинг Mail.ru
               </span>
               <span className="rounded-md border border-border bg-background px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
@@ -419,7 +419,7 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
                 onChange={() => handleAnalyticsToggle('topMailRu')}
                 className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
               />
-              <span className="flex-1 text-[13px] font-medium text-foreground/90 group-hover:text-foreground">
+              <span className="flex-1 text-[13px] font-medium leading-[1.125rem] text-foreground/90 group-hover:text-foreground">
                 Top@Mail.ru
               </span>
               <span className="rounded-md border border-border bg-background px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
@@ -435,7 +435,7 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
                 onChange={() => handleAnalyticsToggle('matomo')}
                 className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
               />
-              <span className="flex-1 text-[13px] font-medium text-foreground/90 group-hover:text-foreground">
+              <span className="flex-1 text-[13px] font-medium leading-[1.125rem] text-foreground/90 group-hover:text-foreground">
                 Matomo (Piwik)
               </span>
               <span className="rounded-md border border-border bg-background px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
@@ -476,7 +476,7 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
                 disabled={data.marketing?.googleAds}
                 className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-30"
               />
-              <span className="flex-1 text-[13px] font-medium text-foreground/90 group-hover:text-foreground">
+              <span className="flex-1 text-[13px] font-medium leading-[1.125rem] text-foreground/90 group-hover:text-foreground">
                 Google Analytics / Google Ads
               </span>
               <span className="rounded-md border border-warning/30 bg-warning/10 px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-warning">
@@ -493,7 +493,7 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
                 disabled={data.marketing?.facebookAds}
                 className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-30"
               />
-              <span className="flex-1 text-[13px] font-medium text-foreground/90 group-hover:text-foreground">
+              <span className="flex-1 text-[13px] font-medium leading-[1.125rem] text-foreground/90 group-hover:text-foreground">
                 Facebook Pixel / Meta Ads
               </span>
               <span className="rounded-md border border-warning/30 bg-warning/10 px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-warning">
@@ -523,7 +523,7 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
                 onChange={() => handleMarketingToggle('yandexDirect')}
                 className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
               />
-              <span className="flex-1 text-[13px] font-medium text-foreground/90 group-hover:text-foreground">
+              <span className="flex-1 text-[13px] font-medium leading-[1.125rem] text-foreground/90 group-hover:text-foreground">
                 Яндекс.Директ
               </span>
               <span className="rounded-md border border-border bg-background px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
@@ -539,7 +539,7 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
                 onChange={() => handleMarketingToggle('yandexAudiences')}
                 className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
               />
-              <span className="flex-1 text-[13px] font-medium text-foreground/90 group-hover:text-foreground">
+              <span className="flex-1 text-[13px] font-medium leading-[1.125rem] text-foreground/90 group-hover:text-foreground">
                 Яндекс Аудитории
               </span>
               <span className="rounded-md border border-border bg-background px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
@@ -555,7 +555,7 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
                 onChange={() => handleMarketingToggle('vkAds')}
                 className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
               />
-              <span className="flex-1 text-[13px] font-medium text-foreground/90 group-hover:text-foreground">
+              <span className="flex-1 text-[13px] font-medium leading-[1.125rem] text-foreground/90 group-hover:text-foreground">
                 VK Реклама (myTarget)
               </span>
               <span className="rounded-md border border-border bg-background px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
@@ -571,7 +571,7 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
                 onChange={() => handleMarketingToggle('okAds')}
                 className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
               />
-              <span className="flex-1 text-[13px] font-medium text-foreground/90 group-hover:text-foreground">
+              <span className="flex-1 text-[13px] font-medium leading-[1.125rem] text-foreground/90 group-hover:text-foreground">
                 Одноклассники (myTarget)
               </span>
               <span className="rounded-md border border-border bg-background px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
@@ -587,7 +587,7 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
                 onChange={() => handleMarketingToggle('telegramAds')}
                 className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
               />
-              <span className="flex-1 text-[13px] font-medium text-foreground/90 group-hover:text-foreground">
+              <span className="flex-1 text-[13px] font-medium leading-[1.125rem] text-foreground/90 group-hover:text-foreground">
                 Telegram Ads
               </span>
               <span className="rounded-md border border-border bg-background px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
@@ -603,7 +603,7 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
                 onChange={() => handleMarketingToggle('googleAds')}
                 className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
               />
-              <span className="flex-1 text-[13px] font-medium text-foreground/90 group-hover:text-foreground">
+              <span className="flex-1 text-[13px] font-medium leading-[1.125rem] text-foreground/90 group-hover:text-foreground">
                 Google Ads
               </span>
               <span className="rounded-md border border-warning/30 bg-warning/10 px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-warning">
@@ -619,7 +619,7 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
                 onChange={() => handleMarketingToggle('facebookAds')}
                 className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
               />
-              <span className="flex-1 text-[13px] font-medium text-foreground/90 group-hover:text-foreground">
+              <span className="flex-1 text-[13px] font-medium leading-[1.125rem] text-foreground/90 group-hover:text-foreground">
                 Facebook Ads
               </span>
               <span className="rounded-md border border-warning/30 bg-warning/10 px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-warning">
