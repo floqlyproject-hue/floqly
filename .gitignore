@@ -50,6 +50,11 @@ coverage/
 # Debug
 .debug/
 
+# Temporary screenshots and files in root
+/*.png
+/*.jpg
+/*.jpeg
+
 # Local Netlify folder
 .netlify/
 
@@ -62,6 +67,10 @@ supabase/.temp
 
 # Widget build artifacts
 apps/widget/dist/
+
+# Drafts and temporary documentation
+docs/drafts/*
+!docs/drafts/README.md
 
 # Source maps in production (security)
 *.map

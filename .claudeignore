@@ -59,8 +59,18 @@ coverage/
 .turbopack/
 .netlify/
 
+# Screenshots and images in root (MCP Playwright)
+/*.png
+/*.jpg
+/*.jpeg
+/*.gif
+/*.webp
+
 # Archived documents (старые логи)
 docs/archived/
+
+# Drafts and temporary documentation
+docs/drafts/
 
 # Design references (картинки/статика)
 design-references/
