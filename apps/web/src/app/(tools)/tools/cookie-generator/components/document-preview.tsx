@@ -270,9 +270,9 @@ ${activeText.split('\n').map(line => {
       ) : (
         <div className="space-y-4">
           {/* Document Card */}
-          <div className="overflow-hidden rounded-xl border border-border">
+          <div className="overflow-hidden rounded-xl border border-border bg-background">
             {/* Header with Actions */}
-            <div className="flex items-center justify-between border-b border-border bg-background px-4 py-3">
+            <div className="flex items-center justify-between border-b border-border bg-card/50 px-4 py-3">
               <div className="flex items-center gap-2">
                 <svg
                   className="size-4 text-muted-foreground"
@@ -314,7 +314,7 @@ ${activeText.split('\n').map(line => {
                     setViewMode(viewMode === 'preview' ? 'edit' : 'preview')
                   }}
                   aria-label={viewMode === 'preview' ? 'Редактировать документ' : 'Сохранить изменения'}
-                  className="flex cursor-pointer items-center gap-1.5 rounded-lg bg-background px-3 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  className="flex cursor-pointer items-center gap-1.5 rounded-lg border border-border bg-background px-3 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 >
                   {viewMode === 'preview' ? (
                     <>
@@ -339,7 +339,7 @@ ${activeText.split('\n').map(line => {
                     <button
                       onClick={() => setShowResetConfirm(true)}
                       aria-label="Сбросить к оригиналу"
-                      className="flex cursor-pointer items-center gap-1.5 rounded-lg bg-background px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                      className="flex cursor-pointer items-center gap-1.5 rounded-lg border border-border bg-background px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                     >
                       <svg className="size-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
@@ -385,10 +385,10 @@ ${activeText.split('\n').map(line => {
                   onClick={handleCopy}
                   disabled={!activeText}
                   aria-label="Копировать текст документа"
-                  className={`flex cursor-pointer items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-40 ${
+                  className={`flex cursor-pointer items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-40 ${
                     copied
-                      ? 'bg-success/10 text-success'
-                      : 'bg-background text-foreground hover:bg-muted'
+                      ? 'border-success/30 bg-success/10 text-success'
+                      : 'border-border bg-background text-foreground hover:bg-muted'
                   }`}
                 >
                   {copied ? (
@@ -414,7 +414,7 @@ ${activeText.split('\n').map(line => {
                     onClick={() => setDownloadMenuOpen(!downloadMenuOpen)}
                     disabled={!activeText}
                     aria-label="Скачать документ"
-                    className="flex cursor-pointer items-center gap-1.5 rounded-lg bg-background px-3 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-40"
+                    className="flex cursor-pointer items-center gap-1.5 rounded-lg border border-border bg-background px-3 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-40"
                   >
                     <svg className="size-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
@@ -468,7 +468,7 @@ ${activeText.split('\n').map(line => {
             {/* Document Content: Preview or Edit Mode */}
             {viewMode === 'preview' ? (
               /* Preview Mode: ReactMarkdown */
-              <div className="prose prose-slate max-w-none bg-background p-6">
+              <div className="prose prose-slate max-w-none p-6">
                 <ReactMarkdown
                   remarkPlugins={[remarkGfm]}
                   components={{
@@ -538,7 +538,7 @@ ${activeText.split('\n').map(line => {
                 ref={editableRef}
                 contentEditable
                 suppressContentEditableWarning
-                className="min-h-[480px] w-full bg-background p-6 focus:outline-none focus:ring-2 focus:ring-ring/20 focus:ring-inset rounded-b-xl"
+                className="min-h-[480px] w-full p-6 focus:outline-none focus:ring-2 focus:ring-ring/20 focus:ring-inset rounded-b-xl"
                 style={{
                   // Inline styles for contentEditable formatting
                   wordWrap: 'break-word',
