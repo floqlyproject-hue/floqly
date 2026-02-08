@@ -464,9 +464,14 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
               {/* Other Analytics Form */}
               {showAnalyticsOtherForm && (
                 <div className="ml-6.5 mt-3 space-y-3 border-l border-border pl-4">
-                  <p className="text-[12px] leading-relaxed text-muted-foreground/70">
-                    Укажите названия других систем аналитики, которые используются на вашем сайте
-                  </p>
+                  <div className="flex items-start gap-2.5 rounded-lg border border-border bg-background px-3.5 py-3">
+                    <svg aria-hidden="true" className="mt-px size-4 shrink-0 text-foreground/60" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
+                    </svg>
+                    <p className="text-[12px] leading-relaxed text-foreground/70">
+                      Сюда относятся инструменты сквозной аналитики (Roistat, Calltouch), коллтрекинг, системы A/B-тестирования (Google Optimize, VWO), карты кликов (Hotjar) и другие сервисы веб-аналитики, не перечисленные выше.
+                    </p>
+                  </div>
 
                   {/* Added services list */}
                   {(data.analytics?.other?.length ?? 0) > 0 && (
