@@ -231,11 +231,7 @@ ${editableGenerated.split('\n').map(line => {
                       // Save HTML edits back to Markdown state
                       const htmlContent = editableRef.current.innerHTML
                       const markdownContent = turndownService.current.turndown(htmlContent)
-                      if (mode === 'generate') {
-                        setEditableGenerated(markdownContent)
-                      } else {
-                        onCustomDocumentChange(markdownContent)
-                      }
+                      setEditableGenerated(markdownContent)
                     }
                     setViewMode(viewMode === 'preview' ? 'edit' : 'preview')
                   }}
