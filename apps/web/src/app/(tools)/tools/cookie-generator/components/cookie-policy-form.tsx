@@ -345,9 +345,6 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
               <span className="flex-1 text-[13px] font-medium leading-[1.125rem] text-foreground/90 group-hover:text-foreground">
                 Яндекс.Метрика
               </span>
-              <span className="rounded-md border border-border bg-background px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
-                РФ
-              </span>
             </label>
 
             {/* Google Analytics */}
@@ -360,9 +357,6 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
               />
               <span className="flex-1 text-[13px] font-medium leading-[1.125rem] text-foreground/90 group-hover:text-foreground">
                 Google Analytics
-              </span>
-              <span className="rounded-md border border-warning/30 bg-warning/10 px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-warning">
-                США
               </span>
             </label>
 
@@ -377,9 +371,6 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
               <span className="flex-1 text-[13px] font-medium leading-[1.125rem] text-foreground/90 group-hover:text-foreground">
                 LiveInternet
               </span>
-              <span className="rounded-md border border-border bg-background px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
-                РФ
-              </span>
             </label>
 
             {/* Рейтинг Mail.ru */}
@@ -392,9 +383,6 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
               />
               <span className="flex-1 text-[13px] font-medium leading-[1.125rem] text-foreground/90 group-hover:text-foreground">
                 Рейтинг Mail.ru
-              </span>
-              <span className="rounded-md border border-border bg-background px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
-                РФ
               </span>
             </label>
 
@@ -409,9 +397,6 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
               <span className="flex-1 text-[13px] font-medium leading-[1.125rem] text-foreground/90 group-hover:text-foreground">
                 Top@Mail.ru
               </span>
-              <span className="rounded-md border border-border bg-background px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
-                РФ
-              </span>
             </label>
 
             {/* Matomo (Piwik) */}
@@ -424,9 +409,6 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
               />
               <span className="flex-1 text-[13px] font-medium leading-[1.125rem] text-foreground/90 group-hover:text-foreground">
                 Matomo (Piwik)
-              </span>
-              <span className="rounded-md border border-border bg-background px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
-                Self-hosted
               </span>
             </label>
           </div>
@@ -466,9 +448,6 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
               <span className="flex-1 text-[13px] font-medium leading-[1.125rem] text-foreground/90 group-hover:text-foreground">
                 Google Analytics / Google Ads
               </span>
-              <span className="rounded-md border border-warning/30 bg-warning/10 px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-warning">
-                США
-              </span>
             </label>
 
             {/* Facebook */}
@@ -482,9 +461,6 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
               />
               <span className="flex-1 text-[13px] font-medium leading-[1.125rem] text-foreground/90 group-hover:text-foreground">
                 Facebook Pixel / Meta Ads
-              </span>
-              <span className="rounded-md border border-warning/30 bg-warning/10 px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-warning">
-                США
               </span>
             </label>
           </div>
@@ -513,9 +489,6 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
               <span className="flex-1 text-[13px] font-medium leading-[1.125rem] text-foreground/90 group-hover:text-foreground">
                 Яндекс.Директ
               </span>
-              <span className="rounded-md border border-border bg-background px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
-                РФ
-              </span>
             </label>
 
             {/* Yandex Audiences */}
@@ -528,9 +501,6 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
               />
               <span className="flex-1 text-[13px] font-medium leading-[1.125rem] text-foreground/90 group-hover:text-foreground">
                 Яндекс Аудитории
-              </span>
-              <span className="rounded-md border border-border bg-background px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
-                РФ
               </span>
             </label>
 
@@ -545,9 +515,6 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
               <span className="flex-1 text-[13px] font-medium leading-[1.125rem] text-foreground/90 group-hover:text-foreground">
                 VK Реклама (myTarget)
               </span>
-              <span className="rounded-md border border-border bg-background px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
-                РФ
-              </span>
             </label>
 
             {/* Odnoklassniki Ads */}
@@ -560,9 +527,6 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
               />
               <span className="flex-1 text-[13px] font-medium leading-[1.125rem] text-foreground/90 group-hover:text-foreground">
                 Одноклассники (myTarget)
-              </span>
-              <span className="rounded-md border border-border bg-background px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
-                РФ
               </span>
             </label>
 
@@ -577,9 +541,6 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
               <span className="flex-1 text-[13px] font-medium leading-[1.125rem] text-foreground/90 group-hover:text-foreground">
                 Telegram Ads
               </span>
-              <span className="rounded-md border border-border bg-background px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
-                РФ
-              </span>
             </label>
 
             {/* Google Ads */}
@@ -593,9 +554,6 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
               <span className="flex-1 text-[13px] font-medium leading-[1.125rem] text-foreground/90 group-hover:text-foreground">
                 Google Ads
               </span>
-              <span className="rounded-md border border-warning/30 bg-warning/10 px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-warning">
-                США
-              </span>
             </label>
 
             {/* Facebook Ads */}
@@ -608,9 +566,6 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
               />
               <span className="flex-1 text-[13px] font-medium leading-[1.125rem] text-foreground/90 group-hover:text-foreground">
                 Facebook Ads
-              </span>
-              <span className="rounded-md border border-warning/30 bg-warning/10 px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-warning">
-                США
               </span>
             </label>
           </div>
