@@ -9,7 +9,16 @@
 
 ### ✅ Выполнено:
 
-**Cookie Generator — Step 3 Документ (упрощение UI + seamless preview):**
+**Cookie Generator — Step 3 Документ (упрощение UI + seamless preview + решение проблемы двойных границ):**
+- ✅ **Решена проблема двойных параллельных границ**
+  - Применено "Решение 1: Растворение" (precision minimalism)
+  - Убрана граница у preview документа (`border border-border`)
+  - Оставлена только граница step container
+  - Preview теперь "живёт" внутри контейнера без вложенной рамки
+  - Нет визуального шума от параллельных линий по бокам
+  - Использованы skills: frontend-design (анализ + 3 решения), MCP Playwright (визуальное тестирование)
+  - Работает идеально в светлой и тёмной темах
+  - Результат: чистый precision minimalism дизайн, консистентность со Steps 1-2
 - ✅ **Удалены кнопки переключения режимов "Сгенерировать" / "Вставить свой"**
   - DocumentPreview упрощён: удалены 4 props (mode, onModeChange, customDocument, onCustomDocumentChange)
   - Всегда показывается только сгенерированный документ (editableGenerated)

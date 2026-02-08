@@ -819,6 +819,13 @@ const name = validated.name  // гарантированно строка!
 - [ ] SEO оптимизация для генераторов
 
 ### ✅ Выполнено (последние 3-5):
+- [x] **Step 3 Cookie Generator: решена проблема двойных границ** (2026-02-08)
+  - Применено "Решение 1: Растворение" (precision minimalism)
+  - Убрана граница у preview документа — оставлена только у step container
+  - Preview теперь "живёт" внутри контейнера без вложенной рамки
+  - Нет визуального шума от параллельных линий по бокам
+  - Использованы skills: frontend-design, MCP Playwright
+  - Работает идеально в светлой и тёмной темах
 - [x] **Step 3 Cookie Generator: упрощение UI — удалены кнопки режимов** (2026-02-08)
   - Убраны кнопки переключения "Сгенерировать" / "Вставить свой"
   - DocumentPreview упрощён: удалены props mode, onModeChange, customDocument, onCustomDocumentChange
