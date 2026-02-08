@@ -317,7 +317,7 @@
 Начать реализацию Smart Widget на основе гайда или продолжить работу над Cookie Generator
 
 **Коммит:**
-`[будет добавлен]` — docs: add comprehensive Smart Widget UX/UI Design Guide
+`b4932ef` — docs: add comprehensive Smart Widget UX/UI Design Guide
 
 ---
 
