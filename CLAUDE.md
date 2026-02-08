@@ -819,6 +819,12 @@ const name = validated.name  // гарантированно строка!
 - [ ] SEO оптимизация для генераторов
 
 ### ✅ Выполнено (последние 3-5):
+- [x] **Step 3 Cookie Generator: упрощение UI — удалены кнопки режимов** (2026-02-08)
+  - Убраны кнопки переключения "Сгенерировать" / "Вставить свой"
+  - DocumentPreview упрощён: удалены props mode, onModeChange, customDocument, onCustomDocumentChange
+  - Всегда показывается только сгенерированный документ (editableGenerated)
+  - Удалено состояние documentMode и customDocument из cookie-generator-client
+  - Результат: чище UX, меньше кода, проще поддержка
 - [x] **Step 3 Cookie Generator: seamless preview — документ сливается с фоном страницы** (2026-02-08)
   - Убран bg-card (чистый белый) с preview — теперь прозрачный фон
   - Header изменён с bg-card/50 на bg-muted/30 (тонкий тинт без белизны)
@@ -837,7 +843,3 @@ const name = validated.name  // гарантированно строка!
 - [x] **Идеальное выравнивание чекбоксов в Step 2 Cookie Generator** (2026-02-08)
   - Выровнены центры чекбоксов с центрами заголовков (оптическое выравнивание)
   - Все чекбоксы на одном уровне с заголовками
-- [x] **Интеграция нового шаблона Cookie Policy в Cookie Generator** (2026-02-08)
-  - Создан шаблон документа `cookie-policy.ts` (TypeScript константы)
-  - Создан компонент `cookie-policy-form.tsx` (4 блока)
-  - Step 3 генерирует документ по новому шаблону
