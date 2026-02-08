@@ -1,0 +1,56 @@
+# Dependencies
+node_modules
+.pnpm-store
+.pnpm
+
+# Next.js
+.next
+out
+dist
+build
+
+# Development
+.env.local
+.env*.local
+*.log
+
+# IDE
+.vscode
+.idea
+.cursor
+
+# Git
+.git
+.gitignore
+
+# Testing
+coverage
+.nyc_output
+
+# Misc
+.DS_Store
+*.swp
+*.swo
+*~
+
+# Agents and skills (не нужны в Docker образе)
+.agents
+.claude
+
+# Temp files
+*.tmp
+*.temp
+
+# Documentation
+docs
+*.md
+!README.md
+
+# Design references
+design-references
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.svg
+*.webp

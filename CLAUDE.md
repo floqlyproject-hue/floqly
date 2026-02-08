@@ -116,7 +116,7 @@ Floqly — экосистема виджетов для сайтов с AI-ча�
 | Backend | Node.js (Express/Fastify) |
 | Database | Supabase (PostgreSQL, Auth, Storage, Realtime) |
 | Widget | Vanilla TS, Shadow DOM, Vite |
-| Хостинг | Timeweb Cloud (Docker) — в разработке: Netlify |
+| **Хостинг** | **TimeWeb App Platform** (Docker, автодеплой из GitHub) |
 | CI/CD | GitHub Actions |
 
 ---
@@ -586,8 +586,11 @@ const name = validated.name  // гарантированно строка!
   - ✅ Remote проект настроен: `rhdvlmhcfdqbqjgmcgcc`
   - ⚠️ **TODO:** Сгенерировать реальные типы БД (сейчас placeholder!)
   - 📖 Инструкции: `packages/database/README.md`
-- **Netlify:** Хостинг (временно для разработки/тестирования)
-  - 📌 **В продакшене:** переедем на **Timeweb Cloud** (РФ хостинг)
+- **TimeWeb App Platform:** Production хостинг (РФ, автодеплой из GitHub)
+  - ✅ Конфигурация: Dockerfile + Docker Compose
+  - ✅ Параметры: 1 CPU x 3.3 ГГц, 2 GB RAM, 30 GB NVMe
+  - ✅ Сеть: 192.168.0.0/24 (приватная подсеть Docker)
+  - 📖 Env vars: NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY, NODE_ENV, NEXT_PUBLIC_SITE_URL
 - **GitHub Actions:** CI/CD (автоматическое тестирование и деплой)
 
 **Внешние API:**
