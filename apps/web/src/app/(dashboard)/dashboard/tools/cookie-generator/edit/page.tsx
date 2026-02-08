@@ -87,15 +87,14 @@ export default function CookieGeneratorEditPage() {
       auth: false,
       payment: false,
       preferences: false,
+      security: false,
       externalServices: [],
     },
     analytics: {
       yandexMetrika: false,
-      googleAnalytics: false,
       liveInternet: false,
       mailRu: false,
-      topMailRu: false,
-      matomo: false,
+      customAnalytics: false,
       other: [],
     },
     crossBorder: {

@@ -12,6 +12,8 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
   // Local state for "Other" forms
   const [showExternalServicesForm, setShowExternalServicesForm] = useState(false)
   const [newExternalService, setNewExternalService] = useState('')
+  const [showAnalyticsOtherForm, setShowAnalyticsOtherForm] = useState(false)
+  const [newAnalyticService, setNewAnalyticService] = useState('')
 
   // ============================================================================
   // HANDLERS
@@ -28,6 +30,7 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
         auth: data.technicalFeatures?.auth || false,
         payment: data.technicalFeatures?.payment || false,
         preferences: data.technicalFeatures?.preferences || false,
+        security: data.technicalFeatures?.security || false,
         externalServices: data.technicalFeatures?.externalServices || [],
         [feature]: !data.technicalFeatures?.[feature],
       },
@@ -45,6 +48,7 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
         auth: data.technicalFeatures?.auth || false,
         payment: data.technicalFeatures?.payment || false,
         preferences: data.technicalFeatures?.preferences || false,
+        security: data.technicalFeatures?.security || false,
         externalServices: [
           ...(data.technicalFeatures?.externalServices || []),
           { name: newExternalService.trim() },
@@ -64,6 +68,7 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
         auth: data.technicalFeatures?.auth || false,
         payment: data.technicalFeatures?.payment || false,
         preferences: data.technicalFeatures?.preferences || false,
+        security: data.technicalFeatures?.security || false,
         externalServices: data.technicalFeatures?.externalServices?.filter((_, i) => i !== index) || [],
       },
     })
@@ -77,13 +82,46 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
       analytics: {
         ...data.analytics,
         yandexMetrika: data.analytics?.yandexMetrika || false,
-        googleAnalytics: data.analytics?.googleAnalytics || false,
         liveInternet: data.analytics?.liveInternet || false,
         mailRu: data.analytics?.mailRu || false,
-        topMailRu: data.analytics?.topMailRu || false,
-        matomo: data.analytics?.matomo || false,
+        customAnalytics: data.analytics?.customAnalytics || false,
         other: data.analytics?.other || [],
         [tool]: !data.analytics?.[tool],
+      },
+    })
+  }
+
+  const handleAddAnalyticService = () => {
+    if (!newAnalyticService.trim()) return
+
+    onChange({
+      ...data,
+      analytics: {
+        ...data.analytics,
+        yandexMetrika: data.analytics?.yandexMetrika || false,
+        liveInternet: data.analytics?.liveInternet || false,
+        mailRu: data.analytics?.mailRu || false,
+        customAnalytics: data.analytics?.customAnalytics || false,
+        other: [
+          ...(data.analytics?.other || []),
+          { name: newAnalyticService.trim() },
+        ],
+      },
+    })
+
+    setNewAnalyticService('')
+  }
+
+  const handleRemoveAnalyticService = (index: number) => {
+    onChange({
+      ...data,
+      analytics: {
+        ...data.analytics,
+        yandexMetrika: data.analytics?.yandexMetrika || false,
+        liveInternet: data.analytics?.liveInternet || false,
+        mailRu: data.analytics?.mailRu || false,
+        customAnalytics: data.analytics?.customAnalytics || false,
+        other: data.analytics?.other?.filter((_, i) => i !== index) || [],
       },
     })
   }
@@ -238,6 +276,24 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
               </div>
             </label>
 
+            {/* Security */}
+            <label className="group flex cursor-pointer gap-2.5 py-1.5 transition-colors duration-150 hover:text-foreground">
+              <input
+                type="checkbox"
+                checked={data.technicalFeatures?.security || false}
+                onChange={() => handleTechnicalFeatureToggle('security')}
+                className="mt-0.5 size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
+              />
+              <div className="flex-1">
+                <span className="block text-[13px] font-medium text-foreground/90 group-hover:text-foreground">
+                  Защита от ботов (CAPTCHA)
+                </span>
+                <p className="mt-0.5 text-[12px] leading-relaxed text-muted-foreground/70">
+                  Системы защиты от автоматизированных атак и спама
+                </p>
+              </div>
+            </label>
+
             {/* External Services (Chat widgets, etc.) - Collapsible */}
             <div>
               <label className="group flex cursor-pointer gap-2.5 py-1.5 transition-colors duration-150 hover:text-foreground">
@@ -347,19 +403,6 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
               </span>
             </label>
 
-            {/* Google Analytics */}
-            <label className="group flex cursor-pointer items-center gap-2.5 py-1.5 transition-colors duration-150">
-              <input
-                type="checkbox"
-                checked={data.analytics?.googleAnalytics || false}
-                onChange={() => handleAnalyticsToggle('googleAnalytics')}
-                className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
-              />
-              <span className="flex-1 text-[13px] font-medium leading-[1.125rem] text-foreground/90 group-hover:text-foreground">
-                Google Analytics
-              </span>
-            </label>
-
             {/* LiveInternet */}
             <label className="group flex cursor-pointer items-center gap-2.5 py-1.5 transition-colors duration-150">
               <input
@@ -386,31 +429,100 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
               </span>
             </label>
 
-            {/* Top@Mail.ru */}
+            {/* Custom Analytics (Server-side) */}
             <label className="group flex cursor-pointer items-center gap-2.5 py-1.5 transition-colors duration-150">
               <input
                 type="checkbox"
-                checked={data.analytics?.topMailRu || false}
-                onChange={() => handleAnalyticsToggle('topMailRu')}
+                checked={data.analytics?.customAnalytics || false}
+                onChange={() => handleAnalyticsToggle('customAnalytics')}
                 className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
               />
               <span className="flex-1 text-[13px] font-medium leading-[1.125rem] text-foreground/90 group-hover:text-foreground">
-                Top@Mail.ru
+                Собственная статистика сервера
               </span>
             </label>
 
-            {/* Matomo (Piwik) */}
-            <label className="group flex cursor-pointer items-center gap-2.5 py-1.5 transition-colors duration-150">
-              <input
-                type="checkbox"
-                checked={data.analytics?.matomo || false}
-                onChange={() => handleAnalyticsToggle('matomo')}
-                className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
-              />
-              <span className="flex-1 text-[13px] font-medium leading-[1.125rem] text-foreground/90 group-hover:text-foreground">
-                Matomo (Piwik)
-              </span>
-            </label>
+            {/* Other Analytics - Collapsible */}
+            <div>
+              <label className="group flex cursor-pointer gap-2.5 py-1.5 transition-colors duration-150 hover:text-foreground">
+                <input
+                  type="checkbox"
+                  checked={showAnalyticsOtherForm || (data.analytics?.other?.length ?? 0) > 0}
+                  onChange={() => setShowAnalyticsOtherForm(!showAnalyticsOtherForm)}
+                  className="mt-0.5 size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
+                />
+                <div className="flex-1">
+                  <span className="block text-[13px] font-medium text-foreground/90 group-hover:text-foreground">
+                    Другое
+                  </span>
+                  <p className="mt-0.5 text-[12px] leading-relaxed text-muted-foreground/70">
+                    Укажите другие системы аналитики, если используете
+                  </p>
+                </div>
+              </label>
+
+              {/* Other Analytics Form */}
+              {showAnalyticsOtherForm && (
+                <div className="ml-6.5 mt-3 space-y-3 border-l border-border pl-4">
+                  <p className="text-[12px] leading-relaxed text-muted-foreground/70">
+                    Укажите названия других систем аналитики, которые используются на вашем сайте
+                  </p>
+
+                  {/* Added services list */}
+                  {(data.analytics?.other?.length ?? 0) > 0 && (
+                    <div className="space-y-1.5">
+                      {data.analytics?.other?.map((service, index) => (
+                        <div
+                          key={index}
+                          className="flex items-center gap-2 rounded-lg border border-border bg-background px-3 py-2"
+                        >
+                          <svg className="size-3.5 shrink-0 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                          </svg>
+                          <span className="flex-1 text-[13px] text-foreground">
+                            {service.name}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveAnalyticService(index)}
+                            className="shrink-0 text-muted-foreground transition-colors duration-150 hover:text-foreground"
+                          >
+                            <svg className="size-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Add new service */}
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={newAnalyticService}
+                      onChange={(e) => setNewAnalyticService(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          e.preventDefault()
+                          handleAddAnalyticService()
+                        }
+                      }}
+                      placeholder="Название сервиса аналитики"
+                      className="flex-1 rounded-lg border border-border bg-background px-3 py-2 text-[13px] text-foreground transition-colors duration-150 placeholder:text-muted-foreground/50 focus:border-foreground/30 focus:outline-none focus:ring-1 focus:ring-foreground/10"
+                    />
+                    <button
+                      type="button"
+                      onClick={handleAddAnalyticService}
+                      disabled={!newAnalyticService.trim()}
+                      className="shrink-0 rounded-lg bg-foreground px-4 py-2 text-[13px] font-medium text-background transition-opacity duration-150 hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-30"
+                    >
+                      Добавить
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </fieldset>
 

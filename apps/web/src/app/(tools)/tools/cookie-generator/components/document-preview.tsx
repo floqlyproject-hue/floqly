@@ -43,15 +43,14 @@ export function DocumentPreview({
         auth: false,
         payment: false,
         preferences: false,
+        security: false,
         externalServices: [],
       },
       analytics: cookiePolicyData.analytics || {
         yandexMetrika: false,
-        googleAnalytics: false,
         liveInternet: false,
         mailRu: false,
-        topMailRu: false,
-        matomo: false,
+        customAnalytics: false,
         other: [],
       },
       crossBorder: cookiePolicyData.crossBorder || {

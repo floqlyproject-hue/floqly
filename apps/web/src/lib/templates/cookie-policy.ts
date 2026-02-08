@@ -25,6 +25,7 @@ export interface CookiePolicyData {
     auth: boolean
     payment: boolean
     preferences: boolean
+    security: boolean
     externalServices: Array<{
       name: string
       owner?: string
@@ -35,11 +36,9 @@ export interface CookiePolicyData {
   // Step 2: Analytics (BLOCK_ANALYTICS)
   analytics: {
     yandexMetrika: boolean
-    googleAnalytics: boolean
     liveInternet: boolean
     mailRu: boolean
-    topMailRu: boolean
-    matomo: boolean
+    customAnalytics: boolean
     other: Array<{ name: string }>
   }
 
@@ -95,8 +94,17 @@ export const TECHNICAL_BLOCKS = {
 * Индивидуальные настройки отображения товаров (списком, плиткой и т.д.).
 `,
 
+  SECURITY: `
+**5. Защита от ботов и автоматизированных атак**
+Для обеспечения безопасности Сайта и защиты от мошеннических действий мы используем файлы cookie в составе систем защиты от автоматизированного доступа (CAPTCHA, антибот). Эти файлы помогают:
+* Отличать реальных пользователей от автоматизированных программ (ботов);
+* Предотвращать спам-рассылки через формы обратной связи;
+* Защищать от DDoS-атак и массового парсинга данных;
+* Обнаруживать подозрительную активность (например, множественные попытки входа с неверным паролем).
+`,
+
   CHAT: `
-**5. Коммуникация (Онлайн-чат)**
+**6. Коммуникация (Онлайн-чат)**
 Для работы виджета онлайн-консультанта на Сайте используются файлы cookie, которые позволяют сохранять историю вашей переписки с оператором, идентифицировать вас при повторном обращении и обеспечивать непрерывность диалога при переходе между страницами.
 `,
 
@@ -109,12 +117,15 @@ export const TECHNICAL_BLOCKS = {
 /**
  * 2.2. Analytics Cookies Section
  */
-export const ANALYTICS_SECTION = `
+export const ANALYTICS_SECTION_INTRO = `
 ### 2.2. Аналитические и статистические cookie
 Эти файлы помогают нам понять, как посетители взаимодействуют с Сайтом (какие страницы посещают чаще всего, сколько времени проводят на Сайте, возникают ли ошибки). Вся информация собирается в агрегированном (обезличенном) виде.
 
 **Используемые сервисы:**
-* Мы используем сторонние системы веб-аналитики, которые могут размещать свои cookie на вашем устройстве.
+`
+
+export const ANALYTICS_CUSTOM_SERVER = `
+* **Собственная статистика сервера** — мы ведём внутренний учёт посещаемости на уровне веб-сервера (логи запросов). Эти данные не передаются третьим лицам и используются исключительно для технического анализа работы Сайта.
 `
 
 /**
@@ -253,6 +264,7 @@ export function generateCookiePolicy(data: CookiePolicyData): string {
     technicalFeatures.auth ||
     technicalFeatures.payment ||
     technicalFeatures.preferences ||
+    technicalFeatures.security ||
     technicalFeatures.externalServices.length > 0
 
   if (hasAnyTechnicalFeature) {
@@ -263,6 +275,7 @@ export function generateCookiePolicy(data: CookiePolicyData): string {
     if (technicalFeatures.auth) blockShop += TECHNICAL_BLOCKS.AUTH
     if (technicalFeatures.payment) blockShop += TECHNICAL_BLOCKS.PAYMENT
     if (technicalFeatures.preferences) blockShop += TECHNICAL_BLOCKS.PREFERENCES
+    if (technicalFeatures.security) blockShop += TECHNICAL_BLOCKS.SECURITY
 
     // External services (chat widgets, communication tools, etc.)
     if (technicalFeatures.externalServices.length > 0) {
@@ -278,17 +291,39 @@ export function generateCookiePolicy(data: CookiePolicyData): string {
   const { analytics } = data
   const hasAnalytics =
     analytics.yandexMetrika ||
-    analytics.googleAnalytics ||
     analytics.liveInternet ||
     analytics.mailRu ||
-    analytics.topMailRu ||
-    analytics.matomo ||
+    analytics.customAnalytics ||
     analytics.other.length > 0
 
-  document = document.replace(
-    '{{BLOCK_ANALYTICS}}',
-    hasAnalytics ? ANALYTICS_SECTION : ''
-  )
+  let blockAnalytics = ''
+  if (hasAnalytics) {
+    blockAnalytics = ANALYTICS_SECTION_INTRO
+
+    // Custom server analytics
+    if (analytics.customAnalytics) {
+      blockAnalytics += ANALYTICS_CUSTOM_SERVER
+    }
+
+    // Third-party analytics services
+    const thirdPartyServices: string[] = []
+    if (analytics.yandexMetrika) thirdPartyServices.push('Яндекс.Метрика')
+    if (analytics.liveInternet) thirdPartyServices.push('LiveInternet')
+    if (analytics.mailRu) thirdPartyServices.push('Рейтинг Mail.ru')
+
+    // Add "other" custom analytics
+    analytics.other.forEach((service) => {
+      thirdPartyServices.push(service.name)
+    })
+
+    if (thirdPartyServices.length > 0) {
+      blockAnalytics += '\n* **Сторонние системы веб-аналитики:** '
+      blockAnalytics += thirdPartyServices.join(', ')
+      blockAnalytics += '.\n'
+    }
+  }
+
+  document = document.replace('{{BLOCK_ANALYTICS}}', blockAnalytics)
 
   // Build BLOCK_MARKETING
   const { marketing } = data
