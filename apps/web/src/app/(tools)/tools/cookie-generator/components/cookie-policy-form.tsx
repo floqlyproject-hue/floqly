@@ -240,26 +240,13 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
 
             {/* External Services (Chat widgets, etc.) - Collapsible */}
             <div>
-              <button
-                type="button"
-                onClick={() => setShowExternalServicesForm(!showExternalServicesForm)}
-                className="group flex w-full cursor-pointer gap-2.5 py-1.5 text-left transition-colors duration-150 hover:text-foreground focus-visible:outline-none"
-              >
-                <div className="mt-[0.3125rem] flex size-4 shrink-0 items-center justify-center">
-                  <div
-                    className={`size-4 rounded border transition-colors duration-150 ${
-                      showExternalServicesForm || (data.technicalFeatures?.externalServices?.length ?? 0) > 0
-                        ? 'border-foreground bg-foreground'
-                        : 'border-border bg-background'
-                    }`}
-                  >
-                    {(showExternalServicesForm || (data.technicalFeatures?.externalServices?.length ?? 0) > 0) && (
-                      <svg className="size-4 text-background" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                      </svg>
-                    )}
-                  </div>
-                </div>
+              <label className="group flex cursor-pointer gap-2.5 py-1.5 transition-colors duration-150 hover:text-foreground">
+                <input
+                  type="checkbox"
+                  checked={showExternalServicesForm || (data.technicalFeatures?.externalServices?.length ?? 0) > 0}
+                  onChange={() => setShowExternalServicesForm(!showExternalServicesForm)}
+                  className="mt-0.5 size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
+                />
                 <div className="flex-1">
                   <span className="block text-[13px] font-medium text-foreground/90 group-hover:text-foreground">
                     Средства взаимодействия с посетителями
@@ -268,7 +255,7 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
                     Виджеты онлайн-чатов, системы связи, коммуникационные сервисы
                   </p>
                 </div>
-              </button>
+              </label>
 
               {/* External Services Form */}
               {showExternalServicesForm && (
