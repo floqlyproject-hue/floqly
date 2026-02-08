@@ -118,15 +118,14 @@ export function DocumentPreview({
   }
 
   const handleReset = () => {
+    // Reset to original generated text
     if (mode === 'generate') {
       setEditableGenerated(generatedText)
-      if (editableRef.current) {
-        editableRef.current.innerHTML = '' // Will be re-rendered by React
-      }
     } else {
       onCustomDocumentChange('')
     }
     setShowResetConfirm(false)
+    // Switch to preview mode so React can re-render cleanly
     setViewMode('preview')
   }
 
