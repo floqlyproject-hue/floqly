@@ -1,6 +1,8 @@
 'use client'
 
 import { useMemo, useState, useEffect } from 'react'
+import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 import type { CookieConfig } from '../types'
 import { generateCookiePolicy, type CookiePolicyData } from '@/lib/templates/cookie-policy'
 
@@ -13,6 +15,8 @@ interface DocumentPreviewProps {
   onCustomDocumentChange: (text: string) => void
 }
 
+type ViewMode = 'preview' | 'edit'
+
 export function DocumentPreview({
   config,
   cookiePolicyData,
@@ -23,6 +27,8 @@ export function DocumentPreview({
 }: DocumentPreviewProps) {
   const [copied, setCopied] = useState(false)
   const [editableGenerated, setEditableGenerated] = useState('')
+  const [viewMode, setViewMode] = useState<ViewMode>('preview')
+  const [downloadMenuOpen, setDownloadMenuOpen] = useState(false)
 
   const generatedText = useMemo(() => {
     // Build full CookiePolicyData from Step 1 + Step 2
@@ -83,7 +89,7 @@ export function DocumentPreview({
     setTimeout(() => setCopied(false), 2000)
   }
 
-  const handleDownload = () => {
+  const handleDownloadMarkdown = () => {
     const blob = new Blob([activeText], { type: 'text/markdown' })
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
@@ -93,6 +99,78 @@ export function DocumentPreview({
     a.click()
     document.body.removeChild(a)
     URL.revokeObjectURL(url)
+    setDownloadMenuOpen(false)
+  }
+
+  const handleDownloadHTML = () => {
+    // Convert Markdown to HTML
+    const htmlContent = `<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Политика использования файлов cookie</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      line-height: 1.6;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 2rem;
+      color: #1a1a1a;
+    }
+    h1 { font-size: 2rem; font-weight: 600; margin-top: 2rem; margin-bottom: 1rem; }
+    h2 { font-size: 1.5rem; font-weight: 600; margin-top: 1.75rem; margin-bottom: 0.75rem; }
+    h3 { font-size: 1.25rem; font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.5rem; }
+    p { margin-bottom: 1rem; }
+    ul, ol { margin-bottom: 1rem; padding-left: 1.5rem; }
+    li { margin-bottom: 0.25rem; }
+    strong { font-weight: 600; }
+    blockquote {
+      border-left: 4px solid #e5e5e5;
+      padding-left: 1rem;
+      margin-left: 0;
+      font-style: italic;
+      color: #666;
+    }
+    a { color: #0066cc; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+${activeText.split('\n').map(line => {
+  // Basic Markdown to HTML conversion
+  line = line.replace(/^# (.+)$/gm, '<h1>$1</h1>')
+  line = line.replace(/^## (.+)$/gm, '<h2>$1</h2>')
+  line = line.replace(/^### (.+)$/gm, '<h3>$1</h3>')
+  line = line.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+  line = line.replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2">$1</a>')
+  line = line.replace(/^> (.+)$/gm, '<blockquote>$1</blockquote>')
+  line = line.replace(/^\* (.+)$/gm, '<li>$1</li>')
+  if (line.startsWith('<li>')) {
+    return line
+  }
+  if (line.trim() === '') {
+    return '<br>'
+  }
+  if (!line.startsWith('<h') && !line.startsWith('<blockquote>')) {
+    return '<p>' + line + '</p>'
+  }
+  return line
+}).join('\n').replace(/(<li>.*<\/li>\n?)+/g, '<ul>$&</ul>')}
+</body>
+</html>`
+
+    const blob = new Blob([htmlContent], { type: 'text/html' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = 'cookie-policy.html'
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+    URL.revokeObjectURL(url)
+    setDownloadMenuOpen(false)
   }
 
   const isEmpty = !config.company.name && mode === 'generate'
@@ -183,12 +261,40 @@ export function DocumentPreview({
                   />
                 </svg>
                 <div>
-                  <span className="text-[13px] font-medium text-foreground">cookie-policy.md</span>
-                  <span className="ml-2 text-xs text-muted-foreground">Markdown</span>
+                  <span className="text-[13px] font-medium text-foreground">
+                    {viewMode === 'preview' ? 'Предпросмотр документа' : 'Редактирование документа'}
+                  </span>
+                  <span className="ml-2 text-xs text-muted-foreground">
+                    {viewMode === 'preview' ? 'HTML' : 'Markdown'}
+                  </span>
                 </div>
               </div>
 
               <div className="flex items-center gap-2">
+                {/* Edit/Save Button */}
+                <button
+                  onClick={() => setViewMode(viewMode === 'preview' ? 'edit' : 'preview')}
+                  aria-label={viewMode === 'preview' ? 'Редактировать документ' : 'Сохранить изменения'}
+                  className="flex cursor-pointer items-center gap-1.5 rounded-lg bg-background px-3 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                >
+                  {viewMode === 'preview' ? (
+                    <>
+                      <svg className="size-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931z" />
+                      </svg>
+                      Редактировать
+                    </>
+                  ) : (
+                    <>
+                      <svg className="size-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                      </svg>
+                      Сохранить
+                    </>
+                  )}
+                </button>
+
+                {/* Copy Button */}
                 <button
                   onClick={handleCopy}
                   disabled={!activeText}
@@ -215,33 +321,146 @@ export function DocumentPreview({
                     </>
                   )}
                 </button>
-                <button
-                  onClick={handleDownload}
-                  disabled={!activeText}
-                  aria-label="Скачать документ"
-                  className="flex cursor-pointer items-center gap-1.5 rounded-lg bg-background px-3 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-40"
-                >
-                  <svg className="size-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
-                  </svg>
-                  Скачать
-                </button>
+
+                {/* Download Dropdown */}
+                <div className="relative">
+                  <button
+                    onClick={() => setDownloadMenuOpen(!downloadMenuOpen)}
+                    disabled={!activeText}
+                    aria-label="Скачать документ"
+                    className="flex cursor-pointer items-center gap-1.5 rounded-lg bg-background px-3 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-40"
+                  >
+                    <svg className="size-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                    </svg>
+                    Скачать
+                    <svg className="size-3 ml-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                    </svg>
+                  </button>
+
+                  {downloadMenuOpen && (
+                    <>
+                      {/* Backdrop to close dropdown */}
+                      <div
+                        className="fixed inset-0 z-10"
+                        onClick={() => setDownloadMenuOpen(false)}
+                      />
+                      {/* Dropdown Menu */}
+                      <div className="absolute right-0 top-full mt-1 z-20 w-48 overflow-hidden rounded-lg border border-border bg-background shadow-lg">
+                        <button
+                          onClick={handleDownloadMarkdown}
+                          className="flex w-full items-center gap-2 px-3 py-2 text-left text-[13px] text-foreground transition-colors hover:bg-muted"
+                        >
+                          <svg className="size-4 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m6.75 12H9m1.5-12H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+                          </svg>
+                          <div>
+                            <div className="font-medium">Markdown (.md)</div>
+                            <div className="text-xs text-muted-foreground">Исходный формат</div>
+                          </div>
+                        </button>
+                        <button
+                          onClick={handleDownloadHTML}
+                          className="flex w-full items-center gap-2 px-3 py-2 text-left text-[13px] text-foreground transition-colors hover:bg-muted"
+                        >
+                          <svg className="size-4 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5" />
+                          </svg>
+                          <div>
+                            <div className="font-medium">HTML (.html)</div>
+                            <div className="text-xs text-muted-foreground">Готовая страница</div>
+                          </div>
+                        </button>
+                      </div>
+                    </>
+                  )}
+                </div>
               </div>
             </div>
 
-            {/* Editable Document Content */}
-            <textarea
-              value={activeText}
-              onChange={(e) => {
-                if (mode === 'generate') {
-                  setEditableGenerated(e.target.value)
-                } else {
-                  onCustomDocumentChange(e.target.value)
-                }
-              }}
-              placeholder={mode === 'custom' ? 'Вставьте текст вашей политики cookie…' : ''}
-              className="min-h-[320px] w-full resize-y bg-background p-5 font-mono text-[15px] leading-relaxed text-foreground placeholder:text-muted-foreground/50 focus:outline-none"
-            />
+            {/* Document Content: Preview or Edit Mode */}
+            {viewMode === 'preview' ? (
+              /* Preview Mode: Beautiful HTML Render */
+              <div className="prose prose-slate max-w-none bg-background p-6">
+                <ReactMarkdown
+                  remarkPlugins={[remarkGfm]}
+                  components={{
+                    h1: ({ children }) => (
+                      <h1 className="text-[24px] font-semibold tracking-tight text-foreground mb-4 mt-6 first:mt-0">
+                        {children}
+                      </h1>
+                    ),
+                    h2: ({ children }) => (
+                      <h2 className="text-[20px] font-semibold tracking-tight text-foreground mb-3 mt-6">
+                        {children}
+                      </h2>
+                    ),
+                    h3: ({ children }) => (
+                      <h3 className="text-[17px] font-semibold tracking-tight text-foreground mb-2 mt-5">
+                        {children}
+                      </h3>
+                    ),
+                    p: ({ children }) => (
+                      <p className="text-[15px] leading-relaxed text-foreground mb-4">
+                        {children}
+                      </p>
+                    ),
+                    ul: ({ children }) => (
+                      <ul className="space-y-2 mb-4 pl-6 list-disc marker:text-muted-foreground">
+                        {children}
+                      </ul>
+                    ),
+                    ol: ({ children }) => (
+                      <ol className="space-y-2 mb-4 pl-6 list-decimal marker:text-muted-foreground">
+                        {children}
+                      </ol>
+                    ),
+                    li: ({ children }) => (
+                      <li className="text-[15px] leading-relaxed text-foreground">
+                        {children}
+                      </li>
+                    ),
+                    blockquote: ({ children }) => (
+                      <blockquote className="border-l-4 border-border pl-4 italic text-muted-foreground mb-4">
+                        {children}
+                      </blockquote>
+                    ),
+                    strong: ({ children }) => (
+                      <strong className="font-semibold text-foreground">
+                        {children}
+                      </strong>
+                    ),
+                    a: ({ href, children }) => (
+                      <a
+                        href={href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-foreground underline decoration-muted-foreground hover:decoration-foreground transition-colors"
+                      >
+                        {children}
+                      </a>
+                    ),
+                  }}
+                >
+                  {activeText}
+                </ReactMarkdown>
+              </div>
+            ) : (
+              /* Edit Mode: Markdown Textarea */
+              <textarea
+                value={activeText}
+                onChange={(e) => {
+                  if (mode === 'generate') {
+                    setEditableGenerated(e.target.value)
+                  } else {
+                    onCustomDocumentChange(e.target.value)
+                  }
+                }}
+                placeholder={mode === 'custom' ? 'Вставьте текст вашей политики cookie…' : ''}
+                className="min-h-[480px] w-full resize-y bg-background p-6 font-mono text-[14px] leading-relaxed text-foreground placeholder:text-muted-foreground/50 focus:outline-none"
+              />
+            )}
           </div>
 
           {/* Info Card */}
@@ -250,10 +469,10 @@ export function DocumentPreview({
               <path strokeLinecap="round" strokeLinejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
             </svg>
             <p className="text-[13px] leading-relaxed text-foreground/80">
-              {mode === 'generate' ? (
-                <>Текст сгенерирован автоматически. Вы можете <span className="font-medium text-foreground">отредактировать</span> его прямо здесь или скачать файл.</>
+              {viewMode === 'preview' ? (
+                <>Документ отображается так, как он будет выглядеть на вашем сайте. Нажмите <span className="font-medium text-foreground">«Редактировать»</span>, чтобы внести изменения.</>
               ) : (
-                <>Вставьте текст вашей политики cookie. Формат <span className="font-medium text-foreground">Markdown</span> поддерживается большинством CMS.</>
+                <>Редактируйте текст в формате Markdown. Используйте <span className="font-medium text-foreground">**жирный**</span>, <span className="font-medium text-foreground"># Заголовок</span>, <span className="font-medium text-foreground">* списки</span>. Нажмите «Сохранить» для просмотра.</>
               )}
             </p>
           </div>
