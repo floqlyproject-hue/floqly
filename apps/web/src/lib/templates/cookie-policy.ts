@@ -336,17 +336,52 @@ export function generateCookiePolicy(data: CookiePolicyData): string {
     hasMarketing ? MARKETING_SECTION : ''
   )
 
-  // Build BLOCK_CROSS_BORDER
+  // Build BLOCK_CROSS_BORDER (Dynamic)
   const { crossBorder } = data
   const hasCrossBorder =
     crossBorder.googleServices ||
     crossBorder.facebookPixel ||
     crossBorder.other.length > 0
 
-  document = document.replace(
-    '{{BLOCK_CROSS_BORDER}}',
-    hasCrossBorder ? CROSS_BORDER_SECTION : ''
-  )
+  let crossBorderContent = ''
+  if (hasCrossBorder) {
+    const services: string[] = []
+
+    // Add Google if selected
+    if (crossBorder.googleServices) {
+      services.push(
+        '* **Google Analytics / Google Ads.** Владелец: Google LLC (США).\n    [Политика конфиденциальности Google](https://policies.google.com/privacy)'
+      )
+    }
+
+    // Add Facebook if selected
+    if (crossBorder.facebookPixel) {
+      services.push(
+        '* **Facebook Pixel / Meta Ads.** Владелец: Meta Platforms, Inc. (США).\n    [Политика конфиденциальности Meta](https://www.facebook.com/privacy/policy/)'
+      )
+    }
+
+    // Add other services
+    if (crossBorder.other && crossBorder.other.length > 0) {
+      crossBorder.other.forEach((service) => {
+        services.push(`* **${service.name}**`)
+      })
+    }
+
+    crossBorderContent = `
+**Иностранные сервисы (Трансграничная передача):**
+Мы используем инструменты иностранных провайдеров. Ваши данные (файлы cookie, IP-адрес, данные браузера) могут передаваться на серверы, расположенные за пределами Российской Федерации.
+
+${services.join('\n\n')}
+
+> **Предупреждение о трансграничной передаче:**
+> США и некоторые другие страны могут не обеспечивать уровень защиты прав субъектов персональных данных, признаваемый адекватным согласно законодательству РФ (США не входят в перечень стран, являющихся сторонами Конвенции Совета Европы).
+>
+> Продолжая пользоваться Сайтом, вы даете прямое согласие (в соответствии со ст. 12 ФЗ-152) на трансграничную передачу ваших данных, собираемых через cookie, на серверы указанных иностранных компаний для целей аналитики и маркетинга.
+`
+  }
+
+  document = document.replace('{{BLOCK_CROSS_BORDER}}', crossBorderContent)
 
   return document
 }

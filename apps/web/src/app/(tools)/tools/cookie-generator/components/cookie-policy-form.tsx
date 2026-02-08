@@ -14,6 +14,8 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
   const [newExternalService, setNewExternalService] = useState('')
   const [showAnalyticsOtherForm, setShowAnalyticsOtherForm] = useState(false)
   const [newAnalyticService, setNewAnalyticService] = useState('')
+  const [showCrossBorderOtherForm, setShowCrossBorderOtherForm] = useState(false)
+  const [newCrossBorderService, setNewCrossBorderService] = useState('')
   const [showPartnerNetworksForm, setShowPartnerNetworksForm] = useState(false)
   const [newPartnerNetwork, setNewPartnerNetwork] = useState('')
   const [showMarketingOtherForm, setShowMarketingOtherForm] = useState(false)
@@ -145,6 +147,37 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
     })
   }
 
+  const handleAddCrossBorderService = () => {
+    if (!newCrossBorderService.trim()) return
+
+    onChange({
+      ...data,
+      crossBorder: {
+        ...data.crossBorder,
+        googleServices: data.crossBorder?.googleServices || false,
+        facebookPixel: data.crossBorder?.facebookPixel || false,
+        other: [
+          ...(data.crossBorder?.other || []),
+          { name: newCrossBorderService.trim() },
+        ],
+      },
+    })
+
+    setNewCrossBorderService('')
+  }
+
+  const handleRemoveCrossBorderService = (index: number) => {
+    onChange({
+      ...data,
+      crossBorder: {
+        ...data.crossBorder,
+        googleServices: data.crossBorder?.googleServices || false,
+        facebookPixel: data.crossBorder?.facebookPixel || false,
+        other: data.crossBorder?.other?.filter((_, i) => i !== index) || [],
+      },
+    })
+  }
+
   const handleMarketingToggle = (tool: keyof CookiePolicyData['marketing']) => {
     if (tool === 'other' || tool === 'partnerNetworks') return // These are arrays
 
@@ -241,10 +274,10 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
       {/* Section Header - SAME STYLE AS STEP 1 */}
       <div>
         <h3 className="text-[15px] font-semibold tracking-tight text-foreground">
-          Настройки сайта
+          Что использует ваш сайт?
         </h3>
         <p className="mt-1.5 text-[13px] leading-relaxed text-muted-foreground">
-          Расскажите о функциях и сервисах, которые используются на вашем сайте
+          Отметьте функции и сервисы, которые работают на вашем сайте
         </p>
       </div>
 
@@ -258,98 +291,103 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
             Какие функции доступны на вашем сайте?
           </legend>
           <p className="text-[12px] leading-relaxed text-muted-foreground/70">
-            Выберите функции, которые используются на вашем сайте. Это поможет корректно составить политику.
+            Отметьте функции, которые есть на вашем сайте — это нужно для правильного оформления документа.
           </p>
 
           <div className="space-y-2">
             {/* Cart */}
-            <label className="group flex cursor-pointer gap-2.5 py-1.5 transition-colors duration-150 hover:text-foreground">
+            <label className="group flex cursor-pointer items-center gap-2.5 py-1.5 transition-colors duration-150">
               <input
                 type="checkbox"
                 checked={data.technicalFeatures?.cart || false}
                 onChange={() => handleTechnicalFeatureToggle('cart')}
-                className="mt-0.5 size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
+                className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
               />
-              <div className="flex-1">
-                <span className="block text-[13px] font-medium text-foreground/90 group-hover:text-foreground">
-                  Корзина заказов
-                </span>
-                <p className="mt-0.5 text-[12px] leading-relaxed text-muted-foreground/70">
-                  Возможность добавлять товары или услуги в корзину покупок
-                </p>
-              </div>
+              <span className="flex-1 text-[13px] font-medium leading-[1.125rem] text-foreground/90 group-hover:text-foreground">
+                Корзина покупок и товары
+              </span>
             </label>
 
             {/* Auth */}
-            <label className="group flex cursor-pointer gap-2.5 py-1.5 transition-colors duration-150 hover:text-foreground">
+            <label className="group flex cursor-pointer items-center gap-2.5 py-1.5 transition-colors duration-150">
               <input
                 type="checkbox"
                 checked={data.technicalFeatures?.auth || false}
                 onChange={() => handleTechnicalFeatureToggle('auth')}
-                className="mt-0.5 size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
+                className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
               />
-              <div className="flex-1">
-                <span className="block text-[13px] font-medium text-foreground/90 group-hover:text-foreground">
-                  Личный кабинет / Регистрация
-                </span>
-                <p className="mt-0.5 text-[12px] leading-relaxed text-muted-foreground/70">
-                  Авторизация пользователей (вход по логину-паролю или SMS)
-                </p>
-              </div>
+              <span className="flex-1 text-[13px] font-medium leading-[1.125rem] text-foreground/90 group-hover:text-foreground">
+                Авторизация и личный кабинет
+              </span>
             </label>
 
             {/* Payment */}
-            <label className="group flex cursor-pointer gap-2.5 py-1.5 transition-colors duration-150 hover:text-foreground">
+            <label className="group flex cursor-pointer items-center gap-2.5 py-1.5 transition-colors duration-150">
               <input
                 type="checkbox"
                 checked={data.technicalFeatures?.payment || false}
                 onChange={() => handleTechnicalFeatureToggle('payment')}
-                className="mt-0.5 size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
+                className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
               />
-              <div className="flex-1">
-                <span className="block text-[13px] font-medium text-foreground/90 group-hover:text-foreground">
-                  Онлайн-оплата
-                </span>
-                <p className="mt-0.5 text-[12px] leading-relaxed text-muted-foreground/70">
-                  Эквайринг, ввод данных карты, переход на платежный шлюз
-                </p>
-              </div>
+              <span className="flex-1 text-[13px] font-medium leading-[1.125rem] text-foreground/90 group-hover:text-foreground">
+                Приём платежей на сайте
+              </span>
             </label>
 
             {/* Preferences */}
-            <label className="group flex cursor-pointer gap-2.5 py-1.5 transition-colors duration-150 hover:text-foreground">
+            <label className="group flex cursor-pointer items-center gap-2.5 py-1.5 transition-colors duration-150">
               <input
                 type="checkbox"
                 checked={data.technicalFeatures?.preferences || false}
                 onChange={() => handleTechnicalFeatureToggle('preferences')}
-                className="mt-0.5 size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
+                className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
               />
-              <div className="flex-1">
-                <span className="block text-[13px] font-medium text-foreground/90 group-hover:text-foreground">
-                  Избранное / Сравнение / Выбор города
+              <span className="flex flex-1 items-center gap-1.5 text-[13px] font-medium leading-[1.125rem] text-foreground/90 group-hover:text-foreground">
+                Избранное и пользовательские настройки
+                <span className="group/tooltip relative inline-flex">
+                  <svg
+                    className="size-3.5 shrink-0 text-muted-foreground/40 transition-colors duration-150 hover:text-foreground/60"
+                    viewBox="0 0 16 16"
+                    fill="currentColor"
+                    aria-label="Подробнее"
+                  >
+                    <circle cx="8" cy="8" r="8" opacity="0.12" />
+                    <path d="M8 7.5v3M8 5.5h.01M15 8A7 7 0 111 8a7 7 0 0114 0z" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                  </svg>
+                  <span className="pointer-events-none absolute bottom-full left-1/2 mb-2 hidden w-56 -translate-x-1/2 rounded-lg border border-border bg-background px-3 py-2 text-[11px] font-normal leading-relaxed text-foreground/80 opacity-0 transition-opacity duration-150 group-hover/tooltip:block group-hover/tooltip:opacity-100">
+                    Добавление товаров в избранное, сравнение характеристик, выбор города или региона, сохранение предпочтений интерфейса
+                    <span className="absolute left-1/2 top-full -mt-px size-2 -translate-x-1/2 rotate-45 border-b border-r border-border bg-background" />
+                  </span>
                 </span>
-                <p className="mt-0.5 text-[12px] leading-relaxed text-muted-foreground/70">
-                  Сохранение пользовательских настроек и предпочтений
-                </p>
-              </div>
+              </span>
             </label>
 
             {/* Security */}
-            <label className="group flex cursor-pointer gap-2.5 py-1.5 transition-colors duration-150 hover:text-foreground">
+            <label className="group flex cursor-pointer items-center gap-2.5 py-1.5 transition-colors duration-150">
               <input
                 type="checkbox"
                 checked={data.technicalFeatures?.security || false}
                 onChange={() => handleTechnicalFeatureToggle('security')}
-                className="mt-0.5 size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
+                className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
               />
-              <div className="flex-1">
-                <span className="block text-[13px] font-medium text-foreground/90 group-hover:text-foreground">
-                  Защита от ботов (CAPTCHA)
+              <span className="flex flex-1 items-center gap-1.5 text-[13px] font-medium leading-[1.125rem] text-foreground/90 group-hover:text-foreground">
+                Защита от спама и ботов
+                <span className="group/tooltip relative inline-flex">
+                  <svg
+                    className="size-3.5 shrink-0 text-muted-foreground/40 transition-colors duration-150 hover:text-foreground/60"
+                    viewBox="0 0 16 16"
+                    fill="currentColor"
+                    aria-label="Подробнее"
+                  >
+                    <circle cx="8" cy="8" r="8" opacity="0.12" />
+                    <path d="M8 7.5v3M8 5.5h.01M15 8A7 7 0 111 8a7 7 0 0114 0z" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                  </svg>
+                  <span className="pointer-events-none absolute bottom-full left-1/2 mb-2 hidden w-56 -translate-x-1/2 rounded-lg border border-border bg-background px-3 py-2 text-[11px] font-normal leading-relaxed text-foreground/80 opacity-0 transition-opacity duration-150 group-hover/tooltip:block group-hover/tooltip:opacity-100">
+                    CAPTCHA-системы (Google reCAPTCHA, Яндекс SmartCaptcha, hCaptcha) для защиты форм от автоматических отправок
+                    <span className="absolute left-1/2 top-full -mt-px size-2 -translate-x-1/2 rotate-45 border-b border-r border-border bg-background" />
+                  </span>
                 </span>
-                <p className="mt-0.5 text-[12px] leading-relaxed text-muted-foreground/70">
-                  Системы защиты от автоматизированных атак и спама
-                </p>
-              </div>
+              </span>
             </label>
 
             {/* External Services (Chat widgets, etc.) - Collapsible */}
@@ -363,10 +401,10 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
                 />
                 <div className="flex-1">
                   <span className="block text-[13px] font-medium text-foreground/90 group-hover:text-foreground">
-                    Средства взаимодействия с посетителями
+                    Онлайн-чаты и виджеты связи
                   </span>
                   <p className="mt-0.5 text-[12px] leading-relaxed text-muted-foreground/70">
-                    Виджеты онлайн-чатов, системы связи, коммуникационные сервисы
+                    Виджеты для общения с посетителями (чаты, мессенджеры, формы обратной связи)
                   </p>
                 </div>
               </label>
@@ -444,7 +482,7 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
             Используете ли вы инструменты аналитики?
           </legend>
           <p className="text-[12px] leading-relaxed text-muted-foreground/70">
-            Системы веб-аналитики помогают отслеживать посещаемость сайта. Укажите, какие инструменты вы используете.
+            Сервисы для отслеживания посещаемости и поведения пользователей на сайте. Отметьте те, которые вы используете.
           </p>
 
           <div className="space-y-2">
@@ -502,34 +540,36 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
 
             {/* Other Analytics - Collapsible */}
             <div>
-              <label className="group flex cursor-pointer gap-2.5 py-1.5 transition-colors duration-150 hover:text-foreground">
+              <label className="group flex cursor-pointer items-center gap-2.5 py-1.5 transition-colors duration-150">
                 <input
                   type="checkbox"
                   checked={showAnalyticsOtherForm || (data.analytics?.other?.length ?? 0) > 0}
                   onChange={() => setShowAnalyticsOtherForm(!showAnalyticsOtherForm)}
-                  className="mt-0.5 size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
+                  className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
                 />
-                <div className="flex-1">
-                  <span className="block text-[13px] font-medium text-foreground/90 group-hover:text-foreground">
-                    Другое
+                <span className="flex flex-1 items-center gap-1.5 text-[13px] font-medium leading-[1.125rem] text-foreground/90 group-hover:text-foreground">
+                  Другие сервисы
+                  <span className="group/tooltip relative inline-flex">
+                    <svg
+                      className="size-3.5 shrink-0 text-muted-foreground/40 transition-colors duration-150 hover:text-foreground/60"
+                      viewBox="0 0 16 16"
+                      fill="currentColor"
+                      aria-label="Подробнее"
+                    >
+                      <circle cx="8" cy="8" r="8" opacity="0.12" />
+                      <path d="M8 7.5v3M8 5.5h.01M15 8A7 7 0 111 8a7 7 0 0114 0z" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                    </svg>
+                    <span className="pointer-events-none absolute bottom-full left-1/2 mb-2 hidden w-64 -translate-x-1/2 rounded-lg border border-border bg-background px-3 py-2 text-[11px] font-normal leading-relaxed text-foreground/80 opacity-0 transition-opacity duration-150 group-hover/tooltip:block group-hover/tooltip:opacity-100">
+                      Инструменты сквозной аналитики (Roistat, Calltouch), коллтрекинг, системы A/B-тестирования (Google Optimize, VWO), карты кликов (Hotjar) и другие сервисы веб-аналитики
+                      <span className="absolute left-1/2 top-full -mt-px size-2 -translate-x-1/2 rotate-45 border-b border-r border-border bg-background" />
+                    </span>
                   </span>
-                  <p className="mt-0.5 text-[12px] leading-relaxed text-muted-foreground/70">
-                    Укажите другие системы аналитики, если используете
-                  </p>
-                </div>
+                </span>
               </label>
 
               {/* Other Analytics Form */}
               {showAnalyticsOtherForm && (
                 <div className="ml-6.5 mt-3 space-y-3 border-l border-border pl-4">
-                  <div className="flex items-start gap-2.5 rounded-lg border border-border bg-background px-3.5 py-3">
-                    <svg aria-hidden="true" className="mt-px size-4 shrink-0 text-foreground/60" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
-                    </svg>
-                    <p className="text-[12px] leading-relaxed text-foreground/70">
-                      Сюда относятся инструменты сквозной аналитики (Roistat, Calltouch), коллтрекинг, системы A/B-тестирования (Google Optimize, VWO), карты кликов (Hotjar) и другие сервисы веб-аналитики, не перечисленные выше.
-                    </p>
-                  </div>
 
                   {/* Added services list */}
                   {(data.analytics?.other?.length ?? 0) > 0 && (
@@ -606,7 +646,7 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
               <path strokeLinecap="round" strokeLinejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
             </svg>
             <p className="text-[12px] leading-relaxed text-foreground/70">
-              <span className="font-medium text-foreground">Согласно ФЗ-152,</span> при использовании иностранных сервисов необходимо указать факт трансграничной передачи данных. Это защитит вас от претензий регуляторов.
+              <span className="font-medium text-foreground">По закону о персональных данных (ФЗ-152)</span> нужно указать, что данные передаются за границу. Это защитит вас от штрафов и претензий.
             </p>
           </div>
 
@@ -636,6 +676,95 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
                 Facebook Pixel / Meta Ads
               </span>
             </label>
+
+            {/* Other Cross-Border Services - Collapsible */}
+            <div>
+              <label className="group flex cursor-pointer items-center gap-2.5 py-1.5 transition-colors duration-150">
+                <input
+                  type="checkbox"
+                  checked={showCrossBorderOtherForm || (data.crossBorder?.other?.length ?? 0) > 0}
+                  onChange={() => setShowCrossBorderOtherForm(!showCrossBorderOtherForm)}
+                  className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
+                />
+                <span className="flex flex-1 items-center gap-1.5 text-[13px] font-medium leading-[1.125rem] text-foreground/90 group-hover:text-foreground">
+                  Другие сервисы
+                  <span className="group/tooltip relative inline-flex">
+                    <svg
+                      className="size-3.5 shrink-0 text-muted-foreground/40 transition-colors duration-150 hover:text-foreground/60"
+                      viewBox="0 0 16 16"
+                      fill="currentColor"
+                      aria-label="Подробнее"
+                    >
+                      <circle cx="8" cy="8" r="8" opacity="0.12" />
+                      <path d="M8 7.5v3M8 5.5h.01M15 8A7 7 0 111 8a7 7 0 0114 0z" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                    </svg>
+                    <span className="pointer-events-none absolute bottom-full left-1/2 mb-2 hidden w-64 -translate-x-1/2 rounded-lg border border-border bg-background px-3 py-2 text-[11px] font-normal leading-relaxed text-foreground/80 opacity-0 transition-opacity duration-150 group-hover/tooltip:block group-hover/tooltip:opacity-100">
+                      Другие зарубежные сервисы, которые передают данные за пределы России (например, Amazon AWS, Stripe, Mailchimp)
+                      <span className="absolute left-1/2 top-full -mt-px size-2 -translate-x-1/2 rotate-45 border-b border-r border-border bg-background" />
+                    </span>
+                  </span>
+                </span>
+              </label>
+
+              {/* Other Cross-Border Form */}
+              {showCrossBorderOtherForm && (
+                <div className="ml-6.5 mt-3 space-y-3 border-l border-border pl-4">
+
+                  {/* Added services list */}
+                  {(data.crossBorder?.other?.length ?? 0) > 0 && (
+                    <div className="space-y-1.5">
+                      {data.crossBorder?.other?.map((service, index) => (
+                        <div
+                          key={index}
+                          className="flex items-center gap-2 rounded-lg border border-border bg-background px-3 py-2"
+                        >
+                          <svg className="size-3.5 shrink-0 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                          </svg>
+                          <span className="flex-1 text-[13px] text-foreground">
+                            {service.name}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveCrossBorderService(index)}
+                            className="shrink-0 text-muted-foreground transition-colors duration-150 hover:text-foreground"
+                          >
+                            <svg className="size-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Add new service */}
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={newCrossBorderService}
+                      onChange={(e) => setNewCrossBorderService(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          e.preventDefault()
+                          handleAddCrossBorderService()
+                        }
+                      }}
+                      placeholder="Название зарубежного сервиса"
+                      className="flex-1 rounded-lg border border-border bg-background px-3 py-2 text-[13px] text-foreground transition-colors duration-150 placeholder:text-muted-foreground/50 focus:border-foreground/30 focus:outline-none focus:ring-1 focus:ring-foreground/10"
+                    />
+                    <button
+                      type="button"
+                      onClick={handleAddCrossBorderService}
+                      disabled={!newCrossBorderService.trim()}
+                      className="shrink-0 rounded-lg bg-foreground px-4 py-2 text-[13px] font-medium text-background transition-opacity duration-150 hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-30"
+                    >
+                      Добавить
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </fieldset>
 
@@ -644,10 +773,10 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
             ======================================================================== */}
         <fieldset className="space-y-3">
           <legend className="text-[13px] font-medium text-foreground">
-            Используете ли вы маркетинговые cookie?
+            Используете ли вы рекламные инструменты?
           </legend>
           <p className="text-[12px] leading-relaxed text-muted-foreground/70">
-            Пиксели ретаргетинга, рекламные системы и партнёрские программы устанавливают cookie для показа персонализированной рекламы.
+            Сервисы для показа рекламы и отслеживания её эффективности (ВКонтакте, Яндекс, партнёрские программы).
           </p>
 
           <div className="space-y-2">
@@ -686,40 +815,42 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
                 className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
               />
               <span className="flex-1 text-[13px] font-medium leading-[1.125rem] text-foreground/90 group-hover:text-foreground">
-                Куки Яндекс.Директа
+                Яндекс.Директ
               </span>
             </label>
 
             {/* Partner Networks - Collapsible */}
             <div>
-              <label className="group flex cursor-pointer gap-2.5 py-1.5 transition-colors duration-150 hover:text-foreground">
+              <label className="group flex cursor-pointer items-center gap-2.5 py-1.5 transition-colors duration-150">
                 <input
                   type="checkbox"
                   checked={showPartnerNetworksForm || (data.marketing?.partnerNetworks?.length ?? 0) > 0}
                   onChange={() => setShowPartnerNetworksForm(!showPartnerNetworksForm)}
-                  className="mt-0.5 size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
+                  className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
                 />
-                <div className="flex-1">
-                  <span className="block text-[13px] font-medium text-foreground/90 group-hover:text-foreground">
-                    Партнёрские сети
+                <span className="flex flex-1 items-center gap-1.5 text-[13px] font-medium leading-[1.125rem] text-foreground/90 group-hover:text-foreground">
+                  Партнёрские программы
+                  <span className="group/tooltip relative inline-flex">
+                    <svg
+                      className="size-3.5 shrink-0 text-muted-foreground/40 transition-colors duration-150 hover:text-foreground/60"
+                      viewBox="0 0 16 16"
+                      fill="currentColor"
+                      aria-label="Подробнее"
+                    >
+                      <circle cx="8" cy="8" r="8" opacity="0.12" />
+                      <path d="M8 7.5v3M8 5.5h.01M15 8A7 7 0 111 8a7 7 0 0114 0z" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                    </svg>
+                    <span className="pointer-events-none absolute bottom-full left-1/2 mb-2 hidden w-64 -translate-x-1/2 rounded-lg border border-border bg-background px-3 py-2 text-[11px] font-normal leading-relaxed text-foreground/80 opacity-0 transition-opacity duration-150 group-hover/tooltip:block group-hover/tooltip:opacity-100">
+                      Партнёрские и реферальные программы, которые отслеживают переходы с вашего сайта (например, Admitad, Actionpay, Где Слон, CPA и affiliate-сети)
+                      <span className="absolute left-1/2 top-full -mt-px size-2 -translate-x-1/2 rotate-45 border-b border-r border-border bg-background" />
+                    </span>
                   </span>
-                  <p className="mt-0.5 text-[12px] leading-relaxed text-muted-foreground/70">
-                    Affiliate-программы и партнёрские рекламные сети
-                  </p>
-                </div>
+                </span>
               </label>
 
               {/* Partner Networks Form */}
               {showPartnerNetworksForm && (
                 <div className="ml-6.5 mt-3 space-y-3 border-l border-border pl-4">
-                  <div className="flex items-start gap-2.5 rounded-lg border border-border bg-background px-3.5 py-3">
-                    <svg aria-hidden="true" className="mt-px size-4 shrink-0 text-foreground/60" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
-                    </svg>
-                    <p className="text-[12px] leading-relaxed text-foreground/70">
-                      Укажите партнёрские программы и рекламные сети, которые устанавливают cookie для отслеживания конверсий (например, CPA-сети, affiliate-платформы).
-                    </p>
-                  </div>
 
                   {/* Added networks list */}
                   {(data.marketing?.partnerNetworks?.length ?? 0) > 0 && (
@@ -779,34 +910,36 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
 
             {/* Other Marketing - Collapsible */}
             <div>
-              <label className="group flex cursor-pointer gap-2.5 py-1.5 transition-colors duration-150 hover:text-foreground">
+              <label className="group flex cursor-pointer items-center gap-2.5 py-1.5 transition-colors duration-150">
                 <input
                   type="checkbox"
                   checked={showMarketingOtherForm || (data.marketing?.other?.length ?? 0) > 0}
                   onChange={() => setShowMarketingOtherForm(!showMarketingOtherForm)}
-                  className="mt-0.5 size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
+                  className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
                 />
-                <div className="flex-1">
-                  <span className="block text-[13px] font-medium text-foreground/90 group-hover:text-foreground">
-                    Другое
+                <span className="flex flex-1 items-center gap-1.5 text-[13px] font-medium leading-[1.125rem] text-foreground/90 group-hover:text-foreground">
+                  Другие сервисы
+                  <span className="group/tooltip relative inline-flex">
+                    <svg
+                      className="size-3.5 shrink-0 text-muted-foreground/40 transition-colors duration-150 hover:text-foreground/60"
+                      viewBox="0 0 16 16"
+                      fill="currentColor"
+                      aria-label="Подробнее"
+                    >
+                      <circle cx="8" cy="8" r="8" opacity="0.12" />
+                      <path d="M8 7.5v3M8 5.5h.01M15 8A7 7 0 111 8a7 7 0 0114 0z" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                    </svg>
+                    <span className="pointer-events-none absolute bottom-full left-1/2 mb-2 hidden w-64 -translate-x-1/2 rounded-lg border border-border bg-background px-3 py-2 text-[11px] font-normal leading-relaxed text-foreground/80 opacity-0 transition-opacity duration-150 group-hover/tooltip:block group-hover/tooltip:opacity-100">
+                      Любые другие маркетинговые инструменты и системы ретаргетинга, не перечисленные выше
+                      <span className="absolute left-1/2 top-full -mt-px size-2 -translate-x-1/2 rotate-45 border-b border-r border-border bg-background" />
+                    </span>
                   </span>
-                  <p className="mt-0.5 text-[12px] leading-relaxed text-muted-foreground/70">
-                    Другие маркетинговые cookie, не указанные выше
-                  </p>
-                </div>
+                </span>
               </label>
 
               {/* Other Marketing Form */}
               {showMarketingOtherForm && (
                 <div className="ml-6.5 mt-3 space-y-3 border-l border-border pl-4">
-                  <div className="flex items-start gap-2.5 rounded-lg border border-border bg-background px-3.5 py-3">
-                    <svg aria-hidden="true" className="mt-px size-4 shrink-0 text-foreground/60" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
-                    </svg>
-                    <p className="text-[12px] leading-relaxed text-foreground/70">
-                      Любые другие маркетинговые инструменты и системы ретаргетинга, не перечисленные выше.
-                    </p>
-                  </div>
 
                   {/* Added services list */}
                   {(data.marketing?.other?.length ?? 0) > 0 && (
