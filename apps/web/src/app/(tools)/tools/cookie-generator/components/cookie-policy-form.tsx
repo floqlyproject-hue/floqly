@@ -14,6 +14,10 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
   const [newExternalService, setNewExternalService] = useState('')
   const [showAnalyticsOtherForm, setShowAnalyticsOtherForm] = useState(false)
   const [newAnalyticService, setNewAnalyticService] = useState('')
+  const [showPartnerNetworksForm, setShowPartnerNetworksForm] = useState(false)
+  const [newPartnerNetwork, setNewPartnerNetwork] = useState('')
+  const [showMarketingOtherForm, setShowMarketingOtherForm] = useState(false)
+  const [newMarketingService, setNewMarketingService] = useState('')
 
   // ============================================================================
   // HANDLERS
@@ -142,35 +146,89 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
   }
 
   const handleMarketingToggle = (tool: keyof CookiePolicyData['marketing']) => {
-    if (tool === 'other') return // This is an array
-
-    const newMarketing = {
-      ...data.marketing,
-      yandexDirect: data.marketing?.yandexDirect || false,
-      yandexAudiences: data.marketing?.yandexAudiences || false,
-      vkAds: data.marketing?.vkAds || false,
-      googleAds: data.marketing?.googleAds || false,
-      facebookAds: data.marketing?.facebookAds || false,
-      telegramAds: data.marketing?.telegramAds || false,
-      okAds: data.marketing?.okAds || false,
-      other: data.marketing?.other || [],
-      [tool]: !data.marketing?.[tool],
-    }
-
-    // Auto-enable cross-border if Google/Facebook selected
-    const shouldEnableCrossBorder = newMarketing.googleAds || newMarketing.facebookAds
+    if (tool === 'other' || tool === 'partnerNetworks') return // These are arrays
 
     onChange({
       ...data,
-      marketing: newMarketing,
-      crossBorder: shouldEnableCrossBorder
-        ? {
-            ...data.crossBorder,
-            googleServices: newMarketing.googleAds || data.crossBorder?.googleServices || false,
-            facebookPixel: newMarketing.facebookAds || data.crossBorder?.facebookPixel || false,
-            other: data.crossBorder?.other || [],
-          }
-        : data.crossBorder,
+      marketing: {
+        ...data.marketing,
+        vkPixel: data.marketing?.vkPixel || false,
+        myTarget: data.marketing?.myTarget || false,
+        yandexDirect: data.marketing?.yandexDirect || false,
+        partnerNetworks: data.marketing?.partnerNetworks || [],
+        other: data.marketing?.other || [],
+        [tool]: !data.marketing?.[tool],
+      },
+    })
+  }
+
+  const handleAddPartnerNetwork = () => {
+    if (!newPartnerNetwork.trim()) return
+
+    onChange({
+      ...data,
+      marketing: {
+        ...data.marketing,
+        vkPixel: data.marketing?.vkPixel || false,
+        myTarget: data.marketing?.myTarget || false,
+        yandexDirect: data.marketing?.yandexDirect || false,
+        partnerNetworks: [
+          ...(data.marketing?.partnerNetworks || []),
+          { name: newPartnerNetwork.trim() },
+        ],
+        other: data.marketing?.other || [],
+      },
+    })
+
+    setNewPartnerNetwork('')
+  }
+
+  const handleRemovePartnerNetwork = (index: number) => {
+    onChange({
+      ...data,
+      marketing: {
+        ...data.marketing,
+        vkPixel: data.marketing?.vkPixel || false,
+        myTarget: data.marketing?.myTarget || false,
+        yandexDirect: data.marketing?.yandexDirect || false,
+        partnerNetworks: data.marketing?.partnerNetworks?.filter((_, i) => i !== index) || [],
+        other: data.marketing?.other || [],
+      },
+    })
+  }
+
+  const handleAddMarketingService = () => {
+    if (!newMarketingService.trim()) return
+
+    onChange({
+      ...data,
+      marketing: {
+        ...data.marketing,
+        vkPixel: data.marketing?.vkPixel || false,
+        myTarget: data.marketing?.myTarget || false,
+        yandexDirect: data.marketing?.yandexDirect || false,
+        partnerNetworks: data.marketing?.partnerNetworks || [],
+        other: [
+          ...(data.marketing?.other || []),
+          { name: newMarketingService.trim() },
+        ],
+      },
+    })
+
+    setNewMarketingService('')
+  }
+
+  const handleRemoveMarketingService = (index: number) => {
+    onChange({
+      ...data,
+      marketing: {
+        ...data.marketing,
+        vkPixel: data.marketing?.vkPixel || false,
+        myTarget: data.marketing?.myTarget || false,
+        yandexDirect: data.marketing?.yandexDirect || false,
+        partnerNetworks: data.marketing?.partnerNetworks || [],
+        other: data.marketing?.other?.filter((_, i) => i !== index) || [],
+      },
     })
   }
 
@@ -559,8 +617,7 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
                 type="checkbox"
                 checked={data.crossBorder?.googleServices || false}
                 onChange={() => handleCrossBorderToggle('googleServices')}
-                disabled={data.marketing?.googleAds}
-                className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-30"
+                className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
               />
               <span className="flex-1 text-[13px] font-medium leading-[1.125rem] text-foreground/90 group-hover:text-foreground">
                 Google Analytics / Google Ads
@@ -573,8 +630,7 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
                 type="checkbox"
                 checked={data.crossBorder?.facebookPixel || false}
                 onChange={() => handleCrossBorderToggle('facebookPixel')}
-                disabled={data.marketing?.facebookAds}
-                className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-30"
+                className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
               />
               <span className="flex-1 text-[13px] font-medium leading-[1.125rem] text-foreground/90 group-hover:text-foreground">
                 Facebook Pixel / Meta Ads
@@ -584,17 +640,43 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
         </fieldset>
 
         {/* ========================================================================
-            BLOCK 4: MARKETING/RETARGETING (Реклама и ретаргетинг)
+            BLOCK 4: MARKETING/RETARGETING (Маркетинговые и рекламные cookie)
             ======================================================================== */}
         <fieldset className="space-y-3">
           <legend className="text-[13px] font-medium text-foreground">
-            Показываете ли вы рекламу на сайте?
+            Используете ли вы маркетинговые cookie?
           </legend>
           <p className="text-[12px] leading-relaxed text-muted-foreground/70">
-            Если вы используете рекламные системы или пиксели для ретаргетинга, это нужно указать в политике.
+            Пиксели ретаргетинга, рекламные системы и партнёрские программы устанавливают cookie для показа персонализированной рекламы.
           </p>
 
           <div className="space-y-2">
+            {/* VK Pixel */}
+            <label className="group flex cursor-pointer items-center gap-2.5 py-1.5 transition-colors duration-150">
+              <input
+                type="checkbox"
+                checked={data.marketing?.vkPixel || false}
+                onChange={() => handleMarketingToggle('vkPixel')}
+                className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
+              />
+              <span className="flex-1 text-[13px] font-medium leading-[1.125rem] text-foreground/90 group-hover:text-foreground">
+                Пиксель ВКонтакте
+              </span>
+            </label>
+
+            {/* MyTarget */}
+            <label className="group flex cursor-pointer items-center gap-2.5 py-1.5 transition-colors duration-150">
+              <input
+                type="checkbox"
+                checked={data.marketing?.myTarget || false}
+                onChange={() => handleMarketingToggle('myTarget')}
+                className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
+              />
+              <span className="flex-1 text-[13px] font-medium leading-[1.125rem] text-foreground/90 group-hover:text-foreground">
+                MyTarget (Одноклассники, Mail.ru)
+              </span>
+            </label>
+
             {/* Yandex Direct */}
             <label className="group flex cursor-pointer items-center gap-2.5 py-1.5 transition-colors duration-150">
               <input
@@ -604,87 +686,183 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
                 className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
               />
               <span className="flex-1 text-[13px] font-medium leading-[1.125rem] text-foreground/90 group-hover:text-foreground">
-                Яндекс.Директ
+                Куки Яндекс.Директа
               </span>
             </label>
 
-            {/* Yandex Audiences */}
-            <label className="group flex cursor-pointer items-center gap-2.5 py-1.5 transition-colors duration-150">
-              <input
-                type="checkbox"
-                checked={data.marketing?.yandexAudiences || false}
-                onChange={() => handleMarketingToggle('yandexAudiences')}
-                className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
-              />
-              <span className="flex-1 text-[13px] font-medium leading-[1.125rem] text-foreground/90 group-hover:text-foreground">
-                Яндекс Аудитории
-              </span>
-            </label>
+            {/* Partner Networks - Collapsible */}
+            <div>
+              <label className="group flex cursor-pointer gap-2.5 py-1.5 transition-colors duration-150 hover:text-foreground">
+                <input
+                  type="checkbox"
+                  checked={showPartnerNetworksForm || (data.marketing?.partnerNetworks?.length ?? 0) > 0}
+                  onChange={() => setShowPartnerNetworksForm(!showPartnerNetworksForm)}
+                  className="mt-0.5 size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
+                />
+                <div className="flex-1">
+                  <span className="block text-[13px] font-medium text-foreground/90 group-hover:text-foreground">
+                    Партнёрские сети
+                  </span>
+                  <p className="mt-0.5 text-[12px] leading-relaxed text-muted-foreground/70">
+                    Affiliate-программы и партнёрские рекламные сети
+                  </p>
+                </div>
+              </label>
 
-            {/* VK Ads */}
-            <label className="group flex cursor-pointer items-center gap-2.5 py-1.5 transition-colors duration-150">
-              <input
-                type="checkbox"
-                checked={data.marketing?.vkAds || false}
-                onChange={() => handleMarketingToggle('vkAds')}
-                className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
-              />
-              <span className="flex-1 text-[13px] font-medium leading-[1.125rem] text-foreground/90 group-hover:text-foreground">
-                VK Реклама (myTarget)
-              </span>
-            </label>
+              {/* Partner Networks Form */}
+              {showPartnerNetworksForm && (
+                <div className="ml-6.5 mt-3 space-y-3 border-l border-border pl-4">
+                  <div className="flex items-start gap-2.5 rounded-lg border border-border bg-background px-3.5 py-3">
+                    <svg aria-hidden="true" className="mt-px size-4 shrink-0 text-foreground/60" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
+                    </svg>
+                    <p className="text-[12px] leading-relaxed text-foreground/70">
+                      Укажите партнёрские программы и рекламные сети, которые устанавливают cookie для отслеживания конверсий (например, CPA-сети, affiliate-платформы).
+                    </p>
+                  </div>
 
-            {/* Odnoklassniki Ads */}
-            <label className="group flex cursor-pointer items-center gap-2.5 py-1.5 transition-colors duration-150">
-              <input
-                type="checkbox"
-                checked={data.marketing?.okAds || false}
-                onChange={() => handleMarketingToggle('okAds')}
-                className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
-              />
-              <span className="flex-1 text-[13px] font-medium leading-[1.125rem] text-foreground/90 group-hover:text-foreground">
-                Одноклассники (myTarget)
-              </span>
-            </label>
+                  {/* Added networks list */}
+                  {(data.marketing?.partnerNetworks?.length ?? 0) > 0 && (
+                    <div className="space-y-1.5">
+                      {data.marketing?.partnerNetworks?.map((network, index) => (
+                        <div
+                          key={index}
+                          className="flex items-center gap-2 rounded-lg border border-border bg-background px-3 py-2"
+                        >
+                          <svg className="size-3.5 shrink-0 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                          </svg>
+                          <span className="flex-1 text-[13px] text-foreground">
+                            {network.name}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => handleRemovePartnerNetwork(index)}
+                            className="shrink-0 text-muted-foreground transition-colors duration-150 hover:text-foreground"
+                          >
+                            <svg className="size-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
 
-            {/* Telegram Ads */}
-            <label className="group flex cursor-pointer items-center gap-2.5 py-1.5 transition-colors duration-150">
-              <input
-                type="checkbox"
-                checked={data.marketing?.telegramAds || false}
-                onChange={() => handleMarketingToggle('telegramAds')}
-                className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
-              />
-              <span className="flex-1 text-[13px] font-medium leading-[1.125rem] text-foreground/90 group-hover:text-foreground">
-                Telegram Ads
-              </span>
-            </label>
+                  {/* Add new network */}
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={newPartnerNetwork}
+                      onChange={(e) => setNewPartnerNetwork(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          e.preventDefault()
+                          handleAddPartnerNetwork()
+                        }
+                      }}
+                      placeholder="Название партнёрской сети"
+                      className="flex-1 rounded-lg border border-border bg-background px-3 py-2 text-[13px] text-foreground transition-colors duration-150 placeholder:text-muted-foreground/50 focus:border-foreground/30 focus:outline-none focus:ring-1 focus:ring-foreground/10"
+                    />
+                    <button
+                      type="button"
+                      onClick={handleAddPartnerNetwork}
+                      disabled={!newPartnerNetwork.trim()}
+                      className="shrink-0 rounded-lg bg-foreground px-4 py-2 text-[13px] font-medium text-background transition-opacity duration-150 hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-30"
+                    >
+                      Добавить
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
 
-            {/* Google Ads */}
-            <label className="group flex cursor-pointer items-center gap-2.5 py-1.5 transition-colors duration-150">
-              <input
-                type="checkbox"
-                checked={data.marketing?.googleAds || false}
-                onChange={() => handleMarketingToggle('googleAds')}
-                className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
-              />
-              <span className="flex-1 text-[13px] font-medium leading-[1.125rem] text-foreground/90 group-hover:text-foreground">
-                Google Ads
-              </span>
-            </label>
+            {/* Other Marketing - Collapsible */}
+            <div>
+              <label className="group flex cursor-pointer gap-2.5 py-1.5 transition-colors duration-150 hover:text-foreground">
+                <input
+                  type="checkbox"
+                  checked={showMarketingOtherForm || (data.marketing?.other?.length ?? 0) > 0}
+                  onChange={() => setShowMarketingOtherForm(!showMarketingOtherForm)}
+                  className="mt-0.5 size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
+                />
+                <div className="flex-1">
+                  <span className="block text-[13px] font-medium text-foreground/90 group-hover:text-foreground">
+                    Другое
+                  </span>
+                  <p className="mt-0.5 text-[12px] leading-relaxed text-muted-foreground/70">
+                    Другие маркетинговые cookie, не указанные выше
+                  </p>
+                </div>
+              </label>
 
-            {/* Facebook Ads */}
-            <label className="group flex cursor-pointer items-center gap-2.5 py-1.5 transition-colors duration-150">
-              <input
-                type="checkbox"
-                checked={data.marketing?.facebookAds || false}
-                onChange={() => handleMarketingToggle('facebookAds')}
-                className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
-              />
-              <span className="flex-1 text-[13px] font-medium leading-[1.125rem] text-foreground/90 group-hover:text-foreground">
-                Facebook Ads
-              </span>
-            </label>
+              {/* Other Marketing Form */}
+              {showMarketingOtherForm && (
+                <div className="ml-6.5 mt-3 space-y-3 border-l border-border pl-4">
+                  <div className="flex items-start gap-2.5 rounded-lg border border-border bg-background px-3.5 py-3">
+                    <svg aria-hidden="true" className="mt-px size-4 shrink-0 text-foreground/60" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
+                    </svg>
+                    <p className="text-[12px] leading-relaxed text-foreground/70">
+                      Любые другие маркетинговые инструменты и системы ретаргетинга, не перечисленные выше.
+                    </p>
+                  </div>
+
+                  {/* Added services list */}
+                  {(data.marketing?.other?.length ?? 0) > 0 && (
+                    <div className="space-y-1.5">
+                      {data.marketing?.other?.map((service, index) => (
+                        <div
+                          key={index}
+                          className="flex items-center gap-2 rounded-lg border border-border bg-background px-3 py-2"
+                        >
+                          <svg className="size-3.5 shrink-0 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                          </svg>
+                          <span className="flex-1 text-[13px] text-foreground">
+                            {service.name}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveMarketingService(index)}
+                            className="shrink-0 text-muted-foreground transition-colors duration-150 hover:text-foreground"
+                          >
+                            <svg className="size-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Add new service */}
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={newMarketingService}
+                      onChange={(e) => setNewMarketingService(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          e.preventDefault()
+                          handleAddMarketingService()
+                        }
+                      }}
+                      placeholder="Название маркетингового сервиса"
+                      className="flex-1 rounded-lg border border-border bg-background px-3 py-2 text-[13px] text-foreground transition-colors duration-150 placeholder:text-muted-foreground/50 focus:border-foreground/30 focus:outline-none focus:ring-1 focus:ring-foreground/10"
+                    />
+                    <button
+                      type="button"
+                      onClick={handleAddMarketingService}
+                      disabled={!newMarketingService.trim()}
+                      className="shrink-0 rounded-lg bg-foreground px-4 py-2 text-[13px] font-medium text-background transition-opacity duration-150 hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-30"
+                    >
+                      Добавить
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </fieldset>
 

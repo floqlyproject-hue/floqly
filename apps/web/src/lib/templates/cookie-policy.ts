@@ -51,13 +51,10 @@ export interface CookiePolicyData {
 
   // Step 2: Marketing/Retargeting (BLOCK_MARKETING)
   marketing: {
+    vkPixel: boolean
+    myTarget: boolean
     yandexDirect: boolean
-    yandexAudiences: boolean
-    vkAds: boolean
-    googleAds: boolean
-    facebookAds: boolean
-    telegramAds: boolean
-    okAds: boolean
+    partnerNetworks: Array<{ name: string }>
     other: Array<{ name: string }>
   }
 }
@@ -328,13 +325,10 @@ export function generateCookiePolicy(data: CookiePolicyData): string {
   // Build BLOCK_MARKETING
   const { marketing } = data
   const hasMarketing =
+    marketing.vkPixel ||
+    marketing.myTarget ||
     marketing.yandexDirect ||
-    marketing.yandexAudiences ||
-    marketing.vkAds ||
-    marketing.googleAds ||
-    marketing.facebookAds ||
-    marketing.telegramAds ||
-    marketing.okAds ||
+    marketing.partnerNetworks.length > 0 ||
     marketing.other.length > 0
 
   document = document.replace(
@@ -359,8 +353,8 @@ export function generateCookiePolicy(data: CookiePolicyData): string {
 
 /**
  * Helper: Check if cross-border transfer should be auto-enabled
- * (when Google/Facebook is selected in marketing)
+ * (currently not used as we removed foreign ad services from marketing)
  */
 export function shouldEnableCrossBorder(data: CookiePolicyData): boolean {
-  return data.marketing.googleAds || data.marketing.facebookAds
+  return false // No auto-enable, user must manually select cross-border services
 }

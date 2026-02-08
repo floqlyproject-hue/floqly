@@ -107,13 +107,10 @@ export function CookieGeneratorClient() {
       other: [],
     },
     marketing: {
+      vkPixel: false,
+      myTarget: false,
       yandexDirect: false,
-      yandexAudiences: false,
-      vkAds: false,
-      googleAds: false,
-      facebookAds: false,
-      telegramAds: false,
-      okAds: false,
+      partnerNetworks: [],
       other: [],
     },
   })
