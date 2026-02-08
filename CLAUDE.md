@@ -872,10 +872,9 @@ cp -r apps/web/src/app/\(marketing\)/widget-preview/_templates apps/web/src/app/
   - Определение наличия/отсутствия виджетов связи и мессенджеров
   - Решить: Next.js API route или отдельный микросервис
   - См. техническую спецификацию в `docs/PLG_STRATEGY.md`
+### 🟡 Medium Priority (следующие):
 - [ ] Создать дизайны 4 простых виджетов (Simple Widget)
 - [ ] На основе Simple Widget создать дизайн Smart Widget (для демо на странице генератора)
-
-### 🟡 Medium Priority (следующие):
 - [ ] **Сгенерировать реальные типы Supabase** (сейчас placeholder!)
   - См. инструкции: `packages/database/README.md`
   - Команда: `npx supabase login` → `pnpm db:generate`
@@ -890,6 +889,17 @@ cp -r apps/web/src/app/\(marketing\)/widget-preview/_templates apps/web/src/app/
 - [ ] SEO оптимизация для генераторов
 
 ### ✅ Выполнено (последние 3-5):
+- [x] **Smart Widget UX/UI Design Guide** (2026-02-09)
+  - Создан полный гайд по UX/UI для Smart Widget: `docs/SMART_WIDGET_UX_GUIDE.md`
+  - Анимация появления проактивного уведомления (slide-in + fade-in, spring physics)
+  - Thinking Indicator (three dots, готовые CodePen примеры)
+  - Дизайн диалогового окна (layout, типографика, scroll behavior)
+  - Проактивные триггеры (exit intent, время на странице, scroll depth)
+  - Визуальные референсы (Dribbble, Awwwards)
+  - Opensource библиотеки (Assistant UI, React Spring, Chat UI Kit)
+  - Material Design Guidelines (motion design, duration, transition patterns)
+  - Roadmap реализации (6 фаз от базовой структуры до полировки)
+  - Финальные рекомендации и ресурсы для изучения
 - [x] **Git Recovery Guide + исправление TypeScript ошибки на деплое** (2026-02-08)
   - Создана памятка `docs/git-recovery-guide.md` для восстановления с GitHub
   - Исправлена TypeScript ошибка: Dashboard версия передавала устаревшие props в DocumentPreview
