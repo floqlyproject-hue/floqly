@@ -10,10 +10,6 @@ import { generateCookiePolicy, type CookiePolicyData } from '@/lib/templates/coo
 interface DocumentPreviewProps {
   config: CookieConfig
   cookiePolicyData: Partial<CookiePolicyData>
-  mode: 'generate' | 'custom'
-  onModeChange: (mode: 'generate' | 'custom') => void
-  customDocument: string
-  onCustomDocumentChange: (text: string) => void
 }
 
 type ViewMode = 'preview' | 'edit'
@@ -21,10 +17,6 @@ type ViewMode = 'preview' | 'edit'
 export function DocumentPreview({
   config,
   cookiePolicyData,
-  mode,
-  onModeChange,
-  customDocument,
-  onCustomDocumentChange,
 }: DocumentPreviewProps) {
   const [copied, setCopied] = useState(false)
   const [editableGenerated, setEditableGenerated] = useState('')
@@ -88,16 +80,14 @@ export function DocumentPreview({
     setEditableGenerated(generatedText)
   }, [generatedText])
 
-  const activeText = mode === 'generate' ? editableGenerated : customDocument
-
   const handleCopy = async () => {
-    await navigator.clipboard.writeText(activeText)
+    await navigator.clipboard.writeText(editableGenerated)
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
   }
 
   const handleDownloadMarkdown = () => {
-    let markdownContent = activeText
+    let markdownContent = editableGenerated
 
     // If in edit mode and contentEditable was used, convert HTML back to Markdown
     if (viewMode === 'edit' && editableRef.current) {
@@ -119,11 +109,7 @@ export function DocumentPreview({
 
   const handleReset = () => {
     // Reset to original generated text
-    if (mode === 'generate') {
-      setEditableGenerated(generatedText)
-    } else {
-      onCustomDocumentChange('')
-    }
+    setEditableGenerated(generatedText)
     setShowResetConfirm(false)
     // Switch to preview mode so React can re-render cleanly
     setViewMode('preview')
@@ -165,7 +151,7 @@ export function DocumentPreview({
   </style>
 </head>
 <body>
-${activeText.split('\n').map(line => {
+${editableGenerated.split('\n').map(line => {
   // Basic Markdown to HTML conversion
   line = line.replace(/^# (.+)$/gm, '<h1>$1</h1>')
   line = line.replace(/^## (.+)$/gm, '<h2>$1</h2>')
@@ -200,8 +186,6 @@ ${activeText.split('\n').map(line => {
     setDownloadMenuOpen(false)
   }
 
-  const isEmpty = !config.company.name && mode === 'generate'
-
   return (
     <div className="space-y-6">
       {/* Section Header */}
@@ -210,65 +194,7 @@ ${activeText.split('\n').map(line => {
         <p className="mt-1.5 text-[13px] leading-relaxed text-muted-foreground">Политика использования cookie</p>
       </div>
 
-      {/* Mode Toggle */}
-      <div className="-mb-px flex gap-0 border-b border-border">
-        <button
-          onClick={() => onModeChange('generate')}
-          className={`relative flex cursor-pointer items-center gap-2 px-4 py-2.5 text-[13px] font-medium transition-colors duration-150 ${
-            mode === 'generate'
-              ? 'text-foreground'
-              : 'text-muted-foreground hover:text-foreground'
-          }`}
-        >
-          <svg className="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" />
-          </svg>
-          Сгенерировать
-          {mode === 'generate' && <span className="absolute inset-x-0 -bottom-px h-[2px] bg-foreground" />}
-        </button>
-        <button
-          onClick={() => onModeChange('custom')}
-          className={`relative flex cursor-pointer items-center gap-2 px-4 py-2.5 text-[13px] font-medium transition-colors duration-150 ${
-            mode === 'custom'
-              ? 'text-foreground'
-              : 'text-muted-foreground hover:text-foreground'
-          }`}
-        >
-          <svg className="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931z" />
-          </svg>
-          Вставить свой
-          {mode === 'custom' && <span className="absolute inset-x-0 -bottom-px h-[2px] bg-foreground" />}
-        </button>
-      </div>
-
-      {mode === 'generate' && isEmpty ? (
-        /* Empty State */
-        <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border bg-background px-6 py-12 text-center">
-          <div className="flex size-14 items-center justify-center rounded-xl bg-foreground/[0.05]">
-            <svg
-              className="size-7 text-muted-foreground/60"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={1.5}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"
-              />
-            </svg>
-          </div>
-          <h4 className="mt-4 text-sm font-medium text-foreground">
-            Документ будет сгенерирован автоматически
-          </h4>
-          <p className="mt-1.5 max-w-xs text-sm leading-relaxed text-muted-foreground">
-            Заполните информацию о компании на первом шаге, чтобы увидеть готовый документ
-          </p>
-        </div>
-      ) : (
-        <div className="space-y-4">
+      <div className="space-y-4">
           {/* Document Card */}
           <div className="overflow-hidden rounded-xl border border-border">
             {/* Header with Actions */}
@@ -383,7 +309,7 @@ ${activeText.split('\n').map(line => {
                 {/* Copy Button */}
                 <button
                   onClick={handleCopy}
-                  disabled={!activeText}
+                  disabled={!editableGenerated}
                   aria-label="Копировать текст документа"
                   className={`flex cursor-pointer items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-40 ${
                     copied
@@ -412,7 +338,7 @@ ${activeText.split('\n').map(line => {
                 <div className="relative">
                   <button
                     onClick={() => setDownloadMenuOpen(!downloadMenuOpen)}
-                    disabled={!activeText}
+                    disabled={!editableGenerated}
                     aria-label="Скачать документ"
                     className="flex cursor-pointer items-center gap-1.5 rounded-lg border border-border bg-background px-3 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-40"
                   >
@@ -529,7 +455,7 @@ ${activeText.split('\n').map(line => {
                     ),
                   }}
                 >
-                  {activeText}
+                  {editableGenerated}
                 </ReactMarkdown>
               </div>
             ) : (
@@ -605,7 +531,7 @@ ${activeText.split('\n').map(line => {
                     ),
                   }}
                 >
-                  {activeText}
+                  {editableGenerated}
                 </ReactMarkdown>
               </div>
             )}
@@ -625,7 +551,6 @@ ${activeText.split('\n').map(line => {
             </p>
           </div>
         </div>
-      )}
     </div>
   )
 }
