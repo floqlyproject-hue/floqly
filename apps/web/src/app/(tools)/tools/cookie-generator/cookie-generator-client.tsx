@@ -9,7 +9,7 @@ import {
   DocumentPreview,
 } from './components'
 import { CookiePolicyForm } from './components/cookie-policy-form'
-import { DEFAULT_CONFIG, type CookieConfig } from './types'
+import { DEFAULT_CONFIG, type CookieConfig, type DocumentSettings } from './types'
 import { type BannerTemplateId } from './templates'
 import { type CookiePolicyData } from '@/lib/templates/cookie-policy'
 import { AuthModal } from '@/app/auth/components'
