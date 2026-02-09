@@ -22,7 +22,7 @@
 ```bash
 # Закрой текущее окно Claude Code
 # Открой заново:
-cd C:\Users\User\.claude-worktrees\Floqly2\modest-wozniak
+cd C:\Project\Floqly2
 claude-code
 ```
 

@@ -201,7 +201,7 @@ Claude сам запросит Context7 если увидит что библи�
 ```bash
 # Закрой текущую сессию Claude Code
 # Открой заново в проекте
-cd C:\Users\User\.claude-worktrees\Floqly2\modest-wozniak
+cd C:\Project\Floqly2
 claude-code
 ```
 
