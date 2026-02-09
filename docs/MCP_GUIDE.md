@@ -7,7 +7,7 @@
 
 ## 📦 Установленные MCP серверы
 
-Файл конфигурации: `~/.claude/mcp-config.json`
+Файл конфигурации: `~/AppData/Roaming/Claude/claude_desktop_config.json`
 
 | MCP | Для чего | Как работает |
 |-----|----------|--------------|
@@ -218,7 +218,7 @@ claude-code
 
 Если не видишь такого сообщения, проверь:
 ```bash
-cat ~/.claude/mcp-config.json
+cat ~/AppData/Roaming/Claude/claude_desktop_config.json
 ```
 
 ### Шаг 3: Протестируй Memory Bank
@@ -263,9 +263,9 @@ node --version  # должно быть v18+
 npx --version
 ```
 
-**Решение 2:** Проверь путь в mcp-config.json
+**Решение 2:** Проверь путь в claude_desktop_config.json
 ```bash
-cat ~/.claude/mcp-config.json
+cat ~/AppData/Roaming/Claude/claude_desktop_config.json
 ```
 
 Для FileSystem путь должен быть абсолютным:
@@ -347,7 +347,7 @@ cat ~/.claude/debug/claude-code.log
 
 ### Как временно отключить MCP сервер:
 
-Отредактируй `~/.claude/mcp-config.json`:
+Отредактируй `~/AppData/Roaming/Claude/claude_desktop_config.json`:
 ```json
 {
   "mcpServers": {
