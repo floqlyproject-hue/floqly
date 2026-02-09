@@ -76,6 +76,35 @@ docs/drafts/
 design-references/
 
 # ============================================
+# Документация (читать только по запросу через Read())
+# Экономия: ~15-20k токенов на запрос
+# ============================================
+docs/PROJECT_NAVIGATION.md
+docs/SPECIFICATION.md
+docs/SMART_WIDGET_UX_GUIDE.md
+docs/WIDGET-CONSTRUCTOR-PLAN.md
+docs/prd.md
+docs/git-recovery-guide.md
+docs/CLAUDE_MD_IMPROVEMENTS.md
+docs/plans/
+
+# ============================================
+# Widget Preview дизайны (читать только при работе с виджетами)
+# Экономия: ~3-5k токенов
+# ============================================
+apps/web/src/app/(marketing)/widget-preview/design-*/
+apps/web/src/app/(marketing)/widget-preview/_templates/
+!apps/web/src/app/(marketing)/widget-preview/README.md
+
+# ============================================
+# Skills (неиспользуемые пока)
+# Экономия: ~5-10k токенов
+# ============================================
+.agents/skills/audit-website/
+.agents/skills/seo-audit/
+.agents/skills/mcp-builder/
+
+# ============================================
 # Разрешённые файлы (НЕ игнорировать):
 # ============================================
 # .env.example — нужен для reference
@@ -84,3 +113,9 @@ design-references/
 !CLAUDE.md
 # README.md — документация
 !README.md
+# PROGRESS.md — активные задачи
+!docs/PROGRESS.md
+# DESIGN_SYSTEM.md — дизайн-система
+!docs/DESIGN_SYSTEM.md
+# PLG_STRATEGY.md — стратегия
+!docs/PLG_STRATEGY.md
