@@ -73,9 +73,9 @@ export function BannerSettingsForm({ data, onChange }: BannerSettingsFormProps) 
   return (
     <div className="space-y-6">
       {/* Section Header */}
-      <div>
-        <h3 className="text-[15px] font-semibold tracking-tight text-foreground">Внешний вид</h3>
-        <p className="mt-1.5 text-[13px] leading-relaxed text-muted-foreground">Настройте дизайн баннера</p>
+      <div className="mb-8">
+        <h3 className="text-[22px] font-semibold tracking-tight text-foreground">Внешний вид</h3>
+        <p className="mt-2.5 text-[14px] leading-relaxed text-muted-foreground/70">Настройте дизайн баннера</p>
       </div>
 
       {/* Position Selection */}

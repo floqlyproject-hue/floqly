@@ -189,9 +189,9 @@ ${editableGenerated.split('\n').map(line => {
   return (
     <div className="space-y-6">
       {/* Section Header */}
-      <div>
-        <h3 className="text-[15px] font-semibold tracking-tight text-foreground">Текст документа</h3>
-        <p className="mt-1.5 text-[13px] leading-relaxed text-muted-foreground">Политика использования cookie</p>
+      <div className="mb-8">
+        <h3 className="text-[22px] font-semibold tracking-tight text-foreground">Текст документа</h3>
+        <p className="mt-2.5 text-[14px] leading-relaxed text-muted-foreground/70">Политика использования cookie</p>
       </div>
 
       <div className="space-y-4">

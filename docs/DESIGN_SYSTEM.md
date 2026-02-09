@@ -59,15 +59,16 @@ Primary (синий) — только для:
 - **Geist Sans** — основной (через `next/font/google`, подмножество `latin` + `cyrillic`)
 - **Geist Mono** — для технических элементов (счётчики, код, `https://` в инпутах)
 
-### Размеры и назначение
+### Иерархия размеров (эталон: Cookie Generator Steps 1-2)
 ```
-text-2xl / text-3xl  — заголовок страницы (h1), font-semibold, tracking-tight
-text-[15px]          — заголовки секций (h2/h3), font-semibold или font-medium
-text-[14px]          — подзаголовки, FAQ вопросы, font-medium
-text-[13px]          — основной текст, лейблы форм, кнопки, font-medium
-text-[12px]          — подписи, хелп-текст, тултипы
-text-[11px]          — uppercase-метки секций, tracking-[0.1em] или tracking-[0.15em]
-text-[10px]          — мелкие бейджи ("Обязательно", "Рекомендуется")
+text-[28px] sm:text-[32px]  — заголовок страницы (h1), font-semibold, tracking-tight
+text-[22px]                 — заголовок шага/секции (h2/h3), font-semibold, tracking-tight
+text-[15px]                 — fieldset-заголовки, font-semibold
+text-[14px]                 — подзаголовки шагов, FAQ вопросы, font-medium
+text-[13px]                 — лейблы форм, кнопки, хелп-текст, font-medium
+text-[12px]                 — тултипы, мелкие подписи
+text-[11px]                 — uppercase-метки секций, tracking-[0.08em]
+text-[10px]                 — мелкие бейджи ("Обязательно", "Рекомендуется")
 ```
 
 ### Цвета текста
@@ -84,27 +85,81 @@ text-muted-foreground/50  — неактивные табы
 
 ---
 
-## Компоненты
+## Компоненты (эталон: Cookie Generator Steps 1-2)
 
-### Карточка контента
+### Заголовок шага / секции формы
+```jsx
+<div className="mb-12 max-w-lg">
+  <h3 className="text-[22px] font-semibold tracking-tight text-foreground">
+    Заголовок
+  </h3>
+  <p className="mt-2.5 text-[14px] leading-relaxed text-muted-foreground/70">
+    Подзаголовок
+  </p>
+</div>
 ```
-rounded-xl border border-border bg-card p-6 sm:p-8
-```
-Никаких inner-градиентов, blur, теней. Чистая поверхность.
+Контейнер `mb-12` создаёт воздух. `max-w-lg` ограничивает ширину текста.
 
-### Инпут формы
+### Инпут формы (underline-стиль)
 ```
-rounded-lg border border-border bg-background px-3.5 py-2.5 text-sm
-transition-colors duration-150
+border-b border-border bg-transparent px-0 py-3 text-[15px] text-foreground
+transition-colors duration-200
 placeholder:text-muted-foreground/40
-focus:border-foreground/30 focus:outline-none focus:ring-1 focus:ring-foreground/10
+focus:border-foreground/40 focus:outline-none
 ```
-Фокус через foreground-тонировку, не через primary.
+Без `rounded`, без бокса — только нижняя линия. Фокус усиливает border.
+
+### Инпут формы (boxed, для dashboard)
+```
+rounded-lg border border-border bg-background px-3.5 py-2.5 text-[15px]
+transition-colors duration-200
+placeholder:text-muted-foreground/40
+focus:border-foreground/40 focus:outline-none
+```
 
 ### Лейбл формы
 ```
-text-[13px] font-medium text-foreground
+mb-3 block text-[13px] font-medium text-foreground
 ```
+
+### Хелп-текст (под инпутом)
+```
+mt-2.5 text-[13px] leading-relaxed text-muted-foreground
+```
+
+### Fieldset-заголовок (группа полей)
+```
+text-[15px] font-semibold text-foreground
+```
+
+### Fieldset-подпись
+```
+text-[14px] font-medium text-foreground/90
+```
+
+### Кастомный чекбокс (.cb)
+```css
+/* globals.css — class="cb" на input[type="checkbox"] */
+appearance: none; width: 1.125rem; height: 1.125rem;
+border: 1.5px solid var(--color-border); border-radius: 0.3rem;
+hover → border-color: var(--color-foreground)
+checked → bg + border = var(--color-foreground), checkmark animation
+active → scale(0.9) spring effect
+```
+Используется вместо стандартных чекбоксов. Без box-shadow на hover.
+
+### Тултип (CSS-only)
+```jsx
+<span className="tooltip-trigger relative inline-flex">
+  <svg /* (?) icon */ className="size-4 text-muted-foreground/45 hover:text-muted-foreground" />
+  <span className="tooltip-content mb-2.5 w-60 rounded-lg bg-foreground px-3.5 py-2.5
+    text-[12px] leading-relaxed text-background shadow-lg
+    dark:bg-[oklch(25%_0.025_260)] dark:text-[oklch(90%_0.01_264)]">
+    Текст тултипа
+  </span>
+</span>
+```
+CSS transitions в `globals.css`: `.tooltip-content` + `.tooltip-trigger:hover .tooltip-content`.
 
 ### Кнопка основная (CTA)
 ```
@@ -119,17 +174,18 @@ rounded-lg px-3 py-2 text-[13px] font-medium text-muted-foreground
 transition-colors duration-150 hover:text-foreground
 ```
 
-### Кнопка с обводкой
+### Кнопка inline (добавить)
 ```
-rounded-lg border border-border px-3.5 py-2 text-[13px] font-medium text-foreground
-transition-colors hover:bg-muted
+text-[13px] font-medium text-foreground/60 hover:text-foreground
+disabled:opacity-20 disabled:pointer-events-none
 ```
+Без `cursor-not-allowed` — мягкий disabled через opacity + pointer-events-none.
 
-### Табы (underline-стиль)
+### Табы (step-stepper)
 ```
-Контейнер:  -mb-px flex border-b border-border
-Таб:        relative px-4 py-2.5 text-[13px] font-medium transition-colors duration-150
-Активный:   text-foreground + <span absolute bottom line h-[2px] bg-foreground>
+Контейнер:  flex gap-1 (без border-b)
+Таб:        px-4 py-2.5 text-[13px] font-medium rounded-lg transition-colors duration-150
+Активный:   bg-foreground text-background
 Завершённый: text-muted-foreground + чекмарк svg
 Будущий:    text-muted-foreground/50
 ```
@@ -140,23 +196,9 @@ transition-colors hover:bg-muted
 Рекомендуется: rounded-md bg-amber-500/8 px-1.5 py-px text-[10px] font-medium text-amber-600
 ```
 
-### Тултип
-```
-rounded-lg border border-zinc-700 bg-zinc-900 px-3 py-2.5 text-[12px] text-zinc-300 shadow-xl
-```
-Всегда тёмный фон, независимо от темы — для максимальной читаемости.
-
-### FAQ (2x2 cross-grid)
-```
-Контейнер: relative
-Крестовые разделители: absolute positioned w-px / h-px bg-border
-Ячейки: padding 7-8, без фона, без обводки
-Мобильная: divide-y divide-border (вертикальный стек)
-```
-
 ### Uppercase-метка секции
 ```
-text-[11px] font-medium uppercase tracking-[0.1em] text-muted-foreground/60
+text-[13px] font-medium uppercase tracking-[0.08em] text-muted-foreground/60
 ```
 
 ### Разделитель секций
@@ -167,16 +209,29 @@ border-t border-border
 
 ---
 
-## Анимации
+## Анимации (Material Design 3 motion)
 
 ### Принцип
-Анимации — **только микро-взаимодействия**. Никаких entry-анимаций на секциях, staggered reveals, scroll-triggered появлений. Исключение — главная страница.
+Микро-взаимодействия с Material Design easing. Никаких декоративных entry-анимаций на секциях или scroll-triggered эффектов. Исключение — главная страница.
 
-### Допустимые анимации
+### Easing и timing
 ```
-transition-colors duration-150   — hover/focus на кнопках, табах, ссылках
+Standard decelerate:  cubic-bezier(0.0, 0.0, 0.2, 1)  — для появлений (step-enter, expand-enter)
+Standard:             cubic-bezier(0.4, 0, 0.2, 1)     — для hover/transitions
+Duration:             200ms (hover) / 250ms (appear) / 100ms (active press)
+```
+
+### CSS-классы анимаций (globals.css)
+```
+.step-enter    — появление контента при переключении шага (translateY 8px, 250ms)
+.expand-enter  — раскрытие скрытой секции (translateY -4px, 250ms)
+```
+
+### Допустимые transition-ы
+```
+transition-colors duration-200   — hover/focus на кнопках, табах, ссылках
 transition-all duration-150      — CTA кнопки (hover:opacity-80)
-transition-all duration-500      — progress bar заполнение (если используется)
+transition-colors duration-200   — инпуты (border-color при focus)
 ```
 
 ### Крупные анимации — НЕТ на инструментальных страницах

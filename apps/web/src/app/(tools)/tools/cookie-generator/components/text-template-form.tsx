@@ -40,9 +40,9 @@ export function TextTemplateForm({
   return (
     <div className="space-y-6">
       {/* Section Header */}
-      <div>
-        <h3 className="text-[15px] font-semibold tracking-tight text-foreground">Текст баннера</h3>
-        <p className="mt-1.5 text-[13px] leading-relaxed text-muted-foreground">Выберите шаблон или напишите свой</p>
+      <div className="mb-8">
+        <h3 className="text-[22px] font-semibold tracking-tight text-foreground">Текст баннера</h3>
+        <p className="mt-2.5 text-[14px] leading-relaxed text-muted-foreground/70">Выберите шаблон или напишите свой</p>
       </div>
 
       {/* Template Selection */}

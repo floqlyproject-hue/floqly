@@ -278,14 +278,14 @@ export function CookieGeneratorClient() {
             {activeTab === 'result' && (
               <div className="space-y-6">
                 {/* Section Header */}
-                <div>
-                  <div className="flex items-center gap-2">
-                    <svg className="size-4 text-success" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <div className="mb-8">
+                  <div className="flex items-center gap-3">
+                    <svg className="size-5 text-success" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
                     </svg>
-                    <h3 className="text-[15px] font-medium text-foreground">Всё готово</h3>
+                    <h3 className="text-[22px] font-semibold tracking-tight text-foreground">Всё готово</h3>
                   </div>
-                  <p className="mt-1 text-[13px] text-muted-foreground">Проверьте настройки и получите код для вставки.</p>
+                  <p className="mt-2.5 text-[14px] leading-relaxed text-muted-foreground/70">Проверьте настройки и получите код для вставки</p>
                 </div>
 
                 {/* Checklist */}
