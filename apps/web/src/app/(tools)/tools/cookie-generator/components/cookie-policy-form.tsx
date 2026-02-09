@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import type { CookiePolicyData } from '@/lib/templates/cookie-policy'
 
 interface CookiePolicyFormProps {
@@ -270,140 +270,73 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
   // ============================================================================
 
   return (
-    <div className="space-y-7">
-      {/* Section Header - SAME STYLE AS STEP 1 */}
-      <div>
-        <h3 className="text-[15px] font-semibold tracking-tight text-foreground">
+    <div>
+      {/* Section Header — matches Step 1 */}
+      <div className="mb-12 max-w-lg">
+        <h3 className="text-[22px] font-semibold tracking-tight text-foreground">
           Что использует ваш сайт?
         </h3>
-        <p className="mt-1.5 text-[13px] leading-relaxed text-muted-foreground">
+        <p className="mt-2.5 text-[14px] leading-relaxed text-muted-foreground/70">
           Отметьте функции и сервисы, которые работают на вашем сайте
         </p>
       </div>
 
       {/* Form Blocks */}
-      <div className="space-y-6">
+      <div className="max-w-2xl space-y-10">
         {/* ========================================================================
-            BLOCK 1: TECHNICAL FEATURES (Технические функции сайта)
+            BLOCK 1: TECHNICAL FEATURES
             ======================================================================== */}
-        <fieldset className="space-y-3">
-          <legend className="text-[13px] font-medium text-foreground">
-            Какие функции доступны на вашем сайте?
+        <fieldset className="space-y-4">
+          <legend className="text-[15px] font-semibold text-foreground">
+            Функции сайта
           </legend>
-          <p className="text-[12px] leading-relaxed text-muted-foreground/70">
-            Отметьте функции, которые есть на вашем сайте — это нужно для правильного оформления документа.
+          <p className="text-[13px] leading-relaxed text-muted-foreground">
+            Отметьте функции, которые есть на вашем сайте — это нужно для правильного оформления документа
           </p>
 
-          <div className="space-y-2">
-            {/* Cart */}
-            <label className="group flex cursor-pointer items-center gap-2.5 py-1.5 transition-colors duration-150">
-              <input
-                type="checkbox"
-                checked={data.technicalFeatures?.cart || false}
-                onChange={() => handleTechnicalFeatureToggle('cart')}
-                className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
-              />
-              <span className="flex-1 text-[13px] font-medium leading-[1.125rem] text-foreground/90 group-hover:text-foreground">
-                Корзина покупок и товары
-              </span>
-            </label>
-
-            {/* Auth */}
-            <label className="group flex cursor-pointer items-center gap-2.5 py-1.5 transition-colors duration-150">
-              <input
-                type="checkbox"
-                checked={data.technicalFeatures?.auth || false}
-                onChange={() => handleTechnicalFeatureToggle('auth')}
-                className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
-              />
-              <span className="flex-1 text-[13px] font-medium leading-[1.125rem] text-foreground/90 group-hover:text-foreground">
-                Авторизация и личный кабинет
-              </span>
-            </label>
-
-            {/* Payment */}
-            <label className="group flex cursor-pointer items-center gap-2.5 py-1.5 transition-colors duration-150">
-              <input
-                type="checkbox"
-                checked={data.technicalFeatures?.payment || false}
-                onChange={() => handleTechnicalFeatureToggle('payment')}
-                className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
-              />
-              <span className="flex-1 text-[13px] font-medium leading-[1.125rem] text-foreground/90 group-hover:text-foreground">
-                Приём платежей на сайте
-              </span>
-            </label>
-
-            {/* Preferences */}
-            <label className="group flex cursor-pointer items-center gap-2.5 py-1.5 transition-colors duration-150">
-              <input
-                type="checkbox"
-                checked={data.technicalFeatures?.preferences || false}
-                onChange={() => handleTechnicalFeatureToggle('preferences')}
-                className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
-              />
-              <span className="flex flex-1 items-center gap-1.5 text-[13px] font-medium leading-[1.125rem] text-foreground/90 group-hover:text-foreground">
-                Избранное и пользовательские настройки
-                <span className="group/tooltip relative inline-flex">
-                  <svg
-                    className="size-3.5 shrink-0 text-muted-foreground/40 transition-colors duration-150 hover:text-foreground/60"
-                    viewBox="0 0 16 16"
-                    fill="currentColor"
-                    aria-label="Подробнее"
-                  >
-                    <circle cx="8" cy="8" r="8" opacity="0.12" />
-                    <path d="M8 7.5v3M8 5.5h.01M15 8A7 7 0 111 8a7 7 0 0114 0z" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                  </svg>
-                  <span className="pointer-events-none absolute bottom-full left-1/2 mb-2 hidden w-56 -translate-x-1/2 rounded-lg border border-border bg-background px-3 py-2 text-[11px] font-normal leading-relaxed text-foreground/80 opacity-0 transition-opacity duration-150 group-hover/tooltip:block group-hover/tooltip:opacity-100">
-                    Добавление товаров в избранное, сравнение характеристик, выбор города или региона, сохранение предпочтений интерфейса
-                    <span className="absolute left-1/2 top-full -mt-px size-2 -translate-x-1/2 rotate-45 border-b border-r border-border bg-background" />
-                  </span>
-                </span>
-              </span>
-            </label>
-
-            {/* Security */}
-            <label className="group flex cursor-pointer items-center gap-2.5 py-1.5 transition-colors duration-150">
-              <input
-                type="checkbox"
-                checked={data.technicalFeatures?.security || false}
-                onChange={() => handleTechnicalFeatureToggle('security')}
-                className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
-              />
-              <span className="flex flex-1 items-center gap-1.5 text-[13px] font-medium leading-[1.125rem] text-foreground/90 group-hover:text-foreground">
-                Защита от спама и ботов
-                <span className="group/tooltip relative inline-flex">
-                  <svg
-                    className="size-3.5 shrink-0 text-muted-foreground/40 transition-colors duration-150 hover:text-foreground/60"
-                    viewBox="0 0 16 16"
-                    fill="currentColor"
-                    aria-label="Подробнее"
-                  >
-                    <circle cx="8" cy="8" r="8" opacity="0.12" />
-                    <path d="M8 7.5v3M8 5.5h.01M15 8A7 7 0 111 8a7 7 0 0114 0z" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                  </svg>
-                  <span className="pointer-events-none absolute bottom-full left-1/2 mb-2 hidden w-56 -translate-x-1/2 rounded-lg border border-border bg-background px-3 py-2 text-[11px] font-normal leading-relaxed text-foreground/80 opacity-0 transition-opacity duration-150 group-hover/tooltip:block group-hover/tooltip:opacity-100">
-                    CAPTCHA-системы (Google reCAPTCHA, Яндекс SmartCaptcha, hCaptcha) для защиты форм от автоматических отправок
-                    <span className="absolute left-1/2 top-full -mt-px size-2 -translate-x-1/2 rotate-45 border-b border-r border-border bg-background" />
-                  </span>
-                </span>
-              </span>
-            </label>
+          <div className="space-y-1">
+            <CheckboxItem
+              checked={data.technicalFeatures?.cart || false}
+              onChange={() => handleTechnicalFeatureToggle('cart')}
+              label="Корзина покупок и товары"
+            />
+            <CheckboxItem
+              checked={data.technicalFeatures?.auth || false}
+              onChange={() => handleTechnicalFeatureToggle('auth')}
+              label="Авторизация и личный кабинет"
+            />
+            <CheckboxItem
+              checked={data.technicalFeatures?.payment || false}
+              onChange={() => handleTechnicalFeatureToggle('payment')}
+              label="Приём платежей на сайте"
+            />
+            <CheckboxItem
+              checked={data.technicalFeatures?.preferences || false}
+              onChange={() => handleTechnicalFeatureToggle('preferences')}
+              label="Избранное и пользовательские настройки"
+              hint="Добавление товаров в избранное, сравнение характеристик, выбор города или региона, сохранение предпочтений интерфейса"
+            />
+            <CheckboxItem
+              checked={data.technicalFeatures?.security || false}
+              onChange={() => handleTechnicalFeatureToggle('security')}
+              label="Защита от спама и ботов"
+              hint="CAPTCHA-системы (Google reCAPTCHA, Яндекс SmartCaptcha, hCaptcha) для защиты форм от автоматических отправок"
+            />
 
             {/* External Services (Chat widgets, etc.) - Collapsible */}
             <div>
-              <label className="group flex cursor-pointer gap-2.5 py-1.5 transition-colors duration-150 hover:text-foreground">
+              <label className="group flex cursor-pointer gap-3 py-2.5 transition-colors duration-150">
                 <input
                   type="checkbox"
+                  className="cb mt-0.5"
                   checked={showExternalServicesForm || (data.technicalFeatures?.externalServices?.length ?? 0) > 0}
                   onChange={() => setShowExternalServicesForm(!showExternalServicesForm)}
-                  className="mt-0.5 size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
                 />
                 <div className="flex-1">
-                  <span className="block text-[13px] font-medium text-foreground/90 group-hover:text-foreground">
+                  <span className="block text-[14px] font-medium text-foreground/90 group-hover:text-foreground">
                     Онлайн-чаты и виджеты связи
                   </span>
-                  <p className="mt-0.5 text-[12px] leading-relaxed text-muted-foreground/70">
+                  <p className="mt-0.5 text-[13px] leading-relaxed text-muted-foreground">
                     Виджеты для общения с посетителями (чаты, мессенджеры, формы обратной связи)
                   </p>
                 </div>
@@ -411,63 +344,20 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
 
               {/* External Services Form */}
               {showExternalServicesForm && (
-                <div className="ml-6.5 mt-3 space-y-3 border-l border-border pl-4">
-                  <p className="text-[12px] leading-relaxed text-muted-foreground/70">
-                    Укажите названия сервисов, которые используются на вашем сайте для общения с посетителями (например, JivoSite, Битрикс24, Carrot Quest)
+                <div className="expand-enter ml-[1.875rem] mt-1 space-y-3 border-l-2 border-border pl-4">
+                  <p className="text-[13px] leading-relaxed text-muted-foreground">
+                    Укажите названия сервисов (например, JivoSite, Битрикс24, Carrot Quest)
                   </p>
-
-                  {/* Added services list */}
-                  {(data.technicalFeatures?.externalServices?.length ?? 0) > 0 && (
-                    <div className="space-y-1.5">
-                      {data.technicalFeatures?.externalServices?.map((service, index) => (
-                        <div
-                          key={index}
-                          className="flex items-center gap-2 rounded-lg border border-border bg-background px-3 py-2"
-                        >
-                          <svg className="size-3.5 shrink-0 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                          </svg>
-                          <span className="flex-1 text-[13px] text-foreground">
-                            {service.name}
-                          </span>
-                          <button
-                            type="button"
-                            onClick={() => handleRemoveExternalService(index)}
-                            className="shrink-0 text-muted-foreground transition-colors duration-150 hover:text-foreground"
-                          >
-                            <svg className="size-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                            </svg>
-                          </button>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-
-                  {/* Add new service */}
-                  <div className="flex gap-2">
-                    <input
-                      type="text"
-                      value={newExternalService}
-                      onChange={(e) => setNewExternalService(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
-                          e.preventDefault()
-                          handleAddExternalService()
-                        }
-                      }}
-                      placeholder="Название сервиса (например, JivoSite)"
-                      className="flex-1 rounded-lg border border-border bg-background px-3 py-2 text-[13px] text-foreground transition-colors duration-150 placeholder:text-muted-foreground/50 focus:border-foreground/30 focus:outline-none focus:ring-1 focus:ring-foreground/10"
-                    />
-                    <button
-                      type="button"
-                      onClick={handleAddExternalService}
-                      disabled={!newExternalService.trim()}
-                      className="shrink-0 rounded-lg bg-foreground px-4 py-2 text-[13px] font-medium text-background transition-opacity duration-150 hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-30"
-                    >
-                      Добавить
-                    </button>
-                  </div>
+                  <ServiceList
+                    items={data.technicalFeatures?.externalServices}
+                    onRemove={handleRemoveExternalService}
+                  />
+                  <AddServiceInput
+                    value={newExternalService}
+                    onChange={setNewExternalService}
+                    onAdd={handleAddExternalService}
+                    placeholder="Название сервиса"
+                  />
                 </div>
               )}
             </div>
@@ -475,154 +365,65 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
         </fieldset>
 
         {/* ========================================================================
-            BLOCK 2: ANALYTICS (Аналитика)
+            BLOCK 2: ANALYTICS
             ======================================================================== */}
-        <fieldset className="space-y-3">
-          <legend className="text-[13px] font-medium text-foreground">
-            Используете ли вы инструменты аналитики?
+        <fieldset className="space-y-4">
+          <legend className="text-[15px] font-semibold text-foreground">
+            Аналитика
           </legend>
-          <p className="text-[12px] leading-relaxed text-muted-foreground/70">
-            Сервисы для отслеживания посещаемости и поведения пользователей на сайте. Отметьте те, которые вы используете.
+          <p className="text-[13px] leading-relaxed text-muted-foreground">
+            Сервисы для отслеживания посещаемости и поведения пользователей на сайте
           </p>
 
-          <div className="space-y-2">
-            {/* Yandex Metrika */}
-            <label className="group flex cursor-pointer items-center gap-2.5 py-1.5 transition-colors duration-150">
-              <input
-                type="checkbox"
-                checked={data.analytics?.yandexMetrika || false}
-                onChange={() => handleAnalyticsToggle('yandexMetrika')}
-                className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
-              />
-              <span className="flex-1 text-[13px] font-medium leading-[1.125rem] text-foreground/90 group-hover:text-foreground">
-                Яндекс.Метрика
-              </span>
-            </label>
-
-            {/* LiveInternet */}
-            <label className="group flex cursor-pointer items-center gap-2.5 py-1.5 transition-colors duration-150">
-              <input
-                type="checkbox"
-                checked={data.analytics?.liveInternet || false}
-                onChange={() => handleAnalyticsToggle('liveInternet')}
-                className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
-              />
-              <span className="flex-1 text-[13px] font-medium leading-[1.125rem] text-foreground/90 group-hover:text-foreground">
-                LiveInternet
-              </span>
-            </label>
-
-            {/* Рейтинг Mail.ru */}
-            <label className="group flex cursor-pointer items-center gap-2.5 py-1.5 transition-colors duration-150">
-              <input
-                type="checkbox"
-                checked={data.analytics?.mailRu || false}
-                onChange={() => handleAnalyticsToggle('mailRu')}
-                className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
-              />
-              <span className="flex-1 text-[13px] font-medium leading-[1.125rem] text-foreground/90 group-hover:text-foreground">
-                Рейтинг Mail.ru
-              </span>
-            </label>
-
-            {/* Custom Analytics (Server-side) */}
-            <label className="group flex cursor-pointer items-center gap-2.5 py-1.5 transition-colors duration-150">
-              <input
-                type="checkbox"
-                checked={data.analytics?.customAnalytics || false}
-                onChange={() => handleAnalyticsToggle('customAnalytics')}
-                className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
-              />
-              <span className="flex-1 text-[13px] font-medium leading-[1.125rem] text-foreground/90 group-hover:text-foreground">
-                Собственная статистика сервера
-              </span>
-            </label>
+          <div className="space-y-1">
+            <CheckboxItem
+              checked={data.analytics?.yandexMetrika || false}
+              onChange={() => handleAnalyticsToggle('yandexMetrika')}
+              label="Яндекс.Метрика"
+            />
+            <CheckboxItem
+              checked={data.analytics?.liveInternet || false}
+              onChange={() => handleAnalyticsToggle('liveInternet')}
+              label="LiveInternet"
+            />
+            <CheckboxItem
+              checked={data.analytics?.mailRu || false}
+              onChange={() => handleAnalyticsToggle('mailRu')}
+              label="Рейтинг Mail.ru"
+            />
+            <CheckboxItem
+              checked={data.analytics?.customAnalytics || false}
+              onChange={() => handleAnalyticsToggle('customAnalytics')}
+              label="Собственная статистика сервера"
+            />
 
             {/* Other Analytics - Collapsible */}
             <div>
-              <label className="group flex cursor-pointer items-center gap-2.5 py-1.5 transition-colors duration-150">
+              <label className="group flex cursor-pointer items-center gap-3 py-2.5 transition-colors duration-150">
                 <input
                   type="checkbox"
+                  className="cb"
                   checked={showAnalyticsOtherForm || (data.analytics?.other?.length ?? 0) > 0}
                   onChange={() => setShowAnalyticsOtherForm(!showAnalyticsOtherForm)}
-                  className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
                 />
-                <span className="flex flex-1 items-center gap-1.5 text-[13px] font-medium leading-[1.125rem] text-foreground/90 group-hover:text-foreground">
+                <span className="flex items-center gap-1.5 text-[14px] font-medium text-foreground/90 group-hover:text-foreground">
                   Другие сервисы
-                  <span className="group/tooltip relative inline-flex">
-                    <svg
-                      className="size-3.5 shrink-0 text-muted-foreground/40 transition-colors duration-150 hover:text-foreground/60"
-                      viewBox="0 0 16 16"
-                      fill="currentColor"
-                      aria-label="Подробнее"
-                    >
-                      <circle cx="8" cy="8" r="8" opacity="0.12" />
-                      <path d="M8 7.5v3M8 5.5h.01M15 8A7 7 0 111 8a7 7 0 0114 0z" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                    </svg>
-                    <span className="pointer-events-none absolute bottom-full left-1/2 mb-2 hidden w-64 -translate-x-1/2 rounded-lg border border-border bg-background px-3 py-2 text-[11px] font-normal leading-relaxed text-foreground/80 opacity-0 transition-opacity duration-150 group-hover/tooltip:block group-hover/tooltip:opacity-100">
-                      Инструменты сквозной аналитики (Roistat, Calltouch), коллтрекинг, системы A/B-тестирования (Google Optimize, VWO), карты кликов (Hotjar) и другие сервисы веб-аналитики
-                      <span className="absolute left-1/2 top-full -mt-px size-2 -translate-x-1/2 rotate-45 border-b border-r border-border bg-background" />
-                    </span>
-                  </span>
+                  <Tooltip text="Инструменты сквозной аналитики (Roistat, Calltouch), коллтрекинг, системы A/B-тестирования, карты кликов (Hotjar) и другие" />
                 </span>
               </label>
 
-              {/* Other Analytics Form */}
               {showAnalyticsOtherForm && (
-                <div className="ml-6.5 mt-3 space-y-3 border-l border-border pl-4">
-
-                  {/* Added services list */}
-                  {(data.analytics?.other?.length ?? 0) > 0 && (
-                    <div className="space-y-1.5">
-                      {data.analytics?.other?.map((service, index) => (
-                        <div
-                          key={index}
-                          className="flex items-center gap-2 rounded-lg border border-border bg-background px-3 py-2"
-                        >
-                          <svg className="size-3.5 shrink-0 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                          </svg>
-                          <span className="flex-1 text-[13px] text-foreground">
-                            {service.name}
-                          </span>
-                          <button
-                            type="button"
-                            onClick={() => handleRemoveAnalyticService(index)}
-                            className="shrink-0 text-muted-foreground transition-colors duration-150 hover:text-foreground"
-                          >
-                            <svg className="size-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                            </svg>
-                          </button>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-
-                  {/* Add new service */}
-                  <div className="flex gap-2">
-                    <input
-                      type="text"
-                      value={newAnalyticService}
-                      onChange={(e) => setNewAnalyticService(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
-                          e.preventDefault()
-                          handleAddAnalyticService()
-                        }
-                      }}
-                      placeholder="Название сервиса аналитики"
-                      className="flex-1 rounded-lg border border-border bg-background px-3 py-2 text-[13px] text-foreground transition-colors duration-150 placeholder:text-muted-foreground/50 focus:border-foreground/30 focus:outline-none focus:ring-1 focus:ring-foreground/10"
-                    />
-                    <button
-                      type="button"
-                      onClick={handleAddAnalyticService}
-                      disabled={!newAnalyticService.trim()}
-                      className="shrink-0 rounded-lg bg-foreground px-4 py-2 text-[13px] font-medium text-background transition-opacity duration-150 hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-30"
-                    >
-                      Добавить
-                    </button>
-                  </div>
+                <div className="expand-enter ml-[1.875rem] mt-1 space-y-3 border-l-2 border-border pl-4">
+                  <ServiceList
+                    items={data.analytics?.other}
+                    onRemove={handleRemoveAnalyticService}
+                  />
+                  <AddServiceInput
+                    value={newAnalyticService}
+                    onChange={setNewAnalyticService}
+                    onAdd={handleAddAnalyticService}
+                    placeholder="Название сервиса аналитики"
+                  />
                 </div>
               )}
             </div>
@@ -630,138 +431,65 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
         </fieldset>
 
         {/* ========================================================================
-            BLOCK 3: CROSS-BORDER TRANSFER (Трансграничная передача)
+            BLOCK 3: CROSS-BORDER TRANSFER
             ======================================================================== */}
-        <fieldset className="space-y-3">
-          <legend className="text-[13px] font-medium text-foreground">
-            Используете ли вы иностранные сервисы?
+        <fieldset className="space-y-4">
+          <legend className="text-[15px] font-semibold text-foreground">
+            Иностранные сервисы
           </legend>
-          <p className="text-[12px] leading-relaxed text-muted-foreground/70">
-            Некоторые сервисы (Google, Facebook) передают данные на серверы за пределами РФ. Это требует специального указания в политике.
+          <p className="text-[13px] leading-relaxed text-muted-foreground">
+            Некоторые сервисы передают данные на серверы за пределами РФ — это требует указания в политике
           </p>
 
-          {/* Simplified warning */}
-          <div className="flex items-start gap-2.5 rounded-lg border border-border bg-background px-3.5 py-3">
-            <svg aria-hidden="true" className="mt-px size-4 shrink-0 text-foreground/60" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+          {/* Legal notice — borderless */}
+          <div className="flex items-start gap-2.5 rounded-lg bg-muted/50 px-3.5 py-3">
+            <svg aria-hidden="true" className="mt-px size-4 shrink-0 text-foreground/50" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
             </svg>
-            <p className="text-[12px] leading-relaxed text-foreground/70">
-              <span className="font-medium text-foreground">По закону о персональных данных (ФЗ-152)</span> нужно указать, что данные передаются за границу. Это защитит вас от штрафов и претензий.
+            <p className="text-[13px] leading-relaxed text-muted-foreground">
+              <span className="font-medium text-foreground/80">ФЗ-152</span> требует указать передачу данных за границу для защиты от штрафов и претензий
             </p>
           </div>
 
-          <div className="space-y-2">
-            {/* Google */}
-            <label className="group flex cursor-pointer items-center gap-2.5 py-1.5 transition-colors duration-150">
-              <input
-                type="checkbox"
-                checked={data.crossBorder?.googleServices || false}
-                onChange={() => handleCrossBorderToggle('googleServices')}
-                className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
-              />
-              <span className="flex-1 text-[13px] font-medium leading-[1.125rem] text-foreground/90 group-hover:text-foreground">
-                Google Analytics / Google Ads
-              </span>
-            </label>
-
-            {/* Facebook */}
-            <label className="group flex cursor-pointer items-center gap-2.5 py-1.5 transition-colors duration-150">
-              <input
-                type="checkbox"
-                checked={data.crossBorder?.facebookPixel || false}
-                onChange={() => handleCrossBorderToggle('facebookPixel')}
-                className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
-              />
-              <span className="flex-1 text-[13px] font-medium leading-[1.125rem] text-foreground/90 group-hover:text-foreground">
-                Facebook Pixel / Meta Ads
-              </span>
-            </label>
+          <div className="space-y-1">
+            <CheckboxItem
+              checked={data.crossBorder?.googleServices || false}
+              onChange={() => handleCrossBorderToggle('googleServices')}
+              label="Google Analytics / Google Ads"
+            />
+            <CheckboxItem
+              checked={data.crossBorder?.facebookPixel || false}
+              onChange={() => handleCrossBorderToggle('facebookPixel')}
+              label="Facebook Pixel / Meta Ads"
+            />
 
             {/* Other Cross-Border Services - Collapsible */}
             <div>
-              <label className="group flex cursor-pointer items-center gap-2.5 py-1.5 transition-colors duration-150">
+              <label className="group flex cursor-pointer items-center gap-3 py-2.5 transition-colors duration-150">
                 <input
                   type="checkbox"
+                  className="cb"
                   checked={showCrossBorderOtherForm || (data.crossBorder?.other?.length ?? 0) > 0}
                   onChange={() => setShowCrossBorderOtherForm(!showCrossBorderOtherForm)}
-                  className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
                 />
-                <span className="flex flex-1 items-center gap-1.5 text-[13px] font-medium leading-[1.125rem] text-foreground/90 group-hover:text-foreground">
+                <span className="flex items-center gap-1.5 text-[14px] font-medium text-foreground/90 group-hover:text-foreground">
                   Другие сервисы
-                  <span className="group/tooltip relative inline-flex">
-                    <svg
-                      className="size-3.5 shrink-0 text-muted-foreground/40 transition-colors duration-150 hover:text-foreground/60"
-                      viewBox="0 0 16 16"
-                      fill="currentColor"
-                      aria-label="Подробнее"
-                    >
-                      <circle cx="8" cy="8" r="8" opacity="0.12" />
-                      <path d="M8 7.5v3M8 5.5h.01M15 8A7 7 0 111 8a7 7 0 0114 0z" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                    </svg>
-                    <span className="pointer-events-none absolute bottom-full left-1/2 mb-2 hidden w-64 -translate-x-1/2 rounded-lg border border-border bg-background px-3 py-2 text-[11px] font-normal leading-relaxed text-foreground/80 opacity-0 transition-opacity duration-150 group-hover/tooltip:block group-hover/tooltip:opacity-100">
-                      Другие зарубежные сервисы, которые передают данные за пределы России (например, Amazon AWS, Stripe, Mailchimp)
-                      <span className="absolute left-1/2 top-full -mt-px size-2 -translate-x-1/2 rotate-45 border-b border-r border-border bg-background" />
-                    </span>
-                  </span>
+                  <Tooltip text="Другие зарубежные сервисы, передающие данные за пределы России (например, Amazon AWS, Stripe, Mailchimp)" />
                 </span>
               </label>
 
-              {/* Other Cross-Border Form */}
               {showCrossBorderOtherForm && (
-                <div className="ml-6.5 mt-3 space-y-3 border-l border-border pl-4">
-
-                  {/* Added services list */}
-                  {(data.crossBorder?.other?.length ?? 0) > 0 && (
-                    <div className="space-y-1.5">
-                      {data.crossBorder?.other?.map((service, index) => (
-                        <div
-                          key={index}
-                          className="flex items-center gap-2 rounded-lg border border-border bg-background px-3 py-2"
-                        >
-                          <svg className="size-3.5 shrink-0 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                          </svg>
-                          <span className="flex-1 text-[13px] text-foreground">
-                            {service.name}
-                          </span>
-                          <button
-                            type="button"
-                            onClick={() => handleRemoveCrossBorderService(index)}
-                            className="shrink-0 text-muted-foreground transition-colors duration-150 hover:text-foreground"
-                          >
-                            <svg className="size-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                            </svg>
-                          </button>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-
-                  {/* Add new service */}
-                  <div className="flex gap-2">
-                    <input
-                      type="text"
-                      value={newCrossBorderService}
-                      onChange={(e) => setNewCrossBorderService(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
-                          e.preventDefault()
-                          handleAddCrossBorderService()
-                        }
-                      }}
-                      placeholder="Название зарубежного сервиса"
-                      className="flex-1 rounded-lg border border-border bg-background px-3 py-2 text-[13px] text-foreground transition-colors duration-150 placeholder:text-muted-foreground/50 focus:border-foreground/30 focus:outline-none focus:ring-1 focus:ring-foreground/10"
-                    />
-                    <button
-                      type="button"
-                      onClick={handleAddCrossBorderService}
-                      disabled={!newCrossBorderService.trim()}
-                      className="shrink-0 rounded-lg bg-foreground px-4 py-2 text-[13px] font-medium text-background transition-opacity duration-150 hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-30"
-                    >
-                      Добавить
-                    </button>
-                  </div>
+                <div className="expand-enter ml-[1.875rem] mt-1 space-y-3 border-l-2 border-border pl-4">
+                  <ServiceList
+                    items={data.crossBorder?.other}
+                    onRemove={handleRemoveCrossBorderService}
+                  />
+                  <AddServiceInput
+                    value={newCrossBorderService}
+                    onChange={setNewCrossBorderService}
+                    onAdd={handleAddCrossBorderService}
+                    placeholder="Название зарубежного сервиса"
+                  />
                 </div>
               )}
             </div>
@@ -769,251 +497,255 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
         </fieldset>
 
         {/* ========================================================================
-            BLOCK 4: MARKETING/RETARGETING (Маркетинговые и рекламные cookie)
+            BLOCK 4: MARKETING/RETARGETING
             ======================================================================== */}
-        <fieldset className="space-y-3">
-          <legend className="text-[13px] font-medium text-foreground">
-            Используете ли вы рекламные инструменты?
+        <fieldset className="space-y-4">
+          <legend className="text-[15px] font-semibold text-foreground">
+            Реклама и маркетинг
           </legend>
-          <p className="text-[12px] leading-relaxed text-muted-foreground/70">
-            Сервисы для показа рекламы и отслеживания её эффективности (ВКонтакте, Яндекс, партнёрские программы).
+          <p className="text-[13px] leading-relaxed text-muted-foreground">
+            Сервисы для показа рекламы и отслеживания её эффективности
           </p>
 
-          <div className="space-y-2">
-            {/* VK Pixel */}
-            <label className="group flex cursor-pointer items-center gap-2.5 py-1.5 transition-colors duration-150">
-              <input
-                type="checkbox"
-                checked={data.marketing?.vkPixel || false}
-                onChange={() => handleMarketingToggle('vkPixel')}
-                className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
-              />
-              <span className="flex-1 text-[13px] font-medium leading-[1.125rem] text-foreground/90 group-hover:text-foreground">
-                Пиксель ВКонтакте
-              </span>
-            </label>
-
-            {/* MyTarget */}
-            <label className="group flex cursor-pointer items-center gap-2.5 py-1.5 transition-colors duration-150">
-              <input
-                type="checkbox"
-                checked={data.marketing?.myTarget || false}
-                onChange={() => handleMarketingToggle('myTarget')}
-                className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
-              />
-              <span className="flex-1 text-[13px] font-medium leading-[1.125rem] text-foreground/90 group-hover:text-foreground">
-                MyTarget (Одноклассники, Mail.ru)
-              </span>
-            </label>
-
-            {/* Yandex Direct */}
-            <label className="group flex cursor-pointer items-center gap-2.5 py-1.5 transition-colors duration-150">
-              <input
-                type="checkbox"
-                checked={data.marketing?.yandexDirect || false}
-                onChange={() => handleMarketingToggle('yandexDirect')}
-                className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
-              />
-              <span className="flex-1 text-[13px] font-medium leading-[1.125rem] text-foreground/90 group-hover:text-foreground">
-                Яндекс.Директ
-              </span>
-            </label>
+          <div className="space-y-1">
+            <CheckboxItem
+              checked={data.marketing?.vkPixel || false}
+              onChange={() => handleMarketingToggle('vkPixel')}
+              label="Пиксель ВКонтакте"
+            />
+            <CheckboxItem
+              checked={data.marketing?.myTarget || false}
+              onChange={() => handleMarketingToggle('myTarget')}
+              label="MyTarget (Одноклассники, Mail.ru)"
+            />
+            <CheckboxItem
+              checked={data.marketing?.yandexDirect || false}
+              onChange={() => handleMarketingToggle('yandexDirect')}
+              label="Яндекс.Директ"
+            />
 
             {/* Partner Networks - Collapsible */}
             <div>
-              <label className="group flex cursor-pointer items-center gap-2.5 py-1.5 transition-colors duration-150">
+              <label className="group flex cursor-pointer items-center gap-3 py-2.5 transition-colors duration-150">
                 <input
                   type="checkbox"
+                  className="cb"
                   checked={showPartnerNetworksForm || (data.marketing?.partnerNetworks?.length ?? 0) > 0}
                   onChange={() => setShowPartnerNetworksForm(!showPartnerNetworksForm)}
-                  className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
                 />
-                <span className="flex flex-1 items-center gap-1.5 text-[13px] font-medium leading-[1.125rem] text-foreground/90 group-hover:text-foreground">
+                <span className="flex items-center gap-1.5 text-[14px] font-medium text-foreground/90 group-hover:text-foreground">
                   Партнёрские программы
-                  <span className="group/tooltip relative inline-flex">
-                    <svg
-                      className="size-3.5 shrink-0 text-muted-foreground/40 transition-colors duration-150 hover:text-foreground/60"
-                      viewBox="0 0 16 16"
-                      fill="currentColor"
-                      aria-label="Подробнее"
-                    >
-                      <circle cx="8" cy="8" r="8" opacity="0.12" />
-                      <path d="M8 7.5v3M8 5.5h.01M15 8A7 7 0 111 8a7 7 0 0114 0z" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                    </svg>
-                    <span className="pointer-events-none absolute bottom-full left-1/2 mb-2 hidden w-64 -translate-x-1/2 rounded-lg border border-border bg-background px-3 py-2 text-[11px] font-normal leading-relaxed text-foreground/80 opacity-0 transition-opacity duration-150 group-hover/tooltip:block group-hover/tooltip:opacity-100">
-                      Партнёрские и реферальные программы, которые отслеживают переходы с вашего сайта (например, Admitad, Actionpay, Где Слон, CPA и affiliate-сети)
-                      <span className="absolute left-1/2 top-full -mt-px size-2 -translate-x-1/2 rotate-45 border-b border-r border-border bg-background" />
-                    </span>
-                  </span>
+                  <Tooltip text="Партнёрские и реферальные программы (Admitad, Actionpay, Где Слон, CPA и affiliate-сети)" />
                 </span>
               </label>
 
-              {/* Partner Networks Form */}
               {showPartnerNetworksForm && (
-                <div className="ml-6.5 mt-3 space-y-3 border-l border-border pl-4">
-
-                  {/* Added networks list */}
-                  {(data.marketing?.partnerNetworks?.length ?? 0) > 0 && (
-                    <div className="space-y-1.5">
-                      {data.marketing?.partnerNetworks?.map((network, index) => (
-                        <div
-                          key={index}
-                          className="flex items-center gap-2 rounded-lg border border-border bg-background px-3 py-2"
-                        >
-                          <svg className="size-3.5 shrink-0 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                          </svg>
-                          <span className="flex-1 text-[13px] text-foreground">
-                            {network.name}
-                          </span>
-                          <button
-                            type="button"
-                            onClick={() => handleRemovePartnerNetwork(index)}
-                            className="shrink-0 text-muted-foreground transition-colors duration-150 hover:text-foreground"
-                          >
-                            <svg className="size-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                            </svg>
-                          </button>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-
-                  {/* Add new network */}
-                  <div className="flex gap-2">
-                    <input
-                      type="text"
-                      value={newPartnerNetwork}
-                      onChange={(e) => setNewPartnerNetwork(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
-                          e.preventDefault()
-                          handleAddPartnerNetwork()
-                        }
-                      }}
-                      placeholder="Название партнёрской сети"
-                      className="flex-1 rounded-lg border border-border bg-background px-3 py-2 text-[13px] text-foreground transition-colors duration-150 placeholder:text-muted-foreground/50 focus:border-foreground/30 focus:outline-none focus:ring-1 focus:ring-foreground/10"
-                    />
-                    <button
-                      type="button"
-                      onClick={handleAddPartnerNetwork}
-                      disabled={!newPartnerNetwork.trim()}
-                      className="shrink-0 rounded-lg bg-foreground px-4 py-2 text-[13px] font-medium text-background transition-opacity duration-150 hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-30"
-                    >
-                      Добавить
-                    </button>
-                  </div>
+                <div className="expand-enter ml-[1.875rem] mt-1 space-y-3 border-l-2 border-border pl-4">
+                  <ServiceList
+                    items={data.marketing?.partnerNetworks}
+                    onRemove={handleRemovePartnerNetwork}
+                  />
+                  <AddServiceInput
+                    value={newPartnerNetwork}
+                    onChange={setNewPartnerNetwork}
+                    onAdd={handleAddPartnerNetwork}
+                    placeholder="Название партнёрской сети"
+                  />
                 </div>
               )}
             </div>
 
             {/* Other Marketing - Collapsible */}
             <div>
-              <label className="group flex cursor-pointer items-center gap-2.5 py-1.5 transition-colors duration-150">
+              <label className="group flex cursor-pointer items-center gap-3 py-2.5 transition-colors duration-150">
                 <input
                   type="checkbox"
+                  className="cb"
                   checked={showMarketingOtherForm || (data.marketing?.other?.length ?? 0) > 0}
                   onChange={() => setShowMarketingOtherForm(!showMarketingOtherForm)}
-                  className="size-4 shrink-0 cursor-pointer rounded border-border bg-background text-foreground transition-colors duration-150 focus-visible:outline-none"
                 />
-                <span className="flex flex-1 items-center gap-1.5 text-[13px] font-medium leading-[1.125rem] text-foreground/90 group-hover:text-foreground">
+                <span className="flex items-center gap-1.5 text-[14px] font-medium text-foreground/90 group-hover:text-foreground">
                   Другие сервисы
-                  <span className="group/tooltip relative inline-flex">
-                    <svg
-                      className="size-3.5 shrink-0 text-muted-foreground/40 transition-colors duration-150 hover:text-foreground/60"
-                      viewBox="0 0 16 16"
-                      fill="currentColor"
-                      aria-label="Подробнее"
-                    >
-                      <circle cx="8" cy="8" r="8" opacity="0.12" />
-                      <path d="M8 7.5v3M8 5.5h.01M15 8A7 7 0 111 8a7 7 0 0114 0z" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                    </svg>
-                    <span className="pointer-events-none absolute bottom-full left-1/2 mb-2 hidden w-64 -translate-x-1/2 rounded-lg border border-border bg-background px-3 py-2 text-[11px] font-normal leading-relaxed text-foreground/80 opacity-0 transition-opacity duration-150 group-hover/tooltip:block group-hover/tooltip:opacity-100">
-                      Любые другие маркетинговые инструменты и системы ретаргетинга, не перечисленные выше
-                      <span className="absolute left-1/2 top-full -mt-px size-2 -translate-x-1/2 rotate-45 border-b border-r border-border bg-background" />
-                    </span>
-                  </span>
+                  <Tooltip text="Любые другие маркетинговые инструменты и системы ретаргетинга, не перечисленные выше" />
                 </span>
               </label>
 
-              {/* Other Marketing Form */}
               {showMarketingOtherForm && (
-                <div className="ml-6.5 mt-3 space-y-3 border-l border-border pl-4">
-
-                  {/* Added services list */}
-                  {(data.marketing?.other?.length ?? 0) > 0 && (
-                    <div className="space-y-1.5">
-                      {data.marketing?.other?.map((service, index) => (
-                        <div
-                          key={index}
-                          className="flex items-center gap-2 rounded-lg border border-border bg-background px-3 py-2"
-                        >
-                          <svg className="size-3.5 shrink-0 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                          </svg>
-                          <span className="flex-1 text-[13px] text-foreground">
-                            {service.name}
-                          </span>
-                          <button
-                            type="button"
-                            onClick={() => handleRemoveMarketingService(index)}
-                            className="shrink-0 text-muted-foreground transition-colors duration-150 hover:text-foreground"
-                          >
-                            <svg className="size-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                            </svg>
-                          </button>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-
-                  {/* Add new service */}
-                  <div className="flex gap-2">
-                    <input
-                      type="text"
-                      value={newMarketingService}
-                      onChange={(e) => setNewMarketingService(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
-                          e.preventDefault()
-                          handleAddMarketingService()
-                        }
-                      }}
-                      placeholder="Название маркетингового сервиса"
-                      className="flex-1 rounded-lg border border-border bg-background px-3 py-2 text-[13px] text-foreground transition-colors duration-150 placeholder:text-muted-foreground/50 focus:border-foreground/30 focus:outline-none focus:ring-1 focus:ring-foreground/10"
-                    />
-                    <button
-                      type="button"
-                      onClick={handleAddMarketingService}
-                      disabled={!newMarketingService.trim()}
-                      className="shrink-0 rounded-lg bg-foreground px-4 py-2 text-[13px] font-medium text-background transition-opacity duration-150 hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-30"
-                    >
-                      Добавить
-                    </button>
-                  </div>
+                <div className="expand-enter ml-[1.875rem] mt-1 space-y-3 border-l-2 border-border pl-4">
+                  <ServiceList
+                    items={data.marketing?.other}
+                    onRemove={handleRemoveMarketingService}
+                  />
+                  <AddServiceInput
+                    value={newMarketingService}
+                    onChange={setNewMarketingService}
+                    onAdd={handleAddMarketingService}
+                    placeholder="Название маркетингового сервиса"
+                  />
                 </div>
               )}
             </div>
           </div>
         </fieldset>
 
-        {/* Bottom Info Notice - Simplified */}
-        <div className="flex items-start gap-2.5 rounded-lg border border-border bg-background px-3.5 py-3">
-          <svg aria-hidden="true" className="mt-px size-4 shrink-0 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+        {/* Bottom hint — borderless */}
+        <div className="flex items-start gap-2.5 rounded-lg bg-muted/50 px-3.5 py-3">
+          <svg aria-hidden="true" className="mt-px size-4 shrink-0 text-muted-foreground/60" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z" />
           </svg>
           <div>
-            <p className="text-[12px] font-medium leading-relaxed text-foreground/90">
+            <p className="text-[13px] font-medium leading-relaxed text-foreground/80">
               Выбирайте только то, что действительно используется
             </p>
-            <p className="mt-0.5 text-[12px] leading-relaxed text-muted-foreground/70">
-              Указывайте в политике только те сервисы и функции, которые реально работают на вашем сайте. Это обеспечит юридическую точность документа.
+            <p className="mt-0.5 text-[13px] leading-relaxed text-muted-foreground">
+              Указывайте в политике только те сервисы, которые реально работают на вашем сайте
             </p>
           </div>
         </div>
       </div>
+    </div>
+  )
+}
+
+// ============================================================================
+// SUB-COMPONENTS
+// ============================================================================
+
+function CheckboxItem({
+  checked,
+  onChange,
+  label,
+  hint,
+}: {
+  checked: boolean
+  onChange: () => void
+  label: string
+  hint?: string
+}) {
+  return (
+    <label className="group flex cursor-pointer items-center gap-3 py-2.5 transition-colors duration-150">
+      <input
+        type="checkbox"
+        className="cb"
+        checked={checked}
+        onChange={onChange}
+      />
+      <span className="flex items-center gap-1.5 text-[14px] font-medium text-foreground/90 group-hover:text-foreground">
+        {label}
+        {hint && <Tooltip text={hint} />}
+      </span>
+    </label>
+  )
+}
+
+function Tooltip({ text }: { text: string }) {
+  return (
+    <span className="tooltip-trigger relative inline-flex">
+      <svg
+        className="size-3.5 shrink-0 text-muted-foreground/30 transition-colors duration-200 hover:text-muted-foreground/60"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        aria-label="Подробнее"
+      >
+        <circle cx="12" cy="12" r="10" />
+        <path d="M12 16v-4M12 8h.01" />
+      </svg>
+      <span className="tooltip-content mb-2.5 w-60 rounded-lg bg-foreground px-3.5 py-2.5 text-[12px] font-normal leading-relaxed text-background shadow-lg dark:bg-[oklch(25%_0.025_260)] dark:text-[oklch(90%_0.01_264)]">
+        {text}
+      </span>
+    </span>
+  )
+}
+
+function ServiceList({
+  items,
+  onRemove,
+}: {
+  items?: { name: string }[]
+  onRemove: (index: number) => void
+}) {
+  if (!items?.length) return null
+
+  return (
+    <div className="space-y-1.5">
+      {items.map((service, index) => (
+        <div
+          key={`${service.name}-${index}`}
+          className="expand-enter flex items-center gap-2 rounded-md bg-muted/60 px-3 py-2"
+        >
+          <svg className="size-3.5 shrink-0 text-foreground/40" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+          </svg>
+          <span className="flex-1 text-[13px] text-foreground">
+            {service.name}
+          </span>
+          <button
+            type="button"
+            onClick={() => onRemove(index)}
+            className="shrink-0 text-muted-foreground transition-colors duration-150 hover:text-foreground"
+          >
+            <svg className="size-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+function AddServiceInput({
+  value,
+  onChange,
+  onAdd,
+  placeholder,
+}: {
+  value: string
+  onChange: (val: string) => void
+  onAdd: () => void
+  placeholder: string
+}) {
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  // Автофокус при появлении
+  useEffect(() => {
+    const timer = setTimeout(() => inputRef.current?.focus(), 50)
+    return () => clearTimeout(timer)
+  }, [])
+
+  const handleAdd = () => {
+    onAdd()
+    // Рефокус после добавления
+    setTimeout(() => inputRef.current?.focus(), 50)
+  }
+
+  return (
+    <div className="flex gap-2">
+      <input
+        ref={inputRef}
+        type="text"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') {
+            e.preventDefault()
+            handleAdd()
+          }
+        }}
+        placeholder={placeholder}
+        className="flex-1 border-b border-border bg-transparent px-0 py-2 text-[13px] text-foreground transition-colors duration-150 placeholder:text-muted-foreground/40 focus:border-foreground/40 focus:outline-none"
+      />
+      <button
+        type="button"
+        onClick={handleAdd}
+        disabled={!value.trim()}
+        className="shrink-0 rounded-lg bg-foreground px-4 py-2 text-[13px] font-medium text-background transition-opacity duration-150 hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-30"
+      >
+        Добавить
+      </button>
     </div>
   )
 }

@@ -13,13 +13,6 @@ export const metadata: Metadata = {
   },
 }
 
-const FEATURES = [
-  { text: 'Соответствует 152-ФЗ' },
-  { text: 'Адаптивный дизайн' },
-  { text: 'Работает везде' },
-  { text: 'Без подписки' },
-] as const
-
 const FAQ_ITEMS = [
   {
     q: 'Нужен ли cookie-баннер по закону?',
@@ -42,77 +35,40 @@ const FAQ_ITEMS = [
 export default function CookieGeneratorPage() {
   return (
     <main className="min-h-screen">
-      <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
+      <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8">
         {/* Header */}
-        <header className="mb-12">
-          <h1 className="text-balance text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+        <header className="mb-14">
+          <h1 className="text-[28px] font-semibold tracking-tight text-foreground sm:text-[32px]">
             Генератор Cookie-баннера
           </h1>
-          <p className="mt-3 max-w-2xl text-[15px] leading-relaxed text-muted-foreground">
-            Создайте стильный баннер согласия на использование cookie за пару минут
+          <p className="mt-2 text-[15px] leading-relaxed text-muted-foreground">
+            Готовый документ по&nbsp;152-ФЗ, адаптивный баннер и&nbsp;код для&nbsp;вставки — за&nbsp;5&nbsp;минут
           </p>
-
-          {/* Features */}
-          <ul className="mt-8 flex flex-wrap gap-x-6 gap-y-2">
-            {FEATURES.map((feature) => (
-              <li
-                key={feature.text}
-                className="flex items-center gap-2 text-[13px] text-muted-foreground"
-              >
-                <svg
-                  className="size-4 shrink-0"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={2}
-                  aria-hidden="true"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-                </svg>
-                <span>{feature.text}</span>
-              </li>
-            ))}
-          </ul>
         </header>
 
         {/* Generator */}
         <CookieGeneratorClient />
 
         {/* FAQ Section */}
-        <section className="mt-16 border-t border-border pt-12" aria-labelledby="faq-heading">
+        <section className="mt-20" aria-labelledby="faq-heading">
           <h2
             id="faq-heading"
-            className="text-[15px] font-semibold tracking-tight text-foreground"
+            className="text-[13px] font-medium uppercase tracking-[0.08em] text-muted-foreground/60"
           >
             Частые вопросы
           </h2>
 
-          <div className="relative mt-6">
-            {/* Cross dividers — desktop only */}
-            <div className="pointer-events-none absolute inset-y-0 left-1/2 hidden w-px bg-border sm:block" aria-hidden="true" />
-            <div className="pointer-events-none absolute inset-x-0 top-1/2 hidden h-px bg-border sm:block" aria-hidden="true" />
-
-            <div className="divide-y divide-border sm:grid sm:grid-cols-2 sm:divide-y-0">
-              {FAQ_ITEMS.map((item, i) => {
-                const isLeft = i % 2 === 0
-                const isTop = i < 2
-                return (
-                  <article
-                    key={item.q}
-                    className={`py-6 first:pt-0 last:pb-0 sm:py-0 ${
-                      isLeft ? 'sm:pr-8' : 'sm:pl-8'
-                    } ${isTop ? 'sm:pb-8' : 'sm:pt-8'}`}
-                  >
-                    <h3 className="text-[13px] font-semibold leading-relaxed text-foreground">
-                      {item.q}
-                    </h3>
-                    <p className="mt-1.5 text-[13px] leading-relaxed text-muted-foreground">
-                      {item.a}
-                    </p>
-                  </article>
-                )
-              })}
-            </div>
+          <div className="mt-8 grid gap-x-16 gap-y-10 sm:grid-cols-2">
+            {FAQ_ITEMS.map((item) => (
+              <article key={item.q}>
+                <h3 className="text-[14px] font-medium leading-relaxed text-foreground">
+                  {item.q}
+                </h3>
+                <p className="mt-2 text-[13px] leading-relaxed text-muted-foreground">
+                  {item.a}
+                </p>
+              </article>
+            ))}
           </div>
         </section>
       </div>

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback, useMemo, useEffect } from 'react'
+import { useState, useCallback, useMemo, useEffect, useRef, Fragment } from 'react'
 import {
   CompanyForm,
   BannerSettingsForm,
@@ -9,7 +9,7 @@ import {
   DocumentPreview,
 } from './components'
 import { CookiePolicyForm } from './components/cookie-policy-form'
-import { DEFAULT_CONFIG, type CookieConfig, type DocumentSettings } from './types'
+import { DEFAULT_CONFIG, type CookieConfig } from './types'
 import { type BannerTemplateId } from './templates'
 import { type CookiePolicyData } from '@/lib/templates/cookie-policy'
 import { AuthModal } from '@/app/auth/components'
@@ -19,61 +19,16 @@ import { useSiteParser } from '@/lib/hooks/use-site-parser'
 
 export type ActiveTab = 'company' | 'cookies' | 'document' | 'design' | 'result'
 
-const TABS: { id: ActiveTab; label: string; shortLabel: string; icon: React.ReactNode }[] = [
-  {
-    id: 'company',
-    label: 'Компания',
-    shortLabel: 'Компания',
-    icon: (
-      <svg className="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3H21m-3.75 3H21" />
-      </svg>
-    ),
-  },
-  {
-    id: 'cookies',
-    label: 'Настройка cookie',
-    shortLabel: 'Cookie',
-    icon: (
-      <svg className="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.325.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.241-.438.613-.43.992a7.723 7.723 0 010 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.955.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 010-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28z" />
-        <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-      </svg>
-    ),
-  },
-  {
-    id: 'document',
-    label: 'Документ',
-    shortLabel: 'Документ',
-    icon: (
-      <svg className="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
-      </svg>
-    ),
-  },
-  {
-    id: 'design',
-    label: 'Оформление',
-    shortLabel: 'Оформление',
-    icon: (
-      <svg className="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M4.098 19.902a3.75 3.75 0 005.304 0l6.401-6.402M6.75 21A3.75 3.75 0 013 17.25V4.125C3 3.504 3.504 3 4.125 3h5.25c.621 0 1.125.504 1.125 1.125v4.072M6.75 21a3.75 3.75 0 003.75-3.75V8.197M6.75 21h13.125c.621 0 1.125-.504 1.125-1.125v-5.25c0-.621-.504-1.125-1.125-1.125h-4.072M10.5 8.197l2.88-2.88c.438-.439 1.15-.439 1.59 0l3.712 3.713c.44.44.44 1.152 0 1.59l-2.879 2.88M6.75 17.25h.008v.008H6.75v-.008z" />
-      </svg>
-    ),
-  },
-  {
-    id: 'result',
-    label: 'Результат',
-    shortLabel: 'Результат',
-    icon: (
-      <svg className="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-      </svg>
-    ),
-  },
+const TABS: { id: ActiveTab; shortLabel: string }[] = [
+  { id: 'company', shortLabel: 'Компания' },
+  { id: 'cookies', shortLabel: 'Cookie' },
+  { id: 'document', shortLabel: 'Документ' },
+  { id: 'design', shortLabel: 'Оформление' },
+  { id: 'result', shortLabel: 'Результат' },
 ]
 
 export function CookieGeneratorClient() {
+  const stepsRef = useRef<HTMLElement>(null)
   const [config, setConfig] = useState<CookieConfig>(DEFAULT_CONFIG)
   const [activeTab, setActiveTab] = useState<ActiveTab>('company')
   const [selectedTemplate, setSelectedTemplate] = useState<BannerTemplateId | 'custom'>('standard')
@@ -175,17 +130,23 @@ export function CookieGeneratorClient() {
     [activeTab]
   )
 
+  const scrollToSteps = useCallback(() => {
+    stepsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }, [])
+
   const goToNextTab = useCallback(() => {
     if (currentTabIndex < TABS.length - 1) {
       setActiveTab(TABS[currentTabIndex + 1].id)
+      scrollToSteps()
     }
-  }, [currentTabIndex])
+  }, [currentTabIndex, scrollToSteps])
 
   const goToPrevTab = useCallback(() => {
     if (currentTabIndex > 0) {
       setActiveTab(TABS[currentTabIndex - 1].id)
+      scrollToSteps()
     }
-  }, [currentTabIndex])
+  }, [currentTabIndex, scrollToSteps])
 
   const isFullWidthStep = activeTab === 'design' || activeTab === 'company' || activeTab === 'cookies'
 
@@ -197,38 +158,63 @@ export function CookieGeneratorClient() {
     }`}>
       {/* Left Column - Editor */}
       <div>
-        {/* Tabs */}
-        <nav className="mb-8" aria-label="Шаги настройки">
-          <div className="-mb-px flex border-b border-border">
+        {/* Steps */}
+        <nav ref={stepsRef} className="mb-12 max-w-2xl scroll-mt-24" aria-label="Шаги настройки">
+          <div className="flex items-center">
             {TABS.map((tab, index) => {
               const isActive = activeTab === tab.id
               const isCompleted = index < currentTabIndex
 
               return (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  aria-current={isActive ? 'step' : undefined}
-                  className={`relative whitespace-nowrap px-5 py-3 text-[13px] font-medium tracking-tight transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
-                    isActive
-                      ? 'text-foreground'
-                      : isCompleted
-                        ? 'text-foreground/70 hover:text-foreground'
-                        : 'text-muted-foreground hover:text-foreground/70'
-                  }`}
-                >
-                  {tab.shortLabel}
-                  {isActive && (
-                    <span className="absolute inset-x-0 -bottom-px h-[2px] bg-foreground" aria-hidden="true" />
+                <Fragment key={tab.id}>
+                  <button
+                    onClick={() => { setActiveTab(tab.id); scrollToSteps() }}
+                    aria-current={isActive ? 'step' : undefined}
+                    className={`group flex items-center gap-2.5 text-[13px] font-medium transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${
+                      isActive
+                        ? 'text-foreground'
+                        : isCompleted
+                          ? 'text-foreground/50 hover:text-foreground/70'
+                          : 'text-muted-foreground/40 hover:text-muted-foreground/70'
+                    }`}
+                  >
+                    <span
+                      className={`flex size-6 items-center justify-center rounded-full text-[11px] font-semibold transition-colors duration-150 ${
+                        isActive
+                          ? 'bg-foreground text-background'
+                          : isCompleted
+                            ? 'bg-foreground/10 text-foreground/60'
+                            : 'bg-muted text-muted-foreground/40'
+                      }`}
+                      aria-hidden="true"
+                    >
+                      {isCompleted ? (
+                        <svg className="size-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3} aria-hidden="true">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                        </svg>
+                      ) : (
+                        index + 1
+                      )}
+                    </span>
+                    <span className="hidden sm:block">{tab.shortLabel}</span>
+                  </button>
+
+                  {index < TABS.length - 1 && (
+                    <div
+                      className={`mx-3 h-px flex-1 transition-colors duration-150 ${
+                        index < currentTabIndex ? 'bg-foreground/15' : 'bg-border'
+                      }`}
+                      aria-hidden="true"
+                    />
                   )}
-                </button>
+                </Fragment>
               )
             })}
           </div>
         </nav>
 
-        {/* Tab Content */}
-        <div className="min-h-[400px] rounded-xl border border-border bg-card p-6 sm:p-8">
+        {/* Step Content */}
+        <div key={activeTab} className="step-enter min-h-[400px]">
             {activeTab === 'company' && (
               <CompanyForm
                 data={config.company}
@@ -347,143 +333,64 @@ export function CookieGeneratorClient() {
         </div>
 
         {/* Navigation */}
-        <div className="mt-6 flex items-center justify-between">
-          <button
-            onClick={goToPrevTab}
-            disabled={currentTabIndex === 0}
-            aria-label="Предыдущий шаг"
-            className="flex cursor-pointer items-center gap-1.5 rounded-lg px-3 py-2 text-[13px] font-medium text-muted-foreground transition-colors duration-150 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-0"
-          >
-            <svg className="size-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
-            </svg>
-            Назад
-          </button>
+        <div className="mt-10 flex max-w-lg items-center gap-4">
+          {currentTabIndex > 0 && (
+            <button
+              onClick={goToPrevTab}
+              aria-label="Предыдущий шаг"
+              className="flex cursor-pointer items-center gap-1.5 text-[13px] font-medium text-muted-foreground transition-colors duration-150 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            >
+              <svg className="size-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} aria-hidden="true">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+              </svg>
+              Назад
+            </button>
+          )}
 
           {currentTabIndex < TABS.length - 1 && (
             <button
               onClick={goToNextTab}
               aria-label="Следующий шаг"
-              className="flex cursor-pointer items-center gap-1.5 rounded-lg bg-foreground px-4 py-2 text-[13px] font-medium text-background transition-all duration-150 hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              className="flex cursor-pointer items-center gap-2 rounded-lg bg-foreground px-5 py-2.5 text-[13px] font-medium text-background transition-opacity duration-150 hover:opacity-85 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
             >
               Далее
-              <svg className="size-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <svg className="size-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
               </svg>
             </button>
           )}
         </div>
 
-        {/* Step 1: What you'll get */}
+        {/* Step 1: What you'll get — inline */}
         {activeTab === 'company' && (
-          <div className="mt-12 max-w-md">
-            <h3 className="text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
-              За 5 минут вы получите
-            </h3>
-            <ul className="mt-5 space-y-3">
-              {[
-                { label: 'Политику cookie', desc: 'готовый документ по 152-ФЗ' },
-                { label: 'Баннер согласия', desc: 'с настраиваемым дизайном' },
-                { label: 'Код для вставки', desc: 'одна строка — и готово' },
-              ].map((item) => (
-                <li
-                  key={item.label}
-                  className="flex items-center gap-3"
-                >
-                  <span className="block size-[3px] shrink-0 rounded-full bg-foreground" aria-hidden="true" />
-                  <span className="text-[13px] leading-relaxed text-foreground">
-                    <span className="font-semibold">{item.label}</span>
-                    <span className="text-muted-foreground"> — {item.desc}</span>
-                  </span>
-                </li>
-              ))}
-            </ul>
+          <div className="mt-16 flex max-w-lg flex-wrap items-center gap-x-5 gap-y-2 text-[13px] text-muted-foreground/50">
+            <span>Политика cookie</span>
+            <span className="size-1 rounded-full bg-muted-foreground/20" aria-hidden="true" />
+            <span>Баннер согласия</span>
+            <span className="size-1 rounded-full bg-muted-foreground/20" aria-hidden="true" />
+            <span>Код для вставки</span>
           </div>
         )}
 
-        {/* Step 2: Config summary */}
+        {/* Step 2: inline summary */}
         {activeTab === 'cookies' && (
-          <CookieStepSummary cookieTypes={config.cookieTypes} documentSettings={config.documentSettings} />
+          <div className="mt-16 flex max-w-lg flex-wrap items-center gap-x-5 gap-y-2 text-[13px] text-muted-foreground/50">
+            <span>Технические cookie</span>
+            <span className="size-1 rounded-full bg-muted-foreground/20" aria-hidden="true" />
+            <span>Аналитика</span>
+            <span className="size-1 rounded-full bg-muted-foreground/20" aria-hidden="true" />
+            <span>Маркетинг</span>
+          </div>
         )}
 
-        {/* Step 3: Document info */}
+        {/* Step 3: inline summary */}
         {activeTab === 'document' && (
-          <div className="mt-12 max-w-md">
-            <h3 className="text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
-              Форматы документа
-            </h3>
-            <ul className="mt-5 space-y-3">
-              {[
-                { label: 'Markdown (.md)', desc: 'для GitHub, документации, CMS' },
-                { label: 'HTML', desc: 'готовая страница для вашего сайта' },
-                { label: 'PDF (скоро)', desc: 'печать и официальная публикация' },
-              ].map((item) => (
-                <li
-                  key={item.label}
-                  className="flex items-center gap-3"
-                >
-                  <span className="block size-[3px] shrink-0 rounded-full bg-foreground" aria-hidden="true" />
-                  <span className="text-[13px] leading-relaxed text-foreground">
-                    <span className="font-semibold">{item.label}</span>
-                    <span className="text-muted-foreground"> — {item.desc}</span>
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-
-        {/* Step 4: Design tips */}
-        {activeTab === 'design' && (
-          <div className="mt-12 max-w-md">
-            <h3 className="text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
-              Рекомендации по дизайну
-            </h3>
-            <ul className="mt-5 space-y-3">
-              {[
-                { label: 'Плавающая позиция', desc: 'не перекрывает важный контент' },
-                { label: 'Кнопка «Отклонить»', desc: 'повышает доверие пользователей' },
-                { label: 'Простой язык', desc: 'без юридических терминов' },
-              ].map((item) => (
-                <li
-                  key={item.label}
-                  className="flex items-center gap-3"
-                >
-                  <span className="block size-[3px] shrink-0 rounded-full bg-foreground" aria-hidden="true" />
-                  <span className="text-[13px] leading-relaxed text-foreground">
-                    <span className="font-semibold">{item.label}</span>
-                    <span className="text-muted-foreground"> — {item.desc}</span>
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-
-        {/* Step 5: Ready to use */}
-        {activeTab === 'result' && (
-          <div className="mt-12 max-w-md">
-            <h3 className="text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
-              Что дальше
-            </h3>
-            <ul className="mt-5 space-y-3">
-              {[
-                { label: 'Вставьте код', desc: 'перед закрывающим тегом &lt;/body&gt;' },
-                { label: 'Управление в ЛК', desc: 'изменения применятся автоматически' },
-                { label: 'Соответствие 152-ФЗ', desc: 'документ защищает ваш бизнес' },
-              ].map((item) => (
-                <li
-                  key={item.label}
-                  className="flex items-center gap-3"
-                >
-                  <span className="block size-[3px] shrink-0 rounded-full bg-foreground" aria-hidden="true" />
-                  <span className="text-[13px] leading-relaxed text-foreground">
-                    <span className="font-semibold">{item.label}</span>
-                    <span className="text-muted-foreground" dangerouslySetInnerHTML={{ __html: ` — ${item.desc}` }} />
-                  </span>
-                </li>
-              ))}
-            </ul>
+          <div className="mt-16 flex max-w-lg flex-wrap items-center gap-x-5 gap-y-2 text-[13px] text-muted-foreground/50">
+            <span>Markdown</span>
+            <span className="size-1 rounded-full bg-muted-foreground/20" aria-hidden="true" />
+            <span>HTML</span>
+            <span className="size-1 rounded-full bg-muted-foreground/20" aria-hidden="true" />
+            <span>PDF (скоро)</span>
           </div>
         )}
       </div>
@@ -556,37 +463,6 @@ export function CookieGeneratorClient() {
           setShowCodeModal(true)
         }}
       />
-    </div>
-  )
-}
-
-function CookieStepSummary({ cookieTypes, documentSettings }: { cookieTypes: CookieConfig['cookieTypes']; documentSettings: DocumentSettings }) {
-  const enabledCookies = cookieTypes.filter((c) => c.enabled)
-  const enabledAnalytics = documentSettings.analyticsTools.filter((t) => t.enabled)
-
-  return (
-    <div className="mt-12 max-w-md">
-      <h3 className="text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
-        Что входит в документ
-      </h3>
-      <ul className="mt-5 space-y-3">
-        {[
-          { label: `${enabledCookies.length} типов cookie`, desc: 'технические, аналитические, маркетинговые' },
-          { label: 'Сценарии использования', desc: 'персонализация, авторизация, e-commerce' },
-          { label: `Аналитика: ${enabledAnalytics.map((t) => t.name).join(', ') || 'не указана'}`, desc: 'правовые основания и цели обработки' },
-        ].map((item) => (
-          <li
-            key={item.label}
-            className="flex items-center gap-3"
-          >
-            <span className="block size-[3px] shrink-0 rounded-full bg-foreground" aria-hidden="true" />
-            <span className="text-[13px] leading-relaxed text-foreground">
-              <span className="font-semibold">{item.label}</span>
-              <span className="text-muted-foreground"> — {item.desc}</span>
-            </span>
-          </li>
-        ))}
-      </ul>
     </div>
   )
 }

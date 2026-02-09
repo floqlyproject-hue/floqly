@@ -212,6 +212,13 @@
     @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
   }
 
+  /* Form inputs: border-based focus instead of ring */
+  input:focus-visible,
+  textarea:focus-visible,
+  select:focus-visible {
+    @apply ring-0 ring-offset-0;
+  }
+
   /* Smooth scrolling */
   html {
     scroll-behavior: smooth;
@@ -242,4 +249,135 @@
 
 @utility text-gradient {
   @apply bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent;
+}
+
+/* ─────────────────────────────────────────
+   Step Transition (Material Design motion)
+   Easing: standard decelerate 0.0, 0.0, 0.2, 1
+   ───────────────────────────────────────── */
+.step-enter {
+  animation: step-fade-in 250ms cubic-bezier(0.0, 0.0, 0.2, 1) both;
+}
+
+@keyframes step-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ─────────────────────────────────────────
+   Expand-in — collapsible content reveal
+   ───────────────────────────────────────── */
+.expand-enter {
+  animation: expand-in 250ms cubic-bezier(0.0, 0.0, 0.2, 1) both;
+}
+
+@keyframes expand-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ─────────────────────────────────────────
+   Custom Checkbox — Material-inspired
+   ───────────────────────────────────────── */
+input[type="checkbox"].cb {
+  appearance: none;
+  -webkit-appearance: none;
+  position: relative;
+  width: 1.125rem;
+  height: 1.125rem;
+  border: 1.5px solid var(--color-border);
+  border-radius: 0.3rem;
+  background: transparent;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition:
+    border-color 200ms cubic-bezier(0.4, 0, 0.2, 1),
+    background-color 200ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+input[type="checkbox"].cb:hover {
+  border-color: var(--color-foreground);
+}
+
+input[type="checkbox"].cb:checked {
+  background-color: var(--color-foreground);
+  border-color: var(--color-foreground);
+}
+
+input[type="checkbox"].cb:checked::after {
+  content: '';
+  position: absolute;
+  top: 45%;
+  left: 50%;
+  width: 5px;
+  height: 9px;
+  border: solid var(--color-background);
+  border-width: 0 1.5px 1.5px 0;
+  transform: translate(-50%, -50%) rotate(45deg);
+  animation: cb-check 200ms cubic-bezier(0.0, 0.0, 0.2, 1);
+}
+
+input[type="checkbox"].cb:active {
+  transform: scale(0.9);
+  transition-duration: 100ms;
+}
+
+input[type="checkbox"].cb:focus-visible {
+  outline: 2px solid var(--color-ring);
+  outline-offset: 2px;
+}
+
+@keyframes cb-check {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) rotate(45deg) scale(0.3);
+  }
+  50% {
+    opacity: 1;
+    transform: translate(-50%, -50%) rotate(45deg) scale(1.1);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) rotate(45deg) scale(1);
+  }
+}
+
+/* ─────────────────────────────────────────
+   Tooltip — smooth appearance
+   ───────────────────────────────────────── */
+.tooltip-content {
+  pointer-events: none;
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(4px);
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 200ms cubic-bezier(0.0, 0.0, 0.2, 1),
+    transform 200ms cubic-bezier(0.0, 0.0, 0.2, 1),
+    visibility 0ms 200ms;
+}
+
+.tooltip-trigger:hover .tooltip-content {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
+  pointer-events: auto;
+  transition:
+    opacity 200ms cubic-bezier(0.0, 0.0, 0.2, 1),
+    transform 200ms cubic-bezier(0.0, 0.0, 0.2, 1),
+    visibility 0ms 0ms;
 }

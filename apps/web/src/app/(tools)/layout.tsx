@@ -41,20 +41,17 @@ export default function ToolsLayout({
       {children}
 
       {/* Tools Footer */}
-      <footer className="border-t border-border">
+      <footer>
         <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
           <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
-            <p className="text-sm text-muted-foreground">
-              Бесплатный инструмент от{' '}
-              <Link href="/" className="font-medium text-foreground hover:text-primary">
-                Floqly
-              </Link>
-            </p>
+            <Link href="/" className="text-[13px] text-muted-foreground/50 transition-colors hover:text-foreground">
+              Floqly
+            </Link>
             <Link
               href="/dashboard"
-              className="text-sm text-muted-foreground hover:text-foreground"
+              className="text-[13px] text-muted-foreground/50 transition-colors hover:text-foreground"
             >
-              Войти для сохранения настроек
+              Личный кабинет
             </Link>
           </div>
         </div>
