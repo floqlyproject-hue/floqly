@@ -642,16 +642,18 @@ function Tooltip({ text }: { text: string }) {
   return (
     <span className="tooltip-trigger relative inline-flex">
       <svg
-        className="size-3.5 shrink-0 text-muted-foreground/30 transition-colors duration-200 hover:text-muted-foreground/60"
+        className="size-4 shrink-0 text-muted-foreground/45 transition-colors duration-200 hover:text-muted-foreground"
         viewBox="0 0 24 24"
         fill="none"
         stroke="currentColor"
         strokeWidth="1.5"
         strokeLinecap="round"
+        strokeLinejoin="round"
         aria-label="Подробнее"
       >
         <circle cx="12" cy="12" r="10" />
-        <path d="M12 16v-4M12 8h.01" />
+        <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+        <path d="M12 17h.01" />
       </svg>
       <span className="tooltip-content mb-2.5 w-60 rounded-lg bg-foreground px-3.5 py-2.5 text-[12px] font-normal leading-relaxed text-background shadow-lg dark:bg-[oklch(25%_0.025_260)] dark:text-[oklch(90%_0.01_264)]">
         {text}
@@ -742,7 +744,7 @@ function AddServiceInput({
         type="button"
         onClick={handleAdd}
         disabled={!value.trim()}
-        className="shrink-0 rounded-lg bg-foreground px-4 py-2 text-[13px] font-medium text-background transition-opacity duration-150 hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-30"
+        className="shrink-0 rounded-lg bg-foreground px-4 py-2 text-[13px] font-medium text-background transition-all duration-200 hover:opacity-80 disabled:opacity-20 disabled:pointer-events-none"
       >
         Добавить
       </button>
