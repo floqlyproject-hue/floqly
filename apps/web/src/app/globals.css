@@ -1,4 +1,6 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
 
 /* ============================================
    Floqly Design System - Tailwind CSS v4
@@ -53,6 +55,27 @@
 
   /* Input */
   --color-input: oklch(91% 0.01 264);
+
+  /* Popover (для shadcn) */
+  --color-popover: oklch(100% 0 0);
+  --color-popover-foreground: oklch(15% 0.02 264);
+
+  /* Sidebar (для shadcn) */
+  --color-sidebar: oklch(98% 0.004 90);
+  --color-sidebar-foreground: oklch(15% 0.02 264);
+  --color-sidebar-primary: oklch(55% 0.22 260);
+  --color-sidebar-primary-foreground: oklch(98% 0.01 264);
+  --color-sidebar-accent: oklch(96% 0.01 264);
+  --color-sidebar-accent-foreground: oklch(14.5% 0.025 264);
+  --color-sidebar-border: oklch(90% 0.006 264);
+  --color-sidebar-ring: oklch(55% 0.22 260);
+
+  /* Chart colors (для shadcn) */
+  --color-chart-1: oklch(64.6% 0.222 41.116);
+  --color-chart-2: oklch(60% 0.118 184.704);
+  --color-chart-3: oklch(39.8% 0.07 227.392);
+  --color-chart-4: oklch(82.8% 0.189 84.429);
+  --color-chart-5: oklch(76.9% 0.188 70.08);
 
   /* ─────────────────────────────────────────
      Radius Tokens
@@ -173,6 +196,24 @@
   --color-card-foreground: oklch(98% 0.01 264);
 
   --color-input: oklch(20% 0.025 260);
+
+  --color-popover: oklch(15% 0.025 260);
+  --color-popover-foreground: oklch(98% 0.01 264);
+
+  --color-sidebar: oklch(15% 0.025 260);
+  --color-sidebar-foreground: oklch(98% 0.01 264);
+  --color-sidebar-primary: oklch(65% 0.22 260);
+  --color-sidebar-primary-foreground: oklch(98% 0.01 264);
+  --color-sidebar-accent: oklch(20% 0.03 260);
+  --color-sidebar-accent-foreground: oklch(98% 0.01 264);
+  --color-sidebar-border: oklch(22% 0.025 260);
+  --color-sidebar-ring: oklch(65% 0.22 260);
+
+  --color-chart-1: oklch(48.8% 0.243 264.376);
+  --color-chart-2: oklch(69.6% 0.17 162.48);
+  --color-chart-3: oklch(76.9% 0.188 70.08);
+  --color-chart-4: oklch(62.7% 0.265 303.9);
+  --color-chart-5: oklch(64.5% 0.246 16.439);
 }
 
 /* ─────────────────────────────────────────
@@ -417,3 +458,110 @@ input[type="checkbox"].cb:focus-visible {
     transform: translateY(0);
   }
 }
+
+/* ─────────────────────────────────────────
+   Liquid Glass — floating toolbar effect
+   ───────────────────────────────────────── */
+@layer components {
+  .liquid-glass {
+    position: relative;
+    display: flex;
+    overflow: visible;
+    border-radius: 1rem;
+    box-shadow:
+      0 4px 12px rgba(0, 0, 0, 0.12),
+      0 0 0 1px rgba(255, 255, 255, 0.1);
+    transition: box-shadow 0.3s ease;
+  }
+
+  .liquid-glass:hover {
+    box-shadow:
+      0 6px 16px rgba(0, 0, 0, 0.16),
+      0 0 0 1px rgba(255, 255, 255, 0.15);
+  }
+
+  .liquid-glass-effect {
+    position: absolute;
+    z-index: 0;
+    inset: 0;
+    border-radius: inherit;
+    backdrop-filter: blur(4px);
+    filter: url(#liquid-glass-distortion);
+    overflow: hidden;
+    isolation: isolate;
+  }
+
+  .liquid-glass-tint {
+    z-index: 1;
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.28);
+  }
+
+  .liquid-glass-shine {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    overflow: hidden;
+    border-radius: inherit;
+    box-shadow:
+      inset 1.5px 1.5px 1px 0 rgba(255, 255, 255, 0.45),
+      inset -1px -1px 1px 0 rgba(255, 255, 255, 0.3);
+  }
+
+  .liquid-glass-content {
+    position: relative;
+    z-index: 3;
+  }
+
+  .dark .liquid-glass {
+    box-shadow:
+      0 4px 12px rgba(0, 0, 0, 0.35),
+      0 0 0 1px rgba(255, 255, 255, 0.06);
+  }
+
+  .dark .liquid-glass:hover {
+    box-shadow:
+      0 6px 16px rgba(0, 0, 0, 0.45),
+      0 0 0 1px rgba(255, 255, 255, 0.1);
+  }
+
+  .dark .liquid-glass-tint {
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  .dark .liquid-glass-shine {
+    box-shadow:
+      inset 1.5px 1.5px 1px 0 rgba(255, 255, 255, 0.12),
+      inset -1px -1px 1px 0 rgba(255, 255, 255, 0.08);
+  }
+
+  /* Tooltip — right side variant (island) */
+  .tooltip-content-right {
+    pointer-events: none;
+    position: absolute;
+    left: 100%;
+    top: 50%;
+    transform: translateX(4px) translateY(-50%);
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      opacity 200ms cubic-bezier(0.0, 0.0, 0.2, 1),
+      transform 200ms cubic-bezier(0.0, 0.0, 0.2, 1),
+      visibility 0ms 200ms;
+  }
+
+  .tooltip-trigger:hover .tooltip-content-right {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(8px) translateY(-50%);
+    pointer-events: auto;
+    transition:
+      opacity 200ms cubic-bezier(0.0, 0.0, 0.2, 1),
+      transform 200ms cubic-bezier(0.0, 0.0, 0.2, 1),
+      visibility 0ms 0ms;
+  }
+}
+

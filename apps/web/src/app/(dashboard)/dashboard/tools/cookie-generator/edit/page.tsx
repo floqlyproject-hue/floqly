@@ -4,14 +4,11 @@ import { useState, useCallback, useMemo } from 'react'
 import { MicroEditorLayout } from '@/components/tools/micro-editor-layout'
 import {
   CompanyForm,
-  BannerSettingsForm,
-  TextTemplateForm,
   BannerPreview,
   DocumentPreview,
 } from '@/app/(tools)/tools/cookie-generator/components'
 import { CookiePolicyForm } from '@/app/(tools)/tools/cookie-generator/components/cookie-policy-form'
 import { DEFAULT_CONFIG, type CookieConfig } from '@/app/(tools)/tools/cookie-generator/types'
-import { type BannerTemplateId } from '@/app/(tools)/tools/cookie-generator/templates'
 import { type CookiePolicyData } from '@/lib/templates/cookie-policy'
 import { useCurrentProject } from '@/lib/hooks/use-current-project'
 import { useSiteScreenshot } from '@/lib/hooks/use-site-screenshot'
@@ -71,14 +68,11 @@ export default function CookieGeneratorEditPage() {
   const { project } = useCurrentProject()
   const [config, setConfig] = useState<CookieConfig>(DEFAULT_CONFIG)
   const [activeTab, setActiveTab] = useState<ActiveTab>('company')
-  const [selectedTemplate, setSelectedTemplate] = useState<BannerTemplateId | 'custom'>('standard')
-  const [customText, setCustomText] = useState('')
   const [isSaving, setIsSaving] = useState(false)
   const [isDirty, setIsDirty] = useState(false)
-  const [showCodeModal, setShowCodeModal] = useState(false)
   const { screenshotUrl, isLoading: isScreenshotLoading } = useSiteScreenshot(config.company.website)
 
-  // Cookie policy data (for new document template)
+  // Cookie policy data (for document template)
   const [cookiePolicyData, setCookiePolicyData] = useState<Partial<CookiePolicyData>>({
     technicalFeatures: {
       cart: false,
@@ -114,16 +108,6 @@ export default function CookieGeneratorEditPage() {
     setIsDirty(true)
   }, [])
 
-  const handleBannerChange = useCallback((banner: CookieConfig['banner']) => {
-    setConfig((prev) => ({ ...prev, banner }))
-    setIsDirty(true)
-  }, [])
-
-  const handleButtonTextChange = useCallback((buttonText: CookieConfig['buttonText']) => {
-    setConfig((prev) => ({ ...prev, buttonText }))
-    setIsDirty(true)
-  }, [])
-
   const handleSave = useCallback(async () => {
     if (!project) return
 
@@ -138,10 +122,6 @@ export default function CookieGeneratorEditPage() {
       setIsSaving(false)
     }
   }, [project])
-
-  const handleExport = useCallback(() => {
-    setShowCodeModal(true)
-  }, [])
 
   const currentTabIndex = useMemo(
     () => TABS.findIndex((t) => t.id === activeTab),
@@ -202,27 +182,17 @@ export default function CookieGeneratorEditPage() {
           />
         )}
         {activeTab === 'design' && (
-          <div className="space-y-6">
-            <BannerSettingsForm data={config.banner} onChange={handleBannerChange} />
-            <div className="border-t border-border/40 pt-6">
-              <TextTemplateForm
-                selectedTemplate={selectedTemplate}
-                onTemplateChange={setSelectedTemplate}
-                customText={customText}
-                onCustomTextChange={setCustomText}
-                config={config}
-                buttonText={config.buttonText}
-                onButtonTextChange={handleButtonTextChange}
-              />
-            </div>
+          <div className="flex flex-col items-center justify-center py-12 text-center">
+            <p className="text-sm text-muted-foreground">
+              Настройки дизайна баннера — скоро
+            </p>
           </div>
         )}
         {activeTab === 'result' && (
-          <div className="space-y-4">
-            <div className="rounded-xl border border-success/20 bg-success/[0.06] p-4">
-              <h4 className="text-sm font-medium text-foreground">Всё готово!</h4>
-              <p className="mt-1 text-sm text-muted-foreground">Нажмите «Получить код» для экспорта.</p>
-            </div>
+          <div className="flex flex-col items-center justify-center py-12 text-center">
+            <p className="text-sm text-muted-foreground">
+              Экспорт кода — скоро
+            </p>
           </div>
         )}
       </div>
@@ -244,7 +214,7 @@ export default function CookieGeneratorEditPage() {
           Назад
         </button>
 
-        {currentTabIndex < TABS.length - 1 ? (
+        {currentTabIndex < TABS.length - 1 && (
           <button
             onClick={() => setActiveTab(TABS[currentTabIndex + 1].id)}
             className="flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
@@ -253,17 +223,6 @@ export default function CookieGeneratorEditPage() {
             <svg className="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
             </svg>
-          </button>
-        ) : (
-          <button
-            onClick={handleExport}
-            disabled={!config.company.name}
-            className="flex items-center gap-2 rounded-lg bg-success px-4 py-2 text-sm font-medium text-success-foreground transition-colors hover:bg-success/90 disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            <svg className="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5" />
-            </svg>
-            Получить код
           </button>
         )}
       </div>
@@ -279,8 +238,6 @@ export default function CookieGeneratorEditPage() {
         <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-lg">
           <BannerPreview
             config={config}
-            selectedTemplate={selectedTemplate}
-            customText={customText}
             screenshotUrl={screenshotUrl}
             isScreenshotLoading={isScreenshotLoading}
           />
@@ -290,142 +247,15 @@ export default function CookieGeneratorEditPage() {
   )
 
   return (
-    <>
-      <MicroEditorLayout
-        title="Плашка cookies"
-        backHref="/dashboard/tools/cookie-generator"
-        backLabel="Плашка cookies"
-        settingsPanel={settingsPanel}
-        previewPanel={previewPanel}
-        onSave={handleSave}
-        onExport={handleExport}
-        isSaving={isSaving}
-        isDirty={isDirty}
-      />
-
-      {/* Code Modal */}
-      {showCodeModal && (
-        <CodeModal
-          config={config}
-          selectedTemplate={selectedTemplate}
-          customText={customText}
-          onClose={() => setShowCodeModal(false)}
-        />
-      )}
-    </>
-  )
-}
-
-interface CodeModalProps {
-  config: CookieConfig
-  selectedTemplate: BannerTemplateId | 'custom'
-  customText: string
-  onClose: () => void
-}
-
-function CodeModal({ config, selectedTemplate, customText, onClose }: CodeModalProps) {
-  const [copied, setCopied] = useState(false)
-
-  const embedCode = `<!-- Floqly Cookie Consent -->
-<script>
-  window.floqlyCookieConfig = ${JSON.stringify(
-    {
-      company: config.company.name,
-      position: config.banner.position,
-      colorScheme: config.banner.colorScheme,
-      showDecline: config.banner.showDeclineButton,
-      showSettings: config.banner.showSettingsButton,
-      backdropBlur: config.banner.backdropBlur,
-      hideAfterDays: config.banner.hideAfterDays,
-      animation: config.banner.animation,
-      text: selectedTemplate === 'custom' ? customText : null,
-      template: selectedTemplate !== 'custom' ? selectedTemplate : null,
-      buttons: config.buttonText,
-      cookieTypes: config.cookieTypes.filter(c => c.enabled).map(c => c.id),
-      privacyUrl: config.company.privacyPolicyUrl || null,
-    },
-    null,
-    2
-  )};
-</script>
-<script src="https://cdn.floqly.ru/cookie/fl-consent.js" defer></script>`
-
-  const handleCopy = async () => {
-    await navigator.clipboard.writeText(embedCode)
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
-  }
-
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true">
-      <div className="absolute inset-0 bg-background/80 backdrop-blur-sm" onClick={onClose} />
-
-      <div className="relative w-full max-w-2xl overflow-hidden rounded-2xl border border-border bg-card shadow-2xl animate-scale-in">
-        <div className="p-6">
-          <button
-            onClick={onClose}
-            className="absolute right-4 top-4 rounded-lg p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-          >
-            <svg className="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-
-          <div className="mb-6 flex items-center gap-4">
-            <div className="flex size-12 items-center justify-center rounded-2xl bg-success/10">
-              <svg className="size-6 text-success" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </div>
-            <div>
-              <h2 className="text-xl font-semibold text-foreground">Код готов!</h2>
-              <p className="text-sm text-muted-foreground">Вставьте перед &lt;/body&gt;</p>
-            </div>
-          </div>
-
-          <div className="relative overflow-hidden rounded-xl border border-zinc-800 bg-zinc-950">
-            <div className="flex items-center justify-between border-b border-zinc-800 px-4 py-2">
-              <span className="text-xs font-medium text-zinc-500">HTML</span>
-              <button
-                onClick={handleCopy}
-                className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-all ${
-                  copied
-                    ? 'bg-success/20 text-success'
-                    : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700'
-                }`}
-              >
-                {copied ? (
-                  <>
-                    <svg className="size-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-                    </svg>
-                    Скопировано
-                  </>
-                ) : (
-                  <>
-                    <svg className="size-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M15.666 3.888A2.25 2.25 0 0013.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 01-.75.75H9a.75.75 0 01-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 01-2.25 2.25H6.75A2.25 2.25 0 014.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 011.927-.184" />
-                    </svg>
-                    Копировать
-                  </>
-                )}
-              </button>
-            </div>
-            <pre className="max-h-64 overflow-auto p-4 text-xs text-zinc-300">
-              <code>{embedCode}</code>
-            </pre>
-          </div>
-
-          <div className="mt-6 flex justify-end gap-3">
-            <button
-              onClick={onClose}
-              className="rounded-xl border border-border px-4 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-muted"
-            >
-              Закрыть
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
+    <MicroEditorLayout
+      title="Плашка cookies"
+      backHref="/dashboard/tools/cookie-generator"
+      backLabel="Плашка cookies"
+      settingsPanel={settingsPanel}
+      previewPanel={previewPanel}
+      onSave={handleSave}
+      isSaving={isSaving}
+      isDirty={isDirty}
+    />
   )
 }

@@ -39,7 +39,8 @@ Smart Widget встраивается на floqly.ru и демонстрируе
 | Слой | Технологии |
 |------|------------|
 | Frontend | Next.js 16.1.6 (App Router), React 19.2, TypeScript, Tailwind CSS v4 |
-| Анимации | CSS transitions (apps/web), Framer Motion (landing/виджеты), GSAP/Three.js |
+| UI библиотека | shadcn/ui (New York style) + Framer Motion (где обосновано) |
+| Анимации | CSS transitions (базовые), Framer Motion (сложные UI-взаимодействия), GSAP/Three.js (landing) |
 | Database | Supabase (PostgreSQL, Auth, Storage) |
 | Widget | Vanilla TS, Shadow DOM, Vite |
 | Хостинг | TimeWeb App Platform (Docker, автодеплой из GitHub) |
@@ -111,13 +112,14 @@ pnpm widget:build # Билд виджета
 
 ### Дизайн
 
-| Запрет | Где запрещено | Где можно |
-|--------|--------------|-----------|
-| Framer Motion | Инструменты, ЛК, служебные | Landing, виджеты |
-| backdrop-blur, rounded-2xl, inner-градиенты | Инструменты, ЛК | Landing, виджеты |
+| Правило | Где запрещено | Где можно |
+|---------|--------------|-----------|
+| backdrop-blur, inner-градиенты | Инструменты, ЛК | Landing, виджеты |
 | Fixed/sticky элементы справа | Инструменты | Виджеты |
 | Хардкод цветов (bg-blue-500) | Инструменты, ЛК | Виджеты |
 
+**shadcn/ui** — основа UI-компонентов. Использовать везде (инструменты, ЛК, landing, виджеты).
+**Framer Motion** — допустим в инструментах/ЛК **только для обоснованных случаев** (визуальные редакторы, drag&drop, сложные переходы). Для простых hover/fade — CSS transitions.
 **Стиль инструментов/ЛК:** Precision Minimalism (Linear, Vercel, Raycast) → [`docs/DESIGN_SYSTEM.md`](docs/DESIGN_SYSTEM.md)
 **Стиль виджетов/landing:** Креатив без ограничений (GSAP, градиенты, blur — всё можно)
 
@@ -130,6 +132,7 @@ pnpm widget:build # Билд виджета
 - **Не дублировать код:** Dashboard импортирует из (tools), не копирует
 - **packages/ui** — только универсальные компоненты (не app-specific)
 - **API endpoints** — всегда валидация через zod
+- **shadcn/ui** — для UI-компонентов. `cn()` из `@/lib/utils`. Компоненты в `@/components/ui/`
 - **Нет CSS-in-JS** — только Tailwind
 - **Нет тяжёлых библиотек** без обсуждения (> 50kb → спросить)
 - **Нет sensitive data в localStorage** — использовать httpOnly cookies / Supabase Auth

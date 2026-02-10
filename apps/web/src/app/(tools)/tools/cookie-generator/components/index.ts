@@ -1,8 +1,6 @@
 export { CompanyForm } from './company-form'
 export { CookieTypesForm } from './cookie-types-form'
 export { CookieConfigForm } from './cookie-config-form'
-export { BannerSettingsForm } from './banner-settings-form'
-export { TextTemplateForm } from './text-template-form'
 export { BannerPreview } from './banner-preview'
 export { DocumentPreview } from './document-preview'
 export { WizardProgressCard } from './wizard-progress-card'
