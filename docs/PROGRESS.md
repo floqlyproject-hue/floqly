@@ -1,6 +1,6 @@
 # Floqly — Прогресс разработки
 
-> Последнее обновление: 2026-02-09
+> Последнее обновление: 2026-02-10
 > Текущая фаза: **Подготовка к разработке Smart Widget**
 > Актуальные задачи: см. TODO в [CLAUDE.md](../CLAUDE.md)
 
@@ -10,7 +10,7 @@
 
 | Компонент | Статус | Детали |
 |-----------|--------|--------|
-| Cookie Generator | 90% | Steps 1-5 работают. Нужно: доработать Step 2, auto-fill, тесты |
+| Cookie Generator | 92% | Steps 1-5 дизайн унифицирован. Step 3 WYSIWYG. Нужно: доработать Step 2, auto-fill, тесты |
 | Парсер сайтов | MVP готов | 3-слойная архитектура, 16 сигнатур, интеграция в Cookie Generator |
 | Smart Widget UX Guide | Готов | `docs/SMART_WIDGET_UX_GUIDE.md` (гайд по анимациям, UI, триггерам) |
 | Simple Widget дизайны | Design-01 ready | Sandbox: `widget-preview/design-XX/` |
@@ -22,6 +22,20 @@
 ---
 
 ## Последние 5 сессий
+
+### 2026-02-10 — Cookie Generator Step 3 редизайн + WYSIWYG + unified headers
+- Unified headers (text-[22px]) across all 5 steps
+- Updated DESIGN_SYSTEM.md with concrete patterns from Steps 1-2
+- Step 3 полный редизайн: WYSIWYG (contentEditable вместо Markdown textarea)
+- Segmented control с Material Design sliding indicator animation
+- Icon-only action buttons (32x32) с CSS tooltips
+- Download dropdown (.md/.html) с dropdown-enter animation, Escape key
+- Inline reset confirmation с expand-enter + 5s auto-dismiss
+- Edit mode: border accent + ring + подсказка "Кликните на текст..."
+- Удалён TurndownService dependency (~8kb saved)
+- 2 новые CSS-анимации: .dropdown-enter, .mode-crossfade-enter
+- Sidebar tips обновлены (4 контекстных подсказки)
+- Light + dark themes verified, build passes clean
 
 ### 2026-02-09 — Реструктуризация CLAUDE.md + MCP/Skills
 - CLAUDE.md сокращён с 938 до 226 строк

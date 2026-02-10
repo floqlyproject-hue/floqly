@@ -1,9 +1,8 @@
 'use client'
 
-import { useMemo, useState, useEffect, useRef } from 'react'
+import { useMemo, useState, useEffect, useRef, useCallback } from 'react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
-import TurndownService from 'turndown'
 import type { CookieConfig } from '../types'
 import { generateCookiePolicy, type CookiePolicyData } from '@/lib/templates/cookie-policy'
 
@@ -19,20 +18,20 @@ export function DocumentPreview({
   cookiePolicyData,
 }: DocumentPreviewProps) {
   const [copied, setCopied] = useState(false)
-  const [editableGenerated, setEditableGenerated] = useState('')
   const [viewMode, setViewMode] = useState<ViewMode>('preview')
   const [downloadMenuOpen, setDownloadMenuOpen] = useState(false)
   const [showResetConfirm, setShowResetConfirm] = useState(false)
-  const editableRef = useRef<HTMLDivElement>(null)
-  const turndownService = useRef(new TurndownService({
-    headingStyle: 'atx',
-    codeBlockStyle: 'fenced',
-  }))
+  const [editedHtml, setEditedHtml] = useState<string | null>(null)
+  const contentRef = useRef<HTMLDivElement>(null)
+  const downloadRef = useRef<HTMLDivElement>(null)
+  const resetTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const previewBtnRef = useRef<HTMLButtonElement>(null)
+  const editorBtnRef = useRef<HTMLButtonElement>(null)
+  const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0 })
 
-  const generatedText = useMemo(() => {
-    // Build full CookiePolicyData from Step 1 + Step 2
+  // Generate markdown source from config
+  const generatedMarkdown = useMemo(() => {
     const fullData: CookiePolicyData = {
-      // From Step 1 (Company)
       companyName: config.company.name || '',
       siteUrl: config.company.website || '',
       email: config.company.email || '',
@@ -41,61 +40,105 @@ export function DocumentPreview({
         month: 'long',
         day: 'numeric'
       }),
-
-      // From Step 2 (Cookie Policy Form)
       technicalFeatures: cookiePolicyData.technicalFeatures || {
-        cart: false,
-        auth: false,
-        payment: false,
-        preferences: false,
-        security: false,
-        externalServices: [],
+        cart: false, auth: false, payment: false,
+        preferences: false, security: false, externalServices: [],
       },
       analytics: cookiePolicyData.analytics || {
-        yandexMetrika: false,
-        liveInternet: false,
-        mailRu: false,
-        customAnalytics: false,
-        other: [],
+        yandexMetrika: false, liveInternet: false, mailRu: false,
+        customAnalytics: false, other: [],
       },
       crossBorder: cookiePolicyData.crossBorder || {
-        googleServices: false,
-        facebookPixel: false,
-        other: [],
+        googleServices: false, facebookPixel: false, other: [],
       },
       marketing: cookiePolicyData.marketing || {
-        vkPixel: false,
-        myTarget: false,
-        yandexDirect: false,
-        partnerNetworks: [],
-        other: [],
+        vkPixel: false, myTarget: false, yandexDirect: false,
+        partnerNetworks: [], other: [],
       },
     }
-
     return generateCookiePolicy(fullData)
   }, [config, cookiePolicyData])
 
-  // Sync generated text into editable state when config changes
+  // Reset edited HTML when source markdown changes (user went back and changed config)
   useEffect(() => {
-    setEditableGenerated(generatedText)
-  }, [generatedText])
+    setEditedHtml(null)
+  }, [generatedMarkdown])
 
-  const handleCopy = async () => {
-    await navigator.clipboard.writeText(editableGenerated)
+  // Update sliding indicator position
+  const updateIndicator = useCallback(() => {
+    const activeBtn = viewMode === 'preview' ? previewBtnRef.current : editorBtnRef.current
+    const parent = activeBtn?.parentElement
+    if (activeBtn && parent) {
+      const parentRect = parent.getBoundingClientRect()
+      const btnRect = activeBtn.getBoundingClientRect()
+      setIndicatorStyle({
+        left: btnRect.left - parentRect.left,
+        width: btnRect.width,
+      })
+    }
+  }, [viewMode])
+
+  useEffect(() => {
+    updateIndicator()
+    // Recalculate on resize
+    window.addEventListener('resize', updateIndicator)
+    return () => window.removeEventListener('resize', updateIndicator)
+  }, [updateIndicator])
+
+  // When switching to edit: make contentEditable + focus
+  useEffect(() => {
+    if (viewMode === 'edit' && contentRef.current) {
+      contentRef.current.contentEditable = 'true'
+      // Place cursor at start
+      const timer = setTimeout(() => {
+        contentRef.current?.focus()
+      }, 50)
+      return () => clearTimeout(timer)
+    } else if (viewMode === 'preview' && contentRef.current) {
+      contentRef.current.contentEditable = 'false'
+    }
+  }, [viewMode])
+
+  // Close dropdown on Escape key
+  useEffect(() => {
+    if (!downloadMenuOpen) return
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setDownloadMenuOpen(false)
+    }
+    document.addEventListener('keydown', handleKey)
+    return () => document.removeEventListener('keydown', handleKey)
+  }, [downloadMenuOpen])
+
+  // Auto-dismiss reset confirmation after 5s
+  useEffect(() => {
+    if (showResetConfirm) {
+      resetTimerRef.current = setTimeout(() => setShowResetConfirm(false), 5000)
+      return () => {
+        if (resetTimerRef.current) clearTimeout(resetTimerRef.current)
+      }
+    }
+  }, [showResetConfirm])
+
+  const hasChanges = editedHtml !== null
+
+  // Save edits from contentEditable
+  const handleInput = useCallback(() => {
+    if (contentRef.current) {
+      setEditedHtml(contentRef.current.innerHTML)
+    }
+  }, [])
+
+  const handleCopy = useCallback(async () => {
+    // Copy plain text (what user sees)
+    const text = contentRef.current?.innerText || ''
+    await navigator.clipboard.writeText(text)
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
-  }
+  }, [])
 
-  const handleDownloadMarkdown = () => {
-    let markdownContent = editableGenerated
-
-    // If in edit mode and contentEditable was used, convert HTML back to Markdown
-    if (viewMode === 'edit' && editableRef.current) {
-      const htmlContent = editableRef.current.innerHTML
-      markdownContent = turndownService.current.turndown(htmlContent)
-    }
-
-    const blob = new Blob([markdownContent], { type: 'text/markdown' })
+  const handleDownloadMarkdown = useCallback(() => {
+    // Only available when no manual edits (original markdown)
+    const blob = new Blob([generatedMarkdown], { type: 'text/markdown' })
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
@@ -105,18 +148,10 @@ export function DocumentPreview({
     document.body.removeChild(a)
     URL.revokeObjectURL(url)
     setDownloadMenuOpen(false)
-  }
+  }, [generatedMarkdown])
 
-  const handleReset = () => {
-    // Reset to original generated text
-    setEditableGenerated(generatedText)
-    setShowResetConfirm(false)
-    // Switch to preview mode so React can re-render cleanly
-    setViewMode('preview')
-  }
-
-  const handleDownloadHTML = () => {
-    // Convert Markdown to HTML
+  const handleDownloadHTML = useCallback(() => {
+    const bodyContent = contentRef.current?.innerHTML || ''
     const htmlContent = `<!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -132,13 +167,14 @@ export function DocumentPreview({
       padding: 2rem;
       color: #1a1a1a;
     }
-    h1 { font-size: 2rem; font-weight: 600; margin-top: 2rem; margin-bottom: 1rem; }
-    h2 { font-size: 1.5rem; font-weight: 600; margin-top: 1.75rem; margin-bottom: 0.75rem; }
-    h3 { font-size: 1.25rem; font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.5rem; }
+    h1 { font-size: 1.5rem; font-weight: 600; margin-top: 1.5rem; margin-bottom: 1rem; }
+    h2 { font-size: 1.25rem; font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.75rem; }
+    h3 { font-size: 1.1rem; font-weight: 600; margin-top: 1.25rem; margin-bottom: 0.5rem; }
     p { margin-bottom: 1rem; }
     ul, ol { margin-bottom: 1rem; padding-left: 1.5rem; }
     li { margin-bottom: 0.25rem; }
     strong { font-weight: 600; }
+    em { font-style: italic; }
     blockquote {
       border-left: 4px solid #e5e5e5;
       padding-left: 1rem;
@@ -151,26 +187,7 @@ export function DocumentPreview({
   </style>
 </head>
 <body>
-${editableGenerated.split('\n').map(line => {
-  // Basic Markdown to HTML conversion
-  line = line.replace(/^# (.+)$/gm, '<h1>$1</h1>')
-  line = line.replace(/^## (.+)$/gm, '<h2>$1</h2>')
-  line = line.replace(/^### (.+)$/gm, '<h3>$1</h3>')
-  line = line.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-  line = line.replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2">$1</a>')
-  line = line.replace(/^> (.+)$/gm, '<blockquote>$1</blockquote>')
-  line = line.replace(/^\* (.+)$/gm, '<li>$1</li>')
-  if (line.startsWith('<li>')) {
-    return line
-  }
-  if (line.trim() === '') {
-    return '<br>'
-  }
-  if (!line.startsWith('<h') && !line.startsWith('<blockquote>')) {
-    return '<p>' + line + '</p>'
-  }
-  return line
-}).join('\n').replace(/(<li>.*<\/li>\n?)+/g, '<ul>$&</ul>')}
+${bodyContent}
 </body>
 </html>`
 
@@ -184,369 +201,291 @@ ${editableGenerated.split('\n').map(line => {
     document.body.removeChild(a)
     URL.revokeObjectURL(url)
     setDownloadMenuOpen(false)
-  }
+  }, [])
+
+  const handleReset = useCallback(() => {
+    setEditedHtml(null)
+    setShowResetConfirm(false)
+    setViewMode('preview')
+  }, [])
+
+  // Switch mode handler — save HTML snapshot before leaving edit (only if user actually edited)
+  const switchMode = useCallback((mode: ViewMode) => {
+    if (viewMode === 'edit' && mode === 'preview' && contentRef.current && editedHtml !== null) {
+      // User made edits via onInput — persist latest innerHTML snapshot
+      setEditedHtml(contentRef.current.innerHTML)
+    }
+    setViewMode(mode)
+  }, [viewMode, editedHtml])
 
   return (
-    <div className="space-y-6">
+    <div>
       {/* Section Header */}
-      <div className="mb-8">
+      <div className="mb-12 max-w-lg">
         <h3 className="text-[22px] font-semibold tracking-tight text-foreground">Текст документа</h3>
-        <p className="mt-2.5 text-[14px] leading-relaxed text-muted-foreground/70">Политика использования cookie</p>
+        <p className="mt-2.5 text-[14px] leading-relaxed text-muted-foreground/70">
+          Проверьте и отредактируйте сгенерированную политику cookie
+        </p>
       </div>
 
-      <div className="space-y-4">
-          {/* Document Card */}
-          <div className="overflow-hidden rounded-xl">
-            {/* Header with Actions */}
-            <div className="flex items-center justify-between border-b border-border bg-muted/30 px-4 py-3">
-              <div className="flex items-center gap-2">
-                <svg
-                  className="size-4 text-muted-foreground"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={1.5}
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"
-                  />
-                </svg>
-                <div>
-                  <span className="text-[13px] font-medium text-foreground">
-                    {viewMode === 'preview' ? 'Предпросмотр документа' : 'Редактирование документа'}
-                  </span>
-                  <span className="ml-2 text-xs text-muted-foreground">
-                    {viewMode === 'preview' ? 'HTML' : 'Markdown'}
-                  </span>
-                </div>
-              </div>
+      {/* Toolbar */}
+      <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        {/* Left: Mode Toggle (segmented control with sliding indicator) */}
+        <div className="relative flex items-center gap-0.5 rounded-lg border border-border p-0.5">
+          {/* Sliding indicator */}
+          <div
+            className="absolute top-0.5 h-[calc(100%-4px)] rounded-md bg-foreground transition-all duration-300"
+            style={{
+              left: `${indicatorStyle.left}px`,
+              width: `${indicatorStyle.width}px`,
+              transitionTimingFunction: 'cubic-bezier(0.2, 0, 0, 1)',
+            }}
+          />
+          <button
+            ref={previewBtnRef}
+            onClick={() => switchMode('preview')}
+            aria-pressed={viewMode === 'preview'}
+            className={`relative z-10 rounded-md px-3.5 py-1.5 text-[13px] font-medium transition-colors duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
+              viewMode === 'preview'
+                ? 'text-background'
+                : 'text-muted-foreground hover:text-foreground'
+            }`}
+          >
+            Просмотр
+          </button>
+          <button
+            ref={editorBtnRef}
+            onClick={() => switchMode('edit')}
+            aria-pressed={viewMode === 'edit'}
+            className={`relative z-10 rounded-md px-3.5 py-1.5 text-[13px] font-medium transition-colors duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
+              viewMode === 'edit'
+                ? 'text-background'
+                : 'text-muted-foreground hover:text-foreground'
+            }`}
+          >
+            Редактор
+          </button>
+        </div>
 
-              <div className="flex items-center gap-2">
-                {/* Edit/Save Button */}
-                <button
-                  onClick={() => {
-                    if (viewMode === 'edit' && editableRef.current) {
-                      // Save HTML edits back to Markdown state
-                      const htmlContent = editableRef.current.innerHTML
-                      const markdownContent = turndownService.current.turndown(htmlContent)
-                      setEditableGenerated(markdownContent)
-                    }
-                    setViewMode(viewMode === 'preview' ? 'edit' : 'preview')
-                  }}
-                  aria-label={viewMode === 'preview' ? 'Редактировать документ' : 'Сохранить изменения'}
-                  className="flex cursor-pointer items-center gap-1.5 rounded-lg border border-border bg-background px-3 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                >
-                  {viewMode === 'preview' ? (
-                    <>
-                      <svg className="size-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931z" />
-                      </svg>
-                      Редактировать
-                    </>
-                  ) : (
-                    <>
-                      <svg className="size-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-                      </svg>
-                      Сохранить
-                    </>
-                  )}
-                </button>
-
-                {/* Reset Button - only show in edit mode */}
-                {viewMode === 'edit' && (
-                  <div className="relative">
-                    <button
-                      onClick={() => setShowResetConfirm(true)}
-                      aria-label="Сбросить к оригиналу"
-                      className="flex cursor-pointer items-center gap-1.5 rounded-lg border border-border bg-background px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                    >
-                      <svg className="size-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
-                      </svg>
-                      Сбросить
-                    </button>
-
-                    {/* Confirmation Popup */}
-                    {showResetConfirm && (
-                      <>
-                        {/* Backdrop */}
-                        <div
-                          className="fixed inset-0 z-10"
-                          onClick={() => setShowResetConfirm(false)}
-                        />
-                        {/* Popup */}
-                        <div className="absolute right-0 top-full mt-1 z-20 w-64 rounded-lg border border-border bg-background p-3 shadow-lg">
-                          <p className="text-[13px] text-foreground mb-3">
-                            Вернуть документ к оригинальной версии? Все изменения будут потеряны.
-                          </p>
-                          <div className="flex gap-2">
-                            <button
-                              onClick={handleReset}
-                              className="flex-1 rounded-lg bg-foreground px-3 py-1.5 text-xs font-medium text-background transition-colors hover:bg-foreground/90"
-                            >
-                              Сбросить
-                            </button>
-                            <button
-                              onClick={() => setShowResetConfirm(false)}
-                              className="flex-1 rounded-lg border border-border px-3 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-muted"
-                            >
-                              Отмена
-                            </button>
-                          </div>
-                        </div>
-                      </>
-                    )}
-                  </div>
-                )}
-
-                {/* Copy Button */}
-                <button
-                  onClick={handleCopy}
-                  disabled={!editableGenerated}
-                  aria-label="Копировать текст документа"
-                  className={`flex cursor-pointer items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-40 ${
-                    copied
-                      ? 'border-success/30 bg-success/10 text-success'
-                      : 'border-border bg-background text-foreground hover:bg-muted'
-                  }`}
-                >
-                  {copied ? (
-                    <>
-                      <svg className="size-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-                      </svg>
-                      Скопировано
-                    </>
-                  ) : (
-                    <>
-                      <svg className="size-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M15.666 3.888A2.25 2.25 0 0013.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 01-.75.75H9a.75.75 0 01-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 01-2.25 2.25H6.75A2.25 2.25 0 014.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 011.927-.184" />
-                      </svg>
-                      Копировать
-                    </>
-                  )}
-                </button>
-
-                {/* Download Dropdown */}
-                <div className="relative">
+        {/* Right: Action Buttons */}
+        <div className="flex items-center gap-1.5">
+          {/* Reset (inline confirm, only when hasChanges) */}
+          {hasChanges && (
+            <>
+              {showResetConfirm ? (
+                <div className="expand-enter flex items-center gap-1.5 mr-1">
+                  <span className="text-[12px] text-muted-foreground">Сбросить?</span>
                   <button
-                    onClick={() => setDownloadMenuOpen(!downloadMenuOpen)}
-                    disabled={!editableGenerated}
-                    aria-label="Скачать документ"
-                    className="flex cursor-pointer items-center gap-1.5 rounded-lg border border-border bg-background px-3 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-40"
+                    onClick={handleReset}
+                    className="rounded-md bg-foreground px-2.5 py-1 text-[12px] font-medium text-background transition-all duration-150 hover:opacity-80"
                   >
-                    <svg className="size-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
-                    </svg>
-                    Скачать
-                    <svg className="size-3 ml-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                    Да
+                  </button>
+                  <button
+                    onClick={() => setShowResetConfirm(false)}
+                    className="rounded-md px-2.5 py-1 text-[12px] font-medium text-muted-foreground transition-colors duration-150 hover:text-foreground"
+                  >
+                    Нет
+                  </button>
+                </div>
+              ) : (
+                <span className="tooltip-trigger relative inline-flex">
+                  <button
+                    onClick={() => setShowResetConfirm(true)}
+                    aria-label="Сбросить к оригинальной версии"
+                    className="flex size-8 items-center justify-center rounded-lg text-muted-foreground transition-colors duration-200 hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  >
+                    <svg className="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
                     </svg>
                   </button>
+                  <span className="tooltip-content mb-2.5 w-auto whitespace-nowrap rounded-lg bg-foreground px-3 py-2 text-[12px] font-normal text-background shadow-lg dark:bg-[oklch(25%_0.025_260)] dark:text-[oklch(90%_0.01_264)]">
+                    Сбросить
+                  </span>
+                </span>
+              )}
+            </>
+          )}
 
-                  {downloadMenuOpen && (
-                    <>
-                      {/* Backdrop to close dropdown */}
-                      <div
-                        className="fixed inset-0 z-10"
-                        onClick={() => setDownloadMenuOpen(false)}
-                      />
-                      {/* Dropdown Menu */}
-                      <div className="absolute right-0 top-full mt-1 z-20 w-48 overflow-hidden rounded-lg border border-border bg-background shadow-lg">
-                        <button
-                          onClick={handleDownloadMarkdown}
-                          className="flex w-full items-center gap-2 px-3 py-2 text-left text-[13px] text-foreground transition-colors hover:bg-muted"
-                        >
-                          <svg className="size-4 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m6.75 12H9m1.5-12H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
-                          </svg>
-                          <div>
-                            <div className="font-medium">Markdown (.md)</div>
-                            <div className="text-xs text-muted-foreground">Исходный формат</div>
-                          </div>
-                        </button>
-                        <button
-                          onClick={handleDownloadHTML}
-                          className="flex w-full items-center gap-2 px-3 py-2 text-left text-[13px] text-foreground transition-colors hover:bg-muted"
-                        >
-                          <svg className="size-4 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5" />
-                          </svg>
-                          <div>
-                            <div className="font-medium">HTML (.html)</div>
-                            <div className="text-xs text-muted-foreground">Готовая страница</div>
-                          </div>
-                        </button>
-                      </div>
-                    </>
-                  )}
-                </div>
-              </div>
-            </div>
+          {/* Copy */}
+          <span className="tooltip-trigger relative inline-flex">
+            <button
+              onClick={handleCopy}
+              aria-label={copied ? 'Текст скопирован' : 'Копировать текст'}
+              className={`flex size-8 items-center justify-center rounded-lg transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
+                copied
+                  ? 'text-success'
+                  : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+              }`}
+            >
+              {copied ? (
+                <svg className="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                </svg>
+              ) : (
+                <svg className="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.666 3.888A2.25 2.25 0 0013.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 01-.75.75H9a.75.75 0 01-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 01-2.25 2.25H6.75A2.25 2.25 0 014.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 011.927-.184" />
+                </svg>
+              )}
+            </button>
+            <span className="tooltip-content mb-2.5 w-auto whitespace-nowrap rounded-lg bg-foreground px-3 py-2 text-[12px] font-normal text-background shadow-lg dark:bg-[oklch(25%_0.025_260)] dark:text-[oklch(90%_0.01_264)]">
+              {copied ? 'Скопировано' : 'Копировать'}
+            </span>
+          </span>
 
-            {/* Document Content: Preview or Edit Mode */}
-            {viewMode === 'preview' ? (
-              /* Preview Mode: ReactMarkdown */
-              <div className="prose prose-slate max-w-none p-6">
-                <ReactMarkdown
-                  remarkPlugins={[remarkGfm]}
-                  components={{
-                    h1: ({ children }) => (
-                      <h1 className="text-[24px] font-semibold tracking-tight text-foreground mb-4 mt-6 first:mt-0">
-                        {children}
-                      </h1>
-                    ),
-                    h2: ({ children }) => (
-                      <h2 className="text-[20px] font-semibold tracking-tight text-foreground mb-3 mt-6">
-                        {children}
-                      </h2>
-                    ),
-                    h3: ({ children }) => (
-                      <h3 className="text-[17px] font-semibold tracking-tight text-foreground mb-2 mt-5">
-                        {children}
-                      </h3>
-                    ),
-                    p: ({ children }) => (
-                      <p className="text-[15px] leading-relaxed text-foreground mb-4">
-                        {children}
-                      </p>
-                    ),
-                    ul: ({ children }) => (
-                      <ul className="space-y-2 mb-4 pl-6 list-disc marker:text-muted-foreground">
-                        {children}
-                      </ul>
-                    ),
-                    ol: ({ children }) => (
-                      <ol className="space-y-2 mb-4 pl-6 list-decimal marker:text-muted-foreground">
-                        {children}
-                      </ol>
-                    ),
-                    li: ({ children }) => (
-                      <li className="text-[15px] leading-relaxed text-foreground">
-                        {children}
-                      </li>
-                    ),
-                    blockquote: ({ children }) => (
-                      <blockquote className="border-l-4 border-border pl-4 italic text-muted-foreground mb-4">
-                        {children}
-                      </blockquote>
-                    ),
-                    strong: ({ children }) => (
-                      <strong className="font-semibold text-foreground">
-                        {children}
-                      </strong>
-                    ),
-                    a: ({ href, children }) => (
-                      <a
-                        href={href}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-foreground underline decoration-muted-foreground hover:decoration-foreground transition-colors"
-                      >
-                        {children}
-                      </a>
-                    ),
-                  }}
-                >
-                  {editableGenerated}
-                </ReactMarkdown>
-              </div>
-            ) : (
-              /* Edit Mode: ContentEditable HTML */
-              <div
-                ref={editableRef}
-                contentEditable
-                suppressContentEditableWarning
-                className="min-h-[480px] w-full p-6 focus:outline-none focus:ring-2 focus:ring-ring/20 focus:ring-inset rounded-b-xl"
-                style={{
-                  // Inline styles for contentEditable formatting
-                  wordWrap: 'break-word',
-                  whiteSpace: 'pre-wrap',
-                }}
+          {/* Download Dropdown */}
+          <div ref={downloadRef} className="relative">
+            <span className="tooltip-trigger relative inline-flex">
+              <button
+                onClick={() => setDownloadMenuOpen(!downloadMenuOpen)}
+                aria-label="Скачать документ"
+                aria-expanded={downloadMenuOpen}
+                aria-haspopup="menu"
+                className="flex size-8 items-center justify-center rounded-lg text-muted-foreground transition-colors duration-200 hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               >
-                <ReactMarkdown
-                  remarkPlugins={[remarkGfm]}
-                  components={{
-                    h1: ({ children }) => (
-                      <h1 className="text-[24px] font-semibold tracking-tight text-foreground mb-4 mt-6 first:mt-0">
-                        {children}
-                      </h1>
-                    ),
-                    h2: ({ children }) => (
-                      <h2 className="text-[20px] font-semibold tracking-tight text-foreground mb-3 mt-6">
-                        {children}
-                      </h2>
-                    ),
-                    h3: ({ children }) => (
-                      <h3 className="text-[17px] font-semibold tracking-tight text-foreground mb-2 mt-5">
-                        {children}
-                      </h3>
-                    ),
-                    p: ({ children }) => (
-                      <p className="text-[15px] leading-relaxed text-foreground mb-4">
-                        {children}
-                      </p>
-                    ),
-                    ul: ({ children }) => (
-                      <ul className="space-y-2 mb-4 pl-6 list-disc marker:text-muted-foreground">
-                        {children}
-                      </ul>
-                    ),
-                    ol: ({ children }) => (
-                      <ol className="space-y-2 mb-4 pl-6 list-decimal marker:text-muted-foreground">
-                        {children}
-                      </ol>
-                    ),
-                    li: ({ children }) => (
-                      <li className="text-[15px] leading-relaxed text-foreground">
-                        {children}
-                      </li>
-                    ),
-                    blockquote: ({ children }) => (
-                      <blockquote className="border-l-4 border-border pl-4 italic text-muted-foreground mb-4">
-                        {children}
-                      </blockquote>
-                    ),
-                    strong: ({ children }) => (
-                      <strong className="font-semibold text-foreground">
-                        {children}
-                      </strong>
-                    ),
-                    a: ({ href, children }) => (
-                      <a
-                        href={href}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-foreground underline decoration-muted-foreground hover:decoration-foreground transition-colors"
-                      >
-                        {children}
-                      </a>
-                    ),
-                  }}
-                >
-                  {editableGenerated}
-                </ReactMarkdown>
-              </div>
+                <svg className="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                </svg>
+              </button>
+              {!downloadMenuOpen && (
+                <span className="tooltip-content mb-2.5 w-auto whitespace-nowrap rounded-lg bg-foreground px-3 py-2 text-[12px] font-normal text-background shadow-lg dark:bg-[oklch(25%_0.025_260)] dark:text-[oklch(90%_0.01_264)]">
+                  Скачать
+                </span>
+              )}
+            </span>
+
+            {downloadMenuOpen && (
+              <>
+                <div className="fixed inset-0 z-10" onClick={() => setDownloadMenuOpen(false)} />
+                <div className="dropdown-enter absolute right-0 top-full z-20 mt-1.5 w-48 overflow-hidden rounded-lg border border-border bg-card p-1 shadow-lg" role="menu">
+                  {!hasChanges && (
+                    <button
+                      onClick={handleDownloadMarkdown}
+                      role="menuitem"
+                      className="flex w-full items-center gap-2.5 rounded-md px-2.5 py-2 text-left transition-colors duration-150 hover:bg-muted focus-visible:outline-none focus-visible:bg-muted"
+                    >
+                      <span className="text-[13px] font-medium text-foreground">.md</span>
+                      <span className="text-[12px] text-muted-foreground">Markdown</span>
+                    </button>
+                  )}
+                  <button
+                    onClick={handleDownloadHTML}
+                    role="menuitem"
+                    className="flex w-full items-center gap-2.5 rounded-md px-2.5 py-2 text-left transition-colors duration-150 hover:bg-muted focus-visible:outline-none focus-visible:bg-muted"
+                  >
+                    <span className="text-[13px] font-medium text-foreground">.html</span>
+                    <span className="text-[12px] text-muted-foreground">HTML страница</span>
+                  </button>
+                </div>
+              </>
             )}
           </div>
-
-          {/* Info Card */}
-          <div className="flex items-start gap-3 rounded-xl border border-border bg-card p-4">
-            <svg className="size-4 shrink-0 text-muted-foreground mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
-            </svg>
-            <p className="text-[13px] leading-relaxed text-foreground/80">
-              {viewMode === 'preview' ? (
-                <>Документ отображается так, как он будет выглядеть на вашем сайте. Нажмите <span className="font-medium text-foreground">«Редактировать»</span>, чтобы внести изменения.</>
-              ) : (
-                <>Редактируйте документ прямо в тексте — изменяйте заголовки, списки и параграфы. Нажмите <span className="font-medium text-foreground">«Сохранить»</span> когда закончите. Случайно удалили что-то? Используйте кнопку <span className="font-medium text-foreground">«Сбросить»</span>.</>
-              )}
-            </p>
-          </div>
         </div>
+      </div>
+
+      {/* Document Content — single container, contentEditable in edit mode */}
+      <div
+        className={`overflow-hidden rounded-xl border transition-all duration-300 ${
+          viewMode === 'edit'
+            ? 'border-foreground/20 ring-1 ring-foreground/10'
+            : 'border-border'
+        }`}
+        role="document"
+        aria-label={viewMode === 'edit' ? 'Редактор документа' : 'Предпросмотр политики cookie'}
+      >
+        <div
+          ref={contentRef}
+          onInput={viewMode === 'edit' ? handleInput : undefined}
+          suppressContentEditableWarning
+          className={`doc-content px-5 py-6 outline-none sm:px-8 sm:py-8 ${
+            viewMode === 'edit' ? 'cursor-text' : ''
+          }`}
+        >
+          {editedHtml === null ? (
+            <ReactMarkdown
+              remarkPlugins={[remarkGfm]}
+              components={markdownComponents}
+            >
+              {generatedMarkdown}
+            </ReactMarkdown>
+          ) : (
+            <div dangerouslySetInnerHTML={{ __html: editedHtml }} />
+          )}
+        </div>
+      </div>
+
+      {/* Edit mode hint */}
+      {viewMode === 'edit' && (
+        <p className="mode-crossfade-enter mt-3 text-[12px] text-muted-foreground/60">
+          Кликните на текст для редактирования. Изменения сохраняются автоматически.
+        </p>
+      )}
     </div>
   )
+}
+
+/* ─────────────────────────────────────────
+   Markdown Component Mappings
+   ───────────────────────────────────────── */
+const markdownComponents = {
+  h1: ({ children }: { children?: React.ReactNode }) => (
+    <h1 className="text-[24px] font-semibold tracking-tight text-foreground mb-4 mt-6 first:mt-0">
+      {children}
+    </h1>
+  ),
+  h2: ({ children }: { children?: React.ReactNode }) => (
+    <h2 className="text-[20px] font-semibold tracking-tight text-foreground mb-3 mt-6">
+      {children}
+    </h2>
+  ),
+  h3: ({ children }: { children?: React.ReactNode }) => (
+    <h3 className="text-[17px] font-semibold tracking-tight text-foreground mb-2 mt-5">
+      {children}
+    </h3>
+  ),
+  p: ({ children }: { children?: React.ReactNode }) => (
+    <p className="text-[15px] leading-relaxed text-foreground mb-4">
+      {children}
+    </p>
+  ),
+  ul: ({ children }: { children?: React.ReactNode }) => (
+    <ul className="space-y-2 mb-4 pl-6 list-disc marker:text-muted-foreground">
+      {children}
+    </ul>
+  ),
+  ol: ({ children }: { children?: React.ReactNode }) => (
+    <ol className="space-y-2 mb-4 pl-6 list-decimal marker:text-muted-foreground">
+      {children}
+    </ol>
+  ),
+  li: ({ children }: { children?: React.ReactNode }) => (
+    <li className="text-[15px] leading-relaxed text-foreground">
+      {children}
+    </li>
+  ),
+  blockquote: ({ children }: { children?: React.ReactNode }) => (
+    <blockquote className="border-l-4 border-border pl-4 italic text-muted-foreground mb-4">
+      {children}
+    </blockquote>
+  ),
+  strong: ({ children }: { children?: React.ReactNode }) => (
+    <strong className="font-semibold text-foreground">
+      {children}
+    </strong>
+  ),
+  em: ({ children }: { children?: React.ReactNode }) => (
+    <em className="italic text-foreground">
+      {children}
+    </em>
+  ),
+  a: ({ href, children }: { href?: string; children?: React.ReactNode }) => (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="text-foreground underline decoration-muted-foreground hover:decoration-foreground transition-colors"
+    >
+      {children}
+    </a>
+  ),
 }

@@ -423,9 +423,10 @@ export function CookieGeneratorClient() {
               <ul className="mt-3 space-y-2">
                 {activeTab === 'document' && (
                   <>
-                    <TipItem>Можете сгенерировать текст или вставить свой</TipItem>
-                    <TipItem>Формат Markdown поддерживается большинством CMS</TipItem>
-                    <TipItem>Скопируйте или скачайте файл для вашего сайта</TipItem>
+                    <TipItem>Документ создан автоматически по данным из шагов 1 и 2</TipItem>
+                    <TipItem>Переключитесь в «Редактор» для правки текста</TipItem>
+                    <TipItem>Скопируйте текст или скачайте файл (.html)</TipItem>
+                    <TipItem>Сброс вернёт документ к оригинальной версии</TipItem>
                   </>
                 )}
                 {activeTab === 'result' && (
