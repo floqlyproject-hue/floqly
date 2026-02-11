@@ -4,6 +4,7 @@ import { useMemo, useRef, useState, useCallback } from 'react'
 import type { CookieConfig } from '../types'
 import { LiquidGlassIsland } from './liquid-glass-island'
 import { BackgroundSwitcherIsland, type PreviewBackground } from './background-switcher-island'
+import { ClassicBanner, BANNER_DEFAULTS } from './banner-styles'
 
 interface BannerPreviewProps {
   config: CookieConfig
@@ -159,49 +160,15 @@ export function BannerPreview({
               </div>
             )}
 
-            {/* Cookie Banner Overlay */}
+            {/* Cookie Banner Overlay — uses style component */}
             <div
               className="absolute bottom-0 left-0 right-0"
               style={{ scale: '0.75', transformOrigin: 'bottom center' }}
             >
-              <div className="border-t border-zinc-200/80 bg-white/95 px-6 py-4 backdrop-blur-sm">
-                <div className="flex items-start gap-3">
-                  {/* Cookie Icon */}
-                  <div className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-lg bg-amber-50">
-                    <svg className="size-4 text-amber-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
-                      <circle cx="12" cy="12" r="10" />
-                      <circle cx="8" cy="9" r="1.5" fill="currentColor" stroke="none" />
-                      <circle cx="15" cy="7" r="1" fill="currentColor" stroke="none" />
-                      <circle cx="10" cy="14" r="1" fill="currentColor" stroke="none" />
-                      <circle cx="16" cy="13" r="1.5" fill="currentColor" stroke="none" />
-                      <circle cx="13" cy="17" r="1" fill="currentColor" stroke="none" />
-                    </svg>
-                  </div>
-
-                  {/* Text */}
-                  <div className="min-w-0 flex-1">
-                    <p className="text-[13px] font-medium text-zinc-900">
-                      Мы используем cookie
-                    </p>
-                    <p className="mt-0.5 text-[12px] leading-relaxed text-zinc-500">
-                      {companyName} использует файлы cookie для улучшения работы сайта и анализа трафика.
-                    </p>
-                  </div>
-
-                  {/* Buttons */}
-                  <div className="flex shrink-0 items-center gap-2">
-                    <button className="rounded-lg px-3 py-2 text-[12px] font-medium text-zinc-500 transition-colors hover:text-zinc-700">
-                      Отклонить
-                    </button>
-                    <button className="rounded-lg border border-zinc-200 px-3 py-2 text-[12px] font-medium text-zinc-700 transition-colors hover:bg-zinc-50">
-                      Настроить
-                    </button>
-                    <button className="rounded-lg bg-zinc-900 px-4 py-2 text-[12px] font-medium text-white transition-colors hover:bg-zinc-800">
-                      Принять все
-                    </button>
-                  </div>
-                </div>
-              </div>
+              <ClassicBanner
+                {...BANNER_DEFAULTS}
+                description={`${companyName} использует файлы cookie для улучшения работы сайта и анализа трафика.`}
+              />
             </div>
           </div>
         </div>
