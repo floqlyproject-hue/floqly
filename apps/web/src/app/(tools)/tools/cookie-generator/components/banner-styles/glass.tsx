@@ -62,6 +62,43 @@ function CookieIcon({ color }: { color: string }) {
   )
 }
 
+/** Render description with an optional link-word highlighted */
+function DescriptionWithLink({
+  text,
+  linkWordEnabled,
+  linkWord,
+  linkColor,
+}: {
+  text: string
+  linkWordEnabled?: boolean
+  linkWord?: string
+  linkColor: string
+}) {
+  if (!linkWordEnabled || !linkWord) return <>{text}</>
+  const idx = text.toLowerCase().indexOf(linkWord.toLowerCase())
+  if (idx === -1) return <>{text}</>
+  const before = text.slice(0, idx)
+  const match = text.slice(idx, idx + linkWord.length)
+  const after = text.slice(idx + linkWord.length)
+  return (
+    <>
+      {before}
+      <span
+        style={{
+          color: linkColor,
+          textDecoration: 'underline',
+          textDecorationColor: `${linkColor}80`,
+          textUnderlineOffset: '2px',
+          cursor: 'pointer',
+        }}
+      >
+        {match}
+      </span>
+      {after}
+    </>
+  )
+}
+
 /* ── Glass Banner ── */
 export function GlassBanner({
   title,
@@ -71,6 +108,10 @@ export function GlassBanner({
   settingsText,
   showDecline,
   showSettings,
+  linkWordEnabled,
+  linkWord,
+  linkLineEnabled,
+  linkLineText,
   backgroundColor,
   textColor,
   buttonColor,
@@ -194,8 +235,27 @@ export function GlassBanner({
               className="mt-px text-[10.5px] leading-snug"
               style={{ color: descColor }}
             >
-              {description}
+              <DescriptionWithLink
+                text={description}
+                linkWordEnabled={linkWordEnabled}
+                linkWord={linkWord}
+                linkColor={bgDark ? '#93C5FD' : buttonColor}
+              />
             </p>
+            {linkLineEnabled && linkLineText && (
+              <p
+                className="mt-0.5 text-[10px] leading-snug"
+                style={{
+                  color: bgDark ? '#93C5FD' : buttonColor,
+                  textDecoration: 'underline',
+                  textDecorationColor: bgDark ? 'rgba(147,197,253,0.4)' : hexToRgba(buttonColor, 0.4),
+                  textUnderlineOffset: '2px',
+                  cursor: 'pointer',
+                }}
+              >
+                {linkLineText}
+              </p>
+            )}
           </div>
         </div>
 

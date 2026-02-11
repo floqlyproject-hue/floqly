@@ -1,7 +1,7 @@
 # Floqly — Прогресс разработки
 
-> Последнее обновление: 2026-02-11
-> Текущая фаза: **Подготовка к разработке Smart Widget**
+> Последнее обновление: 2026-02-12
+> Текущая фаза: **Доработка Cookie Generator Step 4**
 > Задачи: обсуждаются в сессии, история фиксируется ниже
 
 ---
@@ -10,7 +10,7 @@
 
 | Компонент | Статус | Детали |
 |-----------|--------|--------|
-| Cookie Generator | 93% | Steps 1-5 дизайн. Step 4: ClassicBanner, liquid-glass islands. Нужно: morph-панели, доработать Step 2, auto-fill |
+| Cookie Generator | 95% | Step 4: суб-табы Содержание/Оформление, GlassBanner, ссылки в баннере. Нужно: остальные стили, auto-fill |
 | Парсер сайтов | MVP готов | 3-слойная архитектура, 16 сигнатур, интеграция в Cookie Generator |
 | Smart Widget UX Guide | Готов | `docs/SMART_WIDGET_UX_GUIDE.md` (гайд по анимациям, UI, триггерам) |
 | Simple Widget дизайны | Design-01 ready | Sandbox: `widget-preview/design-XX/` |
@@ -22,6 +22,17 @@
 ---
 
 ## Последние 5 сессий
+
+### 2026-02-12 — Step 4 редизайн: суб-табы + GlassBanner + ссылки
+- **Step 4 разбит на два суб-таба:** «Содержание» (текст, кнопки, ссылки) и «Оформление» (визуальный редактор)
+- **GlassBanner** — 5-слойный glass-эффект (backdrop blur, tint, shine, borders), адаптивные цвета
+- **Суб-таб «Содержание»:** тон сообщения (5 шаблонов), toggle кнопок, ссылка-слово в тексте, отдельная строка-ссылка, popup/page target
+- **Ссылки в баннере:** поддержка linkWordEnabled/linkLineEnabled в ClassicBanner и GlassBanner
+- **Island обновлён:** hideTextPanel режим (3 панели вместо 4 на суб-табе Оформление)
+- **banner-preview.tsx:** поддержка controlled state (внешний customization/onChange)
+- TextState расширен: settings, showDecline, showSettings, link-поля
+- Подсказка с прогрессивным раскрытием для пользователя
+- План: `docs/plans/PLAN-step4-redesign.md`
 
 ### 2026-02-11 — ClassicBanner + ESLint fixes + liquid-glass restore
 - **ClassicBanner** — премиальный стиль cookie-баннера для Step 4 preview
