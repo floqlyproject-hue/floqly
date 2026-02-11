@@ -92,6 +92,7 @@ export function BannerPreview({
               onBackgroundChange={setActiveBackground}
               onCustomImageUpload={handleCustomImageUpload}
               hasScreenshot={!!screenshotUrl}
+              containerRef={previewRef}
             />
 
             {/* Screenshot / Custom image */}
