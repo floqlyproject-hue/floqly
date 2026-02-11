@@ -28,9 +28,8 @@ export interface BannerStyleProps {
 /** Default values — used when island panels haven't emitted changes yet */
 export const BANNER_DEFAULTS: BannerStyleProps = {
   title: 'Мы используем cookie',
-  description:
-    'Наш сайт использует файлы cookie для улучшения работы сайта и анализа трафика.',
-  acceptText: 'Принять все',
+  description: 'Для удобства работы сайт использует cookie.',
+  acceptText: 'Принять',
   declineText: 'Отклонить',
   settingsText: 'Настроить',
   showDecline: true,

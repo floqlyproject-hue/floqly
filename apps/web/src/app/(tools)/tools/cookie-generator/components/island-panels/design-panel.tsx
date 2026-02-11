@@ -1,10 +1,10 @@
 'use client'
 
-import { useRef, useState } from 'react'
+import { useRef } from 'react'
 import { Pipette } from 'lucide-react'
 
 /* ── Banner Style Presets ── */
-type StyleId = 'classic' | 'glass' | 'neo' | 'minimal' | 'gradient' | 'outlined'
+export type StyleId = 'classic' | 'glass' | 'neo' | 'minimal' | 'gradient' | 'outlined'
 
 const STYLE_ROWS: { id: StyleId; label: string }[][] = [
   [
@@ -20,21 +20,37 @@ const STYLE_ROWS: { id: StyleId; label: string }[][] = [
 ]
 
 /* ── Preset Colors ── */
-const BG_COLORS = [
+export const BG_COLORS = [
   { id: 'white', color: '#FFFFFF', label: 'Белый' },
   { id: 'dark', color: '#1A1A1A', label: 'Тёмный' },
   { id: 'gray', color: '#F5F5F5', label: 'Серый' },
   { id: 'blue', color: '#E8EEF5', label: 'Голубой' },
 ]
 
-const BTN_COLORS = [
+export const BTN_COLORS = [
   { id: 'black', color: '#000000', label: 'Чёрный' },
   { id: 'blue', color: '#3B82F6', label: 'Синий' },
   { id: 'green', color: '#10B981', label: 'Зелёный' },
   { id: 'purple', color: '#8B5CF6', label: 'Фиолетовый' },
 ]
 
-const SHADOWS = ['Нет', 'Мягкая', 'Сильная'] as const
+export type ShadowLabel = 'Нет' | 'Мягкая' | 'Сильная'
+const SHADOWS: ShadowLabel[] = ['Нет', 'Мягкая', 'Сильная']
+
+export interface DesignState {
+  bannerStyle: StyleId
+  bgColor: string       // preset ID or 'custom'
+  bgCustom: string      // hex
+  btnColor: string      // preset ID or 'custom'
+  btnCustom: string     // hex
+  radius: number
+  shadow: ShadowLabel
+}
+
+interface DesignPanelProps {
+  value: DesignState
+  onChange: (next: DesignState) => void
+}
 
 /* ── Color Picker Row ── */
 function ColorPickerRow({
@@ -128,15 +144,7 @@ function ColorPickerRow({
 }
 
 /* ── Design Panel ── */
-export function DesignPanel() {
-  const [bannerStyle, setBannerStyle] = useState<StyleId>('classic')
-  const [bgColor, setBgColor] = useState('white')
-  const [bgCustom, setBgCustom] = useState('#FFFFFF')
-  const [btnColor, setBtnColor] = useState('black')
-  const [btnCustom, setBtnCustom] = useState('#000000')
-  const [radius, setRadius] = useState(12)
-  const [shadow, setShadow] = useState<string>('Мягкая')
-
+export function DesignPanel({ value, onChange }: DesignPanelProps) {
   return (
     <div className="space-y-3.5">
       {/* ── Стиль: compact 2-row pills ── */}
@@ -149,8 +157,8 @@ export function DesignPanel() {
                 <button
                   key={s.id}
                   type="button"
-                  onClick={() => setBannerStyle(s.id)}
-                  className={`island-segment ${bannerStyle === s.id ? 'island-segment-active' : ''}`}
+                  onClick={() => onChange({ ...value, bannerStyle: s.id })}
+                  className={`island-segment ${value.bannerStyle === s.id ? 'island-segment-active' : ''}`}
                 >
                   {s.label}
                 </button>
@@ -165,13 +173,10 @@ export function DesignPanel() {
         <label className="island-label">Фон</label>
         <ColorPickerRow
           presets={BG_COLORS}
-          selected={bgColor}
-          customColor={bgCustom}
-          onPresetSelect={(id) => setBgColor(id)}
-          onCustomSelect={(color) => {
-            setBgCustom(color)
-            setBgColor('custom')
-          }}
+          selected={value.bgColor}
+          customColor={value.bgCustom}
+          onPresetSelect={(id) => onChange({ ...value, bgColor: id })}
+          onCustomSelect={(color) => onChange({ ...value, bgCustom: color, bgColor: 'custom' })}
         />
       </div>
 
@@ -180,13 +185,10 @@ export function DesignPanel() {
         <label className="island-label">Кнопки</label>
         <ColorPickerRow
           presets={BTN_COLORS}
-          selected={btnColor}
-          customColor={btnCustom}
-          onPresetSelect={(id) => setBtnColor(id)}
-          onCustomSelect={(color) => {
-            setBtnCustom(color)
-            setBtnColor('custom')
-          }}
+          selected={value.btnColor}
+          customColor={value.btnCustom}
+          onPresetSelect={(id) => onChange({ ...value, btnColor: id })}
+          onCustomSelect={(color) => onChange({ ...value, btnCustom: color, btnColor: 'custom' })}
         />
       </div>
 
@@ -194,15 +196,15 @@ export function DesignPanel() {
       <div>
         <div className="flex items-center justify-between">
           <label className="island-label mb-0">Скругление</label>
-          <span className="text-[11px] tabular-nums text-muted-foreground">{radius}px</span>
+          <span className="text-[11px] tabular-nums text-muted-foreground">{value.radius}px</span>
         </div>
         <input
           type="range"
           min={0}
           max={24}
           step={2}
-          value={radius}
-          onChange={(e) => setRadius(Number(e.target.value))}
+          value={value.radius}
+          onChange={(e) => onChange({ ...value, radius: Number(e.target.value) })}
           className="island-slider mt-1.5 w-full"
         />
       </div>
@@ -215,8 +217,8 @@ export function DesignPanel() {
             <button
               key={s}
               type="button"
-              onClick={() => setShadow(s)}
-              className={`island-segment ${shadow === s ? 'island-segment-active' : ''}`}
+              onClick={() => onChange({ ...value, shadow: s })}
+              className={`island-segment ${value.shadow === s ? 'island-segment-active' : ''}`}
             >
               {s}
             </button>

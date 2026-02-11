@@ -2,9 +2,134 @@
 
 import { useMemo, useRef, useState, useCallback } from 'react'
 import type { CookieConfig } from '../types'
-import { LiquidGlassIsland } from './liquid-glass-island'
+import { LiquidGlassIsland, type BannerCustomization } from './liquid-glass-island'
 import { BackgroundSwitcherIsland, type PreviewBackground } from './background-switcher-island'
-import { ClassicBanner, BANNER_DEFAULTS } from './banner-styles'
+import { ClassicBanner } from './banner-styles'
+import { BG_COLORS, BTN_COLORS, TONE_TEXTS, type ShadowLabel, type PositionState } from './island-panels'
+import type { BannerStyleProps } from './banner-styles/types'
+
+/* ── Color resolution: preset ID → hex ── */
+
+const BG_COLOR_MAP = Object.fromEntries(BG_COLORS.map((c) => [c.id, c.color]))
+const BTN_COLOR_MAP = Object.fromEntries(BTN_COLORS.map((c) => [c.id, c.color]))
+
+const SHADOW_MAP: Record<ShadowLabel, BannerStyleProps['shadow']> = {
+  'Нет': 'none',
+  'Мягкая': 'soft',
+  'Сильная': 'strong',
+}
+
+function resolveBgColor(bgColor: string, bgCustom: string): string {
+  if (bgColor === 'custom') return bgCustom
+  return BG_COLOR_MAP[bgColor] ?? '#FFFFFF'
+}
+
+function resolveBtnColor(btnColor: string, btnCustom: string): string {
+  if (btnColor === 'custom') return btnCustom
+  return BTN_COLOR_MAP[btnColor] ?? '#000000'
+}
+
+/* ── Position → CSS style ── */
+
+function computeBannerContainerStyle(pos: PositionState): React.CSSProperties {
+  const style: React.CSSProperties = {
+    position: 'absolute',
+    transition: 'all 0.3s ease',
+    scale: '0.75',
+  }
+
+  // Vertical
+  if (pos.vert === 'Сверху') {
+    style.top = pos.offsetY
+    style.bottom = 'auto'
+    style.transformOrigin = 'top center'
+  } else if (pos.vert === 'Центр') {
+    style.top = '50%'
+    style.bottom = 'auto'
+    style.transform = 'translateY(-50%)'
+    style.transformOrigin = 'center center'
+  } else {
+    // 'Снизу' (default)
+    style.bottom = pos.offsetY
+    style.top = 'auto'
+    style.transformOrigin = 'bottom center'
+  }
+
+  // Width + Horizontal
+  if (pos.width === 'Вытянутый') {
+    style.left = pos.offsetX
+    style.right = pos.offsetX
+  } else if (pos.width === 'Обычный') {
+    style.maxWidth = '75%'
+    if (pos.horiz === 'Слева') {
+      style.left = pos.offsetX
+      style.right = 'auto'
+    } else if (pos.horiz === 'Справа') {
+      style.right = pos.offsetX
+      style.left = 'auto'
+    } else {
+      // Центр
+      style.left = '50%'
+      style.right = 'auto'
+      style.transform = (style.transform ? style.transform + ' ' : '') + 'translateX(-50%)'
+    }
+  } else {
+    // 'Компакт'
+    style.maxWidth = 540
+    if (pos.horiz === 'Слева') {
+      style.left = pos.offsetX
+      style.right = 'auto'
+    } else if (pos.horiz === 'Справа') {
+      style.right = pos.offsetX
+      style.left = 'auto'
+    } else {
+      // Центр
+      style.left = '50%'
+      style.right = 'auto'
+      style.transform = (style.transform ? style.transform + ' ' : '') + 'translateX(-50%)'
+    }
+  }
+
+  return style
+}
+
+/* ── Default customization state ── */
+
+const DEFAULT_CUSTOMIZATION: BannerCustomization = {
+  text: {
+    tone: 'friendly',
+    title: TONE_TEXTS.friendly.title,
+    desc: TONE_TEXTS.friendly.desc,
+    accept: TONE_TEXTS.friendly.accept,
+    decline: TONE_TEXTS.friendly.decline,
+  },
+  design: {
+    bannerStyle: 'classic',
+    bgColor: 'white',
+    bgCustom: '#FFFFFF',
+    btnColor: 'black',
+    btnCustom: '#000000',
+    radius: 12,
+    shadow: 'Мягкая',
+  },
+  position: {
+    width: 'Обычный',
+    vert: 'Снизу',
+    horiz: 'Центр',
+    offsetX: 0,
+    offsetY: 16,
+  },
+  animation: {
+    anim: 'slide',
+    trigger: 'time',
+    delay: 2,
+    scrollPx: 300,
+    backdrop: 'Выкл',
+    speed: 0.3,
+  },
+}
+
+/* ── Component ── */
 
 interface BannerPreviewProps {
   config: CookieConfig
@@ -41,6 +166,31 @@ export function BannerPreview({
     setCustomImageUrl(url)
     setActiveBackground('custom')
   }, [])
+
+  // Banner customization — lifted state from island panels
+  const [customization, setCustomization] = useState<BannerCustomization>(DEFAULT_CUSTOMIZATION)
+
+  // Resolve customization → BannerStyleProps
+  const bannerProps: BannerStyleProps = useMemo(() => ({
+    title: customization.text.title,
+    description: customization.text.desc || `${companyName} использует файлы cookie для улучшения работы сайта и анализа трафика.`,
+    acceptText: customization.text.accept,
+    declineText: customization.text.decline,
+    settingsText: 'Настроить',
+    showDecline: true,
+    showSettings: true,
+    backgroundColor: resolveBgColor(customization.design.bgColor, customization.design.bgCustom),
+    textColor: '#111111',
+    buttonColor: resolveBtnColor(customization.design.btnColor, customization.design.btnCustom),
+    borderRadius: customization.design.radius,
+    shadow: SHADOW_MAP[customization.design.shadow],
+  }), [customization.text, customization.design, companyName])
+
+  // Position style
+  const bannerContainerStyle = useMemo(
+    () => computeBannerContainerStyle(customization.position),
+    [customization.position],
+  )
 
   // Which image to display in the preview
   const displayImage = activeBackground === 'screenshot' ? screenshotUrl
@@ -160,26 +310,24 @@ export function BannerPreview({
               </div>
             )}
 
-            {/* Cookie Banner Overlay — uses style component */}
-            <div
-              className="absolute bottom-0 left-0 right-0"
-              style={{ scale: '0.75', transformOrigin: 'bottom center' }}
-            >
-              <ClassicBanner
-                {...BANNER_DEFAULTS}
-                description={`${companyName} использует файлы cookie для улучшения работы сайта и анализа трафика.`}
-              />
+            {/* Cookie Banner Overlay — dynamic position from island panels */}
+            <div style={bannerContainerStyle}>
+              <ClassicBanner {...bannerProps} />
             </div>
           </div>
         </div>
 
         {/* Editing Island — outside Browser Frame so tooltips aren't clipped */}
-        <LiquidGlassIsland containerRef={previewRef} />
+        <LiquidGlassIsland
+          containerRef={previewRef}
+          customization={customization}
+          onCustomizationChange={setCustomization}
+        />
       </div>
 
       {/* Info */}
       <p className="text-center text-xs text-muted-foreground">
-        Баннер отображается в нижней части страницы
+        Настройте баннер через панель инструментов слева
       </p>
     </div>
   )

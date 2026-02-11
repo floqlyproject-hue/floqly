@@ -33,10 +33,9 @@ const SHADOW_MAP = {
   strong: '0 -4px 16px rgba(0,0,0,0.08), 0 -1px 3px rgba(0,0,0,0.04)',
 } as const
 
-/* ── Cookie Icon — warm, friendly, professional ── */
+/* ── Cookie Icon — compact, warm ── */
 function CookieIcon({ accentColor }: { accentColor: string }) {
   const isAccentDark = isDark(accentColor)
-  // Icon circle: if accent is dark, use it at low opacity. If light, use warm amber.
   const circleBg = isAccentDark
     ? hexToRgba(accentColor, 0.08)
     : hexToRgba('#D97706', 0.08)
@@ -44,17 +43,16 @@ function CookieIcon({ accentColor }: { accentColor: string }) {
 
   return (
     <div
-      className="flex size-9 shrink-0 items-center justify-center rounded-xl"
+      className="flex size-7 shrink-0 items-center justify-center rounded-lg"
       style={{ backgroundColor: circleBg }}
     >
       <svg
-        width="18"
-        height="18"
+        width="14"
+        height="14"
         viewBox="0 0 24 24"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
-        {/* Cookie body — slightly irregular for warmth */}
         <path
           d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10c0-.34-.018-.675-.052-1.005a3 3 0 0 1-2.948-2.948A10.014 10.014 0 0 0 12 2Z"
           fill={hexToRgba(iconColor, 0.12)}
@@ -63,15 +61,10 @@ function CookieIcon({ accentColor }: { accentColor: string }) {
           strokeLinecap="round"
           strokeLinejoin="round"
         />
-        {/* Chocolate chips */}
         <circle cx="8.5" cy="9.5" r="1.25" fill={iconColor} />
         <circle cx="14" cy="8" r="1" fill={iconColor} />
         <circle cx="10" cy="14.5" r="1" fill={iconColor} />
         <circle cx="15.5" cy="13.5" r="1.25" fill={iconColor} />
-        {/* Crumble texture — tiny dots */}
-        <circle cx="6.5" cy="13" r="0.5" fill={hexToRgba(iconColor, 0.4)} />
-        <circle cx="12" cy="17" r="0.5" fill={hexToRgba(iconColor, 0.4)} />
-        <circle cx="11" cy="6" r="0.5" fill={hexToRgba(iconColor, 0.3)} />
       </svg>
     </div>
   )
@@ -131,24 +124,24 @@ export function ClassicBanner({
         WebkitBackdropFilter: 'blur(12px)',
       }}
     >
-      {/* Inner container with max-width for very wide previews */}
+      {/* Inner container — compact layout */}
       <div
-        style={{ padding: '14px 24px' }}
-        className="mx-auto flex items-center gap-4"
+        style={{ padding: '10px 16px' }}
+        className="mx-auto flex items-center gap-3"
       >
         {/* Left: Icon + Text */}
-        <div className="flex min-w-0 flex-1 items-start gap-3">
+        <div className="flex min-w-0 flex-1 items-center gap-2.5">
           <CookieIcon accentColor={buttonColor} />
 
-          <div className="min-w-0 flex-1 pt-0.5">
+          <div className="min-w-0 flex-1">
             <p
-              className="text-[13px] font-semibold leading-snug tracking-[-0.01em]"
+              className="text-[12px] font-semibold leading-tight tracking-[-0.01em]"
               style={{ color: titleColor }}
             >
               {title}
             </p>
             <p
-              className="mt-0.5 text-[11.5px] leading-relaxed"
+              className="mt-px text-[10.5px] leading-snug"
               style={{ color: descColor }}
             >
               {description}
@@ -157,12 +150,12 @@ export function ClassicBanner({
         </div>
 
         {/* Right: Buttons */}
-        <div className="flex shrink-0 items-center gap-2">
+        <div className="flex shrink-0 items-center gap-1.5">
           {/* Decline — ghost button, lowest visual weight */}
           {showDecline && (
             <button
               type="button"
-              className="group relative px-3 py-[7px] text-[12px] font-medium transition-colors duration-200"
+              className="group relative px-2.5 py-[5px] text-[11px] font-medium transition-colors duration-200"
               style={{
                 color: ghostColor,
                 borderRadius: `${Math.min(borderRadius, 10)}px`,
@@ -177,7 +170,7 @@ export function ClassicBanner({
               {declineText}
               {/* Subtle underline on hover */}
               <span
-                className="absolute bottom-[6px] left-3 right-3 h-px origin-left scale-x-0 transition-transform duration-200 group-hover:scale-x-100"
+                className="absolute bottom-[4px] left-2.5 right-2.5 h-px origin-left scale-x-0 transition-transform duration-200 group-hover:scale-x-100"
                 style={{ backgroundColor: ghostHoverColor }}
               />
             </button>
@@ -187,7 +180,7 @@ export function ClassicBanner({
           {showSettings && (
             <button
               type="button"
-              className="px-3.5 py-[7px] text-[12px] font-medium transition-all duration-200"
+              className="px-3 py-[5px] text-[11px] font-medium transition-all duration-200"
               style={{
                 color: outlinedText,
                 border: `1px solid ${outlinedBorder}`,
@@ -208,20 +201,20 @@ export function ClassicBanner({
           {/* Accept — primary CTA, highest visual weight */}
           <button
             type="button"
-            className="px-5 py-[7px] text-[12px] font-semibold transition-all duration-200"
+            className="px-4 py-[5px] text-[11px] font-semibold transition-all duration-200"
             style={{
               backgroundColor: buttonColor,
               color: btnText,
               borderRadius: `${Math.min(borderRadius, 10)}px`,
-              boxShadow: `0 1px 2px ${hexToRgba(buttonColor, 0.2)}, inset 0 1px 0 ${hexToRgba('#FFFFFF', btnDark ? 0.06 : 0)}`,
+              boxShadow: `0 1px 2px ${hexToRgba(buttonColor, 0.15)}, inset 0 1px 0 ${hexToRgba('#FFFFFF', btnDark ? 0.06 : 0)}`,
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.transform = 'translateY(-0.5px)'
-              e.currentTarget.style.boxShadow = `0 2px 8px ${hexToRgba(buttonColor, 0.25)}, inset 0 1px 0 ${hexToRgba('#FFFFFF', btnDark ? 0.08 : 0)}`
+              e.currentTarget.style.boxShadow = `0 2px 6px ${hexToRgba(buttonColor, 0.2)}, inset 0 1px 0 ${hexToRgba('#FFFFFF', btnDark ? 0.08 : 0)}`
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.transform = 'translateY(0)'
-              e.currentTarget.style.boxShadow = `0 1px 2px ${hexToRgba(buttonColor, 0.2)}, inset 0 1px 0 ${hexToRgba('#FFFFFF', btnDark ? 0.06 : 0)}`
+              e.currentTarget.style.boxShadow = `0 1px 2px ${hexToRgba(buttonColor, 0.15)}, inset 0 1px 0 ${hexToRgba('#FFFFFF', btnDark ? 0.06 : 0)}`
             }}
           >
             {acceptText}

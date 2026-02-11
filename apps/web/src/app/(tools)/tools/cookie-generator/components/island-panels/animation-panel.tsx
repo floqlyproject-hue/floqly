@@ -1,10 +1,11 @@
 'use client'
 
-import { useState } from 'react'
 import { Play } from 'lucide-react'
 
 /* ── Animation Types ── */
-type AnimId = 'slide' | 'fade' | 'bounce' | 'scale' | 'none'
+export type AnimId = 'slide' | 'fade' | 'bounce' | 'scale' | 'none'
+export type TriggerId = 'time' | 'scroll'
+export type BackdropOption = 'Выкл' | 'Лёгкое' | 'Сильное'
 
 const ANIM_ROWS: { id: AnimId; label: string }[][] = [
   [
@@ -18,25 +19,28 @@ const ANIM_ROWS: { id: AnimId; label: string }[][] = [
   ],
 ]
 
-/* ── Trigger Types ── */
-type TriggerId = 'time' | 'scroll'
-
 const TRIGGERS: { id: TriggerId; label: string }[] = [
   { id: 'time', label: 'По времени' },
   { id: 'scroll', label: 'По прокрутке' },
 ]
 
-/* ── Backdrop ── */
-const BACKDROPS = ['Выкл', 'Лёгкое', 'Сильное'] as const
+const BACKDROPS: BackdropOption[] = ['Выкл', 'Лёгкое', 'Сильное']
 
-export function AnimationPanel() {
-  const [anim, setAnim] = useState<AnimId>('slide')
-  const [trigger, setTrigger] = useState<TriggerId>('time')
-  const [delay, setDelay] = useState(2)
-  const [scrollPx, setScrollPx] = useState(300)
-  const [backdrop, setBackdrop] = useState<string>('Выкл')
-  const [speed, setSpeed] = useState(0.3)
+export interface AnimationState {
+  anim: AnimId
+  trigger: TriggerId
+  delay: number
+  scrollPx: number
+  backdrop: BackdropOption
+  speed: number
+}
 
+interface AnimationPanelProps {
+  value: AnimationState
+  onChange: (next: AnimationState) => void
+}
+
+export function AnimationPanel({ value, onChange }: AnimationPanelProps) {
   return (
     <div className="space-y-3.5">
       {/* ── Тип появления — 2-row pills ── */}
@@ -49,8 +53,8 @@ export function AnimationPanel() {
                 <button
                   key={a.id}
                   type="button"
-                  onClick={() => setAnim(a.id)}
-                  className={`island-segment ${anim === a.id ? 'island-segment-active' : ''}`}
+                  onClick={() => onChange({ ...value, anim: a.id })}
+                  className={`island-segment ${value.anim === a.id ? 'island-segment-active' : ''}`}
                 >
                   {a.label}
                 </button>
@@ -68,8 +72,8 @@ export function AnimationPanel() {
             <button
               key={t.id}
               type="button"
-              onClick={() => setTrigger(t.id)}
-              className={`island-segment ${trigger === t.id ? 'island-segment-active' : ''}`}
+              onClick={() => onChange({ ...value, trigger: t.id })}
+              className={`island-segment ${value.trigger === t.id ? 'island-segment-active' : ''}`}
             >
               {t.label}
             </button>
@@ -77,21 +81,21 @@ export function AnimationPanel() {
         </div>
 
         {/* Conditional slider — smooth reveal */}
-        <div className={`island-trigger-expand ${trigger === 'time' ? 'island-trigger-expand-time' : 'island-trigger-expand-scroll'}`}>
+        <div className={`island-trigger-expand ${value.trigger === 'time' ? 'island-trigger-expand-time' : 'island-trigger-expand-scroll'}`}>
           <div className="island-trigger-expand-inner">
-            {trigger === 'time' ? (
+            {value.trigger === 'time' ? (
               <div className="pt-3">
                 <div className="flex items-center justify-between">
                   <label className="island-label mb-0">Задержка</label>
-                  <span className="text-[11px] tabular-nums text-muted-foreground">{delay}с</span>
+                  <span className="text-[11px] tabular-nums text-muted-foreground">{value.delay}с</span>
                 </div>
                 <input
                   type="range"
                   min={0}
                   max={10}
                   step={0.5}
-                  value={delay}
-                  onChange={(e) => setDelay(Number(e.target.value))}
+                  value={value.delay}
+                  onChange={(e) => onChange({ ...value, delay: Number(e.target.value) })}
                   className="island-slider mt-1.5 w-full"
                 />
               </div>
@@ -99,15 +103,15 @@ export function AnimationPanel() {
               <div className="pt-3">
                 <div className="flex items-center justify-between">
                   <label className="island-label mb-0">Прокрутка</label>
-                  <span className="text-[11px] tabular-nums text-muted-foreground">{scrollPx}px</span>
+                  <span className="text-[11px] tabular-nums text-muted-foreground">{value.scrollPx}px</span>
                 </div>
                 <input
                   type="range"
                   min={50}
                   max={1000}
                   step={50}
-                  value={scrollPx}
-                  onChange={(e) => setScrollPx(Number(e.target.value))}
+                  value={value.scrollPx}
+                  onChange={(e) => onChange({ ...value, scrollPx: Number(e.target.value) })}
                   className="island-slider mt-1.5 w-full"
                 />
               </div>
@@ -124,8 +128,8 @@ export function AnimationPanel() {
             <button
               key={b}
               type="button"
-              onClick={() => setBackdrop(b)}
-              className={`island-segment ${backdrop === b ? 'island-segment-active' : ''}`}
+              onClick={() => onChange({ ...value, backdrop: b })}
+              className={`island-segment ${value.backdrop === b ? 'island-segment-active' : ''}`}
             >
               {b}
             </button>
@@ -137,15 +141,15 @@ export function AnimationPanel() {
       <div>
         <div className="flex items-center justify-between">
           <label className="island-label mb-0">Скорость</label>
-          <span className="text-[11px] tabular-nums text-muted-foreground">{speed}с</span>
+          <span className="text-[11px] tabular-nums text-muted-foreground">{value.speed}с</span>
         </div>
         <input
           type="range"
           min={0.1}
           max={1}
           step={0.1}
-          value={speed}
-          onChange={(e) => setSpeed(Number(e.target.value))}
+          value={value.speed}
+          onChange={(e) => onChange({ ...value, speed: Number(e.target.value) })}
           className="island-slider mt-1.5 w-full"
         />
       </div>

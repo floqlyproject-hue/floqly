@@ -1,31 +1,46 @@
 'use client'
 
-import { useState, type ReactNode } from 'react'
+import { useState } from 'react'
 import { motion, AnimatePresence, LayoutGroup } from 'framer-motion'
 import { Palette, Sparkles, Type, LayoutTemplate, X } from 'lucide-react'
-import { DesignPanel, AnimationPanel, TextPanel, PositionPanel } from './island-panels'
+import {
+  DesignPanel, AnimationPanel, TextPanel, PositionPanel,
+  type TextState, type DesignState, type PositionState, type AnimationState,
+} from './island-panels'
 
 type PanelId = 'text' | 'design' | 'position' | 'animation'
+
+export interface BannerCustomization {
+  text: TextState
+  design: DesignState
+  position: PositionState
+  animation: AnimationState
+}
 
 const ISLAND_CATEGORIES: {
   id: PanelId
   label: string
   icon: typeof Palette
-  panel: () => ReactNode
 }[] = [
-  { id: 'text', label: 'Текст', icon: Type, panel: () => <TextPanel /> },
-  { id: 'design', label: 'Стиль', icon: Palette, panel: () => <DesignPanel /> },
-  { id: 'position', label: 'Позиция', icon: LayoutTemplate, panel: () => <PositionPanel /> },
-  { id: 'animation', label: 'Анимация', icon: Sparkles, panel: () => <AnimationPanel /> },
+  { id: 'text', label: 'Текст', icon: Type },
+  { id: 'design', label: 'Стиль', icon: Palette },
+  { id: 'position', label: 'Позиция', icon: LayoutTemplate },
+  { id: 'animation', label: 'Анимация', icon: Sparkles },
 ]
 
 const SPRING = { type: 'spring' as const, stiffness: 350, damping: 30 }
 
 interface LiquidGlassIslandProps {
   containerRef: React.RefObject<HTMLDivElement | null>
+  customization: BannerCustomization
+  onCustomizationChange: (next: BannerCustomization) => void
 }
 
-export function LiquidGlassIsland({ containerRef }: LiquidGlassIslandProps) {
+export function LiquidGlassIsland({
+  containerRef,
+  customization,
+  onCustomizationChange,
+}: LiquidGlassIslandProps) {
   const [activePanel, setActivePanel] = useState<PanelId | null>(null)
   const isExpanded = activePanel !== null
   const activeCategory = ISLAND_CATEGORIES.find((c) => c.id === activePanel)
@@ -36,6 +51,39 @@ export function LiquidGlassIsland({ containerRef }: LiquidGlassIslandProps) {
 
   function handleDotClick(id: PanelId) {
     setActivePanel(id)
+  }
+
+  function renderPanel(panelId: PanelId) {
+    switch (panelId) {
+      case 'text':
+        return (
+          <TextPanel
+            value={customization.text}
+            onChange={(next) => onCustomizationChange({ ...customization, text: next })}
+          />
+        )
+      case 'design':
+        return (
+          <DesignPanel
+            value={customization.design}
+            onChange={(next) => onCustomizationChange({ ...customization, design: next })}
+          />
+        )
+      case 'position':
+        return (
+          <PositionPanel
+            value={customization.position}
+            onChange={(next) => onCustomizationChange({ ...customization, position: next })}
+          />
+        )
+      case 'animation':
+        return (
+          <AnimationPanel
+            value={customization.animation}
+            onChange={(next) => onCustomizationChange({ ...customization, animation: next })}
+          />
+        )
+    }
   }
 
   return (
@@ -155,7 +203,7 @@ export function LiquidGlassIsland({ containerRef }: LiquidGlassIslandProps) {
                     exit={{ opacity: 0, y: -6 }}
                     transition={{ duration: 0.15, ease: [0, 0, 0.2, 1] }}
                   >
-                    {activeCategory?.panel()}
+                    {renderPanel(activePanel!)}
                   </motion.div>
                 </AnimatePresence>
 

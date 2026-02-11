@@ -1,9 +1,7 @@
 'use client'
 
-import { useState } from 'react'
-
 /* ── Tone Templates ── */
-type ToneId = 'friendly' | 'short' | 'official' | 'creative' | 'detailed'
+export type ToneId = 'friendly' | 'short' | 'official' | 'creative' | 'detailed'
 
 const TONE_ROWS: { id: ToneId; label: string }[][] = [
   [
@@ -17,56 +15,59 @@ const TONE_ROWS: { id: ToneId; label: string }[][] = [
   ],
 ]
 
-const TONE_TEXTS: Record<
+export const TONE_TEXTS: Record<
   ToneId,
   { title: string; desc: string; accept: string; decline: string }
 > = {
   friendly: {
     title: 'Мы используем cookie',
-    desc: 'Чтобы сделать сайт удобнее, мы используем cookie. Продолжая, вы соглашаетесь с этим.',
+    desc: 'Для удобства работы сайт использует cookie.',
     accept: 'Принять',
     decline: 'Отклонить',
   },
   short: {
     title: 'Cookie',
-    desc: 'Сайт использует cookie для корректной работы.',
+    desc: 'Сайт использует cookie.',
     accept: 'OK',
     decline: 'Нет',
   },
   official: {
     title: 'Уведомление о cookie',
-    desc: 'В соответствии с 152-ФЗ, данный сайт использует файлы cookie для обеспечения работоспособности и улучшения качества обслуживания.',
+    desc: 'Сайт использует cookie в соответствии с 152-ФЗ.',
     accept: 'Принять все',
     decline: 'Отклонить',
   },
   creative: {
     title: 'Cookie? Конечно! 🍪',
-    desc: 'Мы используем cookie, чтобы сайт работал ещё лучше для вас.',
+    desc: 'Используем cookie, чтобы сайт работал лучше.',
     accept: 'Согласен!',
     decline: 'Не сейчас',
   },
   detailed: {
     title: 'Политика cookie',
-    desc: 'Мы используем файлы cookie для анализа трафика, персонализации контента и улучшения вашего опыта. Вы можете управлять настройками.',
+    desc: 'Cookie используются для аналитики и персонализации. Вы можете управлять настройками.',
     accept: 'Принять все',
     decline: 'Только необходимые',
   },
 }
 
-export function TextPanel() {
-  const [tone, setTone] = useState<ToneId>('friendly')
-  const [title, setTitle] = useState(TONE_TEXTS.friendly.title)
-  const [desc, setDesc] = useState(TONE_TEXTS.friendly.desc)
-  const [accept, setAccept] = useState(TONE_TEXTS.friendly.accept)
-  const [decline, setDecline] = useState(TONE_TEXTS.friendly.decline)
+export interface TextState {
+  tone: ToneId
+  title: string
+  desc: string
+  accept: string
+  decline: string
+}
 
+interface TextPanelProps {
+  value: TextState
+  onChange: (next: TextState) => void
+}
+
+export function TextPanel({ value, onChange }: TextPanelProps) {
   function applyTone(id: ToneId) {
-    setTone(id)
     const t = TONE_TEXTS[id]
-    setTitle(t.title)
-    setDesc(t.desc)
-    setAccept(t.accept)
-    setDecline(t.decline)
+    onChange({ tone: id, title: t.title, desc: t.desc, accept: t.accept, decline: t.decline })
   }
 
   return (
@@ -82,7 +83,7 @@ export function TextPanel() {
                   key={t.id}
                   type="button"
                   onClick={() => applyTone(t.id)}
-                  className={`island-segment ${tone === t.id ? 'island-segment-active' : ''}`}
+                  className={`island-segment ${value.tone === t.id ? 'island-segment-active' : ''}`}
                 >
                   {t.label}
                 </button>
@@ -97,8 +98,8 @@ export function TextPanel() {
         <label className="island-label">Заголовок</label>
         <input
           type="text"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
+          value={value.title}
+          onChange={(e) => onChange({ ...value, title: e.target.value })}
           className="island-input"
           placeholder="Мы используем cookie"
         />
@@ -107,8 +108,8 @@ export function TextPanel() {
       <div>
         <label className="island-label">Описание</label>
         <textarea
-          value={desc}
-          onChange={(e) => setDesc(e.target.value)}
+          value={value.desc}
+          onChange={(e) => onChange({ ...value, desc: e.target.value })}
           rows={2}
           className="island-input island-textarea"
           placeholder="Текст описания…"
@@ -120,8 +121,8 @@ export function TextPanel() {
           <label className="island-label">Принять</label>
           <input
             type="text"
-            value={accept}
-            onChange={(e) => setAccept(e.target.value)}
+            value={value.accept}
+            onChange={(e) => onChange({ ...value, accept: e.target.value })}
             className="island-input"
             placeholder="Принять"
           />
@@ -130,8 +131,8 @@ export function TextPanel() {
           <label className="island-label">Отклонить</label>
           <input
             type="text"
-            value={decline}
-            onChange={(e) => setDecline(e.target.value)}
+            value={value.decline}
+            onChange={(e) => onChange({ ...value, decline: e.target.value })}
             className="island-input"
             placeholder="Отклонить"
           />
