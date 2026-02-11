@@ -1,8 +1,9 @@
 'use client'
 
-import { useMemo, useRef } from 'react'
+import { useMemo, useRef, useState, useCallback } from 'react'
 import type { CookieConfig } from '../types'
 import { LiquidGlassIsland } from './liquid-glass-island'
+import { BackgroundSwitcherIsland, type PreviewBackground } from './background-switcher-island'
 
 interface BannerPreviewProps {
   config: CookieConfig
@@ -30,6 +31,27 @@ export function BannerPreview({
 
   const previewRef = useRef<HTMLDivElement>(null)
   const companyName = company.name?.trim() || 'Наш сайт'
+
+  // Background switcher state
+  const [activeBackground, setActiveBackground] = useState<PreviewBackground>('screenshot')
+  const [customImageUrl, setCustomImageUrl] = useState<string | null>(null)
+
+  const handleCustomImageUpload = useCallback((url: string) => {
+    setCustomImageUrl(url)
+    setActiveBackground('custom')
+  }, [])
+
+  // Which image to display in the preview
+  const displayImage = activeBackground === 'screenshot' ? screenshotUrl
+    : activeBackground === 'custom' ? customImageUrl
+    : null
+
+  // Background class for solid backgrounds
+  const solidBg = activeBackground === 'light'
+    ? 'bg-white'
+    : activeBackground === 'dark'
+      ? 'bg-zinc-900'
+      : ''
 
   return (
     <div className="space-y-5">
@@ -62,19 +84,27 @@ export function BannerPreview({
             <div className="w-12" />
           </div>
 
-          {/* Website Preview */}
-          <div className="relative aspect-[16/10] bg-gradient-to-b from-background via-background to-muted/20">
-            {/* Screenshot */}
-            {screenshotUrl && (
+          {/* Website Preview — viewport-adaptive height so the entire browser frame fits on screen when scrolled to */}
+          <div className={`relative h-[clamp(260px,calc(100dvh-14rem),800px)] ${solidBg || 'bg-gradient-to-b from-background via-background to-muted/20'}`}>
+            {/* Background Switcher Island */}
+            <BackgroundSwitcherIsland
+              activeBackground={activeBackground}
+              onBackgroundChange={setActiveBackground}
+              onCustomImageUpload={handleCustomImageUpload}
+              hasScreenshot={!!screenshotUrl}
+            />
+
+            {/* Screenshot / Custom image */}
+            {displayImage && (
               <img
-                src={screenshotUrl}
+                src={displayImage}
                 alt="Превью сайта"
                 className="absolute inset-0 h-full w-full object-cover object-top"
               />
             )}
 
-            {/* Skeleton Fallback */}
-            {!screenshotUrl && (
+            {/* Skeleton Fallback — shown only when no image and not a solid background */}
+            {!displayImage && !solidBg && (
               <div className="absolute inset-0 p-4">
                 {/* Navigation */}
                 <div className="flex items-center gap-3">
@@ -111,7 +141,7 @@ export function BannerPreview({
             )}
 
             {/* Loading Overlay */}
-            {isScreenshotLoading && !screenshotUrl && (
+            {isScreenshotLoading && activeBackground === 'screenshot' && !screenshotUrl && (
               <div className="absolute inset-0 flex items-center justify-center bg-background/50">
                 <div className="flex items-center gap-2 rounded-lg bg-background/90 px-3 py-2 shadow-sm">
                   <div className="size-3.5 animate-spin rounded-full border-2 border-primary border-t-transparent" />
@@ -121,8 +151,8 @@ export function BannerPreview({
             )}
 
             {/* Updating Badge */}
-            {isScreenshotLoading && screenshotUrl && (
-              <div className="absolute right-1.5 top-1.5 z-10 flex items-center gap-1.5 rounded-full bg-background/90 px-2 py-0.5 shadow-sm backdrop-blur-sm">
+            {isScreenshotLoading && screenshotUrl && activeBackground === 'screenshot' && (
+              <div className="absolute right-1.5 top-12 z-10 flex items-center gap-1.5 rounded-full bg-background/90 px-2 py-0.5 shadow-sm backdrop-blur-sm">
                 <div className="size-2.5 animate-spin rounded-full border border-primary border-t-transparent" />
                 <span className="text-[9px] font-medium text-foreground/70">Обновляется…</span>
               </div>
