@@ -1,6 +1,5 @@
 'use client'
 
-import { useMemo } from 'react'
 import { Building2, Globe, Mail, Loader2, CheckCircle2 } from 'lucide-react'
 import type { CompanyInfo } from '../types'
 import type { ParserResult } from '@/lib/parser/types'
@@ -17,15 +16,6 @@ export function CompanyForm({ data, onChange, isParserLoading, parserData }: Com
     onChange({ ...data, [field]: value })
   }
 
-  // Count filled fields for progress indicator
-  const filledCount = useMemo(() => {
-    let count = 0
-    if (data.name.trim()) count++
-    if (data.website.trim()) count++
-    if (data.email.trim()) count++
-    return count
-  }, [data.name, data.website, data.email])
-
   return (
     <div>
       {/* Section Header */}
@@ -34,22 +24,6 @@ export function CompanyForm({ data, onChange, isParserLoading, parserData }: Com
         <p className="mt-2.5 text-[14px] leading-relaxed text-muted-foreground/70">
           На основе этих данных мы составим документ политики cookie
         </p>
-        {/* Field completion progress */}
-        <div className="mt-5 flex items-center gap-3">
-          <div className="flex gap-1.5">
-            {[0, 1, 2].map((i) => (
-              <div
-                key={i}
-                className={`h-1 w-8 rounded-full transition-all duration-500 ${
-                  i < filledCount ? 'bg-foreground' : 'bg-border'
-                }`}
-              />
-            ))}
-          </div>
-          <span className="text-[12px] tabular-nums text-muted-foreground/50">
-            {filledCount} из 3
-          </span>
-        </div>
       </div>
 
       {/* Form Fields */}

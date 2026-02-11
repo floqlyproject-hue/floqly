@@ -1,7 +1,10 @@
 'use client'
 
 import { useMemo, useState, useEffect, useRef, useCallback } from 'react'
-import { Eye, Pen, Copy, Check, Download, RotateCcw } from 'lucide-react'
+import {
+  Eye, Pen, Copy, Check, Download, RotateCcw,
+  Bold, Italic, Strikethrough, List, ListOrdered, Link, HelpCircle, X,
+} from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import type { CookieConfig } from '../types'
@@ -17,13 +20,45 @@ interface DocumentPreviewProps {
 type ViewMode = 'preview' | 'edit'
 
 /* ─────────────────────────────────────────
-   TOC Section type
+   Formatting Toolbar Button
    ───────────────────────────────────────── */
-interface TocItem {
-  id: string
-  title: string
-  level: number // 1 = h1, 2 = h2
+interface ToolbarBtnProps {
+  icon: React.ReactNode
+  label: string
+  onClick: () => void
+  isActive?: boolean
 }
+
+function ToolbarBtn({ icon, label, onClick, isActive }: ToolbarBtnProps) {
+  return (
+    <button
+      onMouseDown={(e) => {
+        e.preventDefault() // prevent stealing focus from contentEditable
+        onClick()
+      }}
+      aria-label={label}
+      title={label}
+      className={`flex size-7 items-center justify-center rounded-md transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
+        isActive
+          ? 'bg-foreground/10 text-foreground'
+          : 'text-muted-foreground/60 hover:bg-muted hover:text-foreground'
+      }`}
+    >
+      {icon}
+    </button>
+  )
+}
+
+/* ─────────────────────────────────────────
+   Tips Popover
+   ───────────────────────────────────────── */
+const TIPS = [
+  'Документ создан автоматически по данным из шагов 1 и 2',
+  'Переключитесь в «Редактор» для правки текста',
+  'Используйте панель форматирования для жирного, курсива, списков',
+  'Скопируйте текст или скачайте файл (.html)',
+  'Сброс вернёт документ к оригинальной версии',
+]
 
 export function DocumentPreview({
   config,
@@ -34,16 +69,24 @@ export function DocumentPreview({
   const [viewMode, setViewMode] = useState<ViewMode>('preview')
   const [downloadMenuOpen, setDownloadMenuOpen] = useState(false)
   const [showResetConfirm, setShowResetConfirm] = useState(false)
-  const [editedHtml, setEditedHtml] = useState<string | null>(null)
+  const [tipsOpen, setTipsOpen] = useState(false)
+
+  // Track whether user has edited (to show reset button & disable markdown download)
+  const [hasEdited, setHasEdited] = useState(false)
+
   const contentRef = useRef<HTMLDivElement>(null)
   const downloadRef = useRef<HTMLDivElement>(null)
+  const tipsRef = useRef<HTMLDivElement>(null)
   const resetTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const previewBtnRef = useRef<HTMLButtonElement>(null)
   const editorBtnRef = useRef<HTMLButtonElement>(null)
   const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0 })
 
+  // Snapshot HTML when leaving edit mode
+  const htmlSnapshotRef = useRef<string | null>(null)
+
   // Use external markdown if provided, otherwise generate internally
-  const internalMarkdown = useMemo(() => {
+  const generatedMarkdown = useMemo(() => {
     if (externalMarkdown) return externalMarkdown
     const fullData: CookiePolicyData = {
       companyName: config.company.name || '',
@@ -72,29 +115,11 @@ export function DocumentPreview({
     }
     return generateCookiePolicy(fullData)
   }, [config, cookiePolicyData, externalMarkdown])
-  const generatedMarkdown = internalMarkdown
 
-  // Extract TOC from markdown
-  const tocItems = useMemo<TocItem[]>(() => {
-    const lines = generatedMarkdown.split('\n')
-    const items: TocItem[] = []
-    for (const line of lines) {
-      const h2Match = line.match(/^## (.+)/)
-      const h1Match = line.match(/^# (.+)/)
-      if (h1Match) {
-        const title = h1Match[1].trim()
-        items.push({ id: slugify(title), title, level: 1 })
-      } else if (h2Match) {
-        const title = h2Match[1].trim()
-        items.push({ id: slugify(title), title, level: 2 })
-      }
-    }
-    return items
-  }, [generatedMarkdown])
-
-  // Reset edited HTML when source markdown changes (user went back and changed config)
+  // Reset edited state when source markdown changes (user went back and changed config)
   useEffect(() => {
-    setEditedHtml(null)
+    htmlSnapshotRef.current = null
+    setHasEdited(false)
   }, [generatedMarkdown])
 
   // Update sliding indicator position
@@ -121,6 +146,10 @@ export function DocumentPreview({
   useEffect(() => {
     if (viewMode === 'edit' && contentRef.current) {
       contentRef.current.contentEditable = 'true'
+      // If we have a previous snapshot, restore it
+      if (htmlSnapshotRef.current !== null) {
+        contentRef.current.innerHTML = htmlSnapshotRef.current
+      }
       const timer = setTimeout(() => {
         contentRef.current?.focus()
       }, 50)
@@ -132,13 +161,16 @@ export function DocumentPreview({
 
   // Close dropdown on Escape key
   useEffect(() => {
-    if (!downloadMenuOpen) return
+    if (!downloadMenuOpen && !tipsOpen) return
     const handleKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setDownloadMenuOpen(false)
+      if (e.key === 'Escape') {
+        setDownloadMenuOpen(false)
+        setTipsOpen(false)
+      }
     }
     document.addEventListener('keydown', handleKey)
     return () => document.removeEventListener('keydown', handleKey)
-  }, [downloadMenuOpen])
+  }, [downloadMenuOpen, tipsOpen])
 
   // Auto-dismiss reset confirmation after 5s
   useEffect(() => {
@@ -150,12 +182,25 @@ export function DocumentPreview({
     }
   }, [showResetConfirm])
 
-  const hasChanges = editedHtml !== null
+  // Close tips popover on outside click
+  useEffect(() => {
+    if (!tipsOpen) return
+    const handleClick = (e: MouseEvent) => {
+      if (tipsRef.current && !tipsRef.current.contains(e.target as Node)) {
+        setTipsOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClick)
+    return () => document.removeEventListener('mousedown', handleClick)
+  }, [tipsOpen])
 
-  // Save edits from contentEditable
+  /* ─── Handlers ─── */
+
+  // Track edits via onInput — but DON'T call setState (avoids re-render = cursor fix!)
   const handleInput = useCallback(() => {
     if (contentRef.current) {
-      setEditedHtml(contentRef.current.innerHTML)
+      // Only mark as edited, don't store HTML (prevents re-render & cursor jump)
+      setHasEdited(true)
     }
   }, [])
 
@@ -233,26 +278,78 @@ ${bodyContent}
   }, [])
 
   const handleReset = useCallback(() => {
-    setEditedHtml(null)
+    htmlSnapshotRef.current = null
+    setHasEdited(false)
     setShowResetConfirm(false)
     setViewMode('preview')
   }, [])
 
-  // Switch mode handler — save HTML snapshot before leaving edit
+  // Switch mode handler — snapshot HTML when leaving edit mode
   const switchMode = useCallback((mode: ViewMode) => {
-    if (viewMode === 'edit' && mode === 'preview' && contentRef.current && editedHtml !== null) {
-      setEditedHtml(contentRef.current.innerHTML)
+    if (viewMode === 'edit' && mode === 'preview' && contentRef.current) {
+      // Snapshot current DOM before switching to preview
+      htmlSnapshotRef.current = contentRef.current.innerHTML
     }
     setViewMode(mode)
-  }, [viewMode, editedHtml])
+  }, [viewMode])
 
-  // Scroll to section
-  const scrollToSection = useCallback((id: string) => {
-    const el = document.getElementById(id)
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth', block: 'start' })
-    }
+  /* ─── Formatting Commands (execCommand) ─── */
+  const execFormat = useCallback((command: string, value?: string) => {
+    document.execCommand(command, false, value)
+    // Mark as edited after formatting
+    setHasEdited(true)
   }, [])
+
+  const handleBold = useCallback(() => execFormat('bold'), [execFormat])
+  const handleItalic = useCallback(() => execFormat('italic'), [execFormat])
+  const handleStrikethrough = useCallback(() => execFormat('strikeThrough'), [execFormat])
+  const handleUnorderedList = useCallback(() => execFormat('insertUnorderedList'), [execFormat])
+  const handleOrderedList = useCallback(() => execFormat('insertOrderedList'), [execFormat])
+  const handleLink = useCallback(() => {
+    const url = window.prompt('Введите URL:')
+    if (url) execFormat('createLink', url)
+  }, [execFormat])
+
+  // Detect active formatting states
+  const [formatState, setFormatState] = useState({
+    bold: false,
+    italic: false,
+    strikethrough: false,
+    unorderedList: false,
+    orderedList: false,
+  })
+
+  const updateFormatState = useCallback(() => {
+    setFormatState({
+      bold: document.queryCommandState('bold'),
+      italic: document.queryCommandState('italic'),
+      strikethrough: document.queryCommandState('strikeThrough'),
+      unorderedList: document.queryCommandState('insertUnorderedList'),
+      orderedList: document.queryCommandState('insertOrderedList'),
+    })
+  }, [])
+
+  // Update format state on selection change
+  useEffect(() => {
+    if (viewMode !== 'edit') return
+    const handler = () => updateFormatState()
+    document.addEventListener('selectionchange', handler)
+    return () => document.removeEventListener('selectionchange', handler)
+  }, [viewMode, updateFormatState])
+
+  // Keyboard shortcuts in edit mode
+  useEffect(() => {
+    if (viewMode !== 'edit') return
+    const handler = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && !e.shiftKey) {
+        if (e.key === 'b') { e.preventDefault(); handleBold() }
+        if (e.key === 'i') { e.preventDefault(); handleItalic() }
+        if (e.key === 'k') { e.preventDefault(); handleLink() }
+      }
+    }
+    document.addEventListener('keydown', handler)
+    return () => document.removeEventListener('keydown', handler)
+  }, [viewMode, handleBold, handleItalic, handleLink])
 
   return (
     <div>
@@ -307,11 +404,11 @@ ${bodyContent}
 
         {/* Right: Action Buttons */}
         <div className="flex items-center gap-1.5">
-          {/* Reset (inline confirm, only when hasChanges) */}
-          {hasChanges && (
+          {/* Reset (inline confirm, only when hasEdited) */}
+          {hasEdited && (
             <>
               {showResetConfirm ? (
-                <div className="expand-enter flex items-center gap-1.5 mr-1">
+                <div className="expand-enter mr-1 flex items-center gap-1.5">
                   <span className="text-[12px] text-muted-foreground">Сбросить?</span>
                   <button
                     onClick={handleReset}
@@ -342,6 +439,59 @@ ${bodyContent}
               )}
             </>
           )}
+
+          {/* Separator */}
+          {hasEdited && (
+            <div className="mx-0.5 h-4 w-px bg-border" aria-hidden="true" />
+          )}
+
+          {/* Tips */}
+          <div ref={tipsRef} className="relative">
+            <span className="tooltip-trigger relative inline-flex">
+              <button
+                onClick={() => setTipsOpen(!tipsOpen)}
+                aria-label="Подсказки"
+                aria-expanded={tipsOpen}
+                className={`flex size-8 items-center justify-center rounded-lg transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
+                  tipsOpen
+                    ? 'bg-muted text-foreground'
+                    : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+                }`}
+              >
+                <HelpCircle className="size-4" strokeWidth={1.5} />
+              </button>
+              {!tipsOpen && (
+                <span className="tooltip-content mb-2.5 w-auto whitespace-nowrap rounded-lg bg-foreground px-3 py-2 text-[12px] font-normal text-background shadow-lg dark:bg-[oklch(25%_0.025_260)] dark:text-[oklch(90%_0.01_264)]">
+                  Подсказки
+                </span>
+              )}
+            </span>
+
+            {tipsOpen && (
+              <div className="dropdown-enter absolute right-0 top-full z-20 mt-1.5 w-72 overflow-hidden rounded-xl border border-border bg-card p-4 shadow-lg">
+                <div className="mb-3 flex items-center justify-between">
+                  <h4 className="text-[11px] font-medium uppercase tracking-[0.1em] text-muted-foreground/70">
+                    Подсказки
+                  </h4>
+                  <button
+                    onClick={() => setTipsOpen(false)}
+                    className="flex size-5 items-center justify-center rounded text-muted-foreground/50 transition-colors hover:text-foreground"
+                    aria-label="Закрыть"
+                  >
+                    <X className="size-3" strokeWidth={2} />
+                  </button>
+                </div>
+                <ul className="space-y-2">
+                  {TIPS.map((tip) => (
+                    <li key={tip} className="flex items-start gap-2.5 text-[12px] leading-relaxed text-muted-foreground">
+                      <span className="mt-[7px] size-1 shrink-0 rounded-full bg-foreground/20" aria-hidden="true" />
+                      <span>{tip}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
 
           {/* Copy */}
           <span className="tooltip-trigger relative inline-flex">
@@ -388,7 +538,7 @@ ${bodyContent}
               <>
                 <div className="fixed inset-0 z-10" onClick={() => setDownloadMenuOpen(false)} />
                 <div className="dropdown-enter absolute right-0 top-full z-20 mt-1.5 w-48 overflow-hidden rounded-lg border border-border bg-card p-1 shadow-lg" role="menu">
-                  {!hasChanges && (
+                  {!hasEdited && (
                     <button
                       onClick={handleDownloadMarkdown}
                       role="menuitem"
@@ -413,11 +563,62 @@ ${bodyContent}
         </div>
       </div>
 
+      {/* Formatting Toolbar — only in edit mode */}
+      {viewMode === 'edit' && (
+        <div className="mode-crossfade-enter mb-3 flex items-center gap-0.5 rounded-lg border border-border bg-card/60 px-1.5 py-1">
+          <ToolbarBtn
+            icon={<Bold className="size-3.5" strokeWidth={2} />}
+            label="Жирный (Ctrl+B)"
+            onClick={handleBold}
+            isActive={formatState.bold}
+          />
+          <ToolbarBtn
+            icon={<Italic className="size-3.5" strokeWidth={2} />}
+            label="Курсив (Ctrl+I)"
+            onClick={handleItalic}
+            isActive={formatState.italic}
+          />
+          <ToolbarBtn
+            icon={<Strikethrough className="size-3.5" strokeWidth={2} />}
+            label="Зачёркнутый"
+            onClick={handleStrikethrough}
+            isActive={formatState.strikethrough}
+          />
+
+          <div className="mx-1 h-4 w-px bg-border" aria-hidden="true" />
+
+          <ToolbarBtn
+            icon={<List className="size-3.5" strokeWidth={2} />}
+            label="Маркированный список"
+            onClick={handleUnorderedList}
+            isActive={formatState.unorderedList}
+          />
+          <ToolbarBtn
+            icon={<ListOrdered className="size-3.5" strokeWidth={2} />}
+            label="Нумерованный список"
+            onClick={handleOrderedList}
+            isActive={formatState.orderedList}
+          />
+
+          <div className="mx-1 h-4 w-px bg-border" aria-hidden="true" />
+
+          <ToolbarBtn
+            icon={<Link className="size-3.5" strokeWidth={2} />}
+            label="Ссылка (Ctrl+K)"
+            onClick={handleLink}
+          />
+
+          <div className="ml-auto text-[11px] text-muted-foreground/40">
+            Ctrl+B · Ctrl+I · Ctrl+K
+          </div>
+        </div>
+      )}
+
       {/* Document Content — paper-like container */}
       <div
         className={`overflow-hidden rounded-xl border transition-all duration-300 ${
           viewMode === 'edit'
-            ? 'border-foreground/20 ring-2 ring-foreground/5 shadow-sm'
+            ? 'border-foreground/20 shadow-sm ring-2 ring-foreground/5'
             : 'border-border shadow-[0_1px_6px_rgba(0,0,0,0.04)] dark:shadow-[0_1px_6px_rgba(0,0,0,0.2)]'
         }`}
         role="document"
@@ -438,7 +639,15 @@ ${bodyContent}
             viewMode === 'edit' ? 'cursor-text' : ''
           }`}
         >
-          {editedHtml === null ? (
+          {/*
+            Key insight for cursor bug fix:
+            In preview mode → render ReactMarkdown (static)
+            In edit mode → contentEditable manages its own DOM, no React re-renders
+            We only re-render when switching modes, not on every keystroke
+          */}
+          {viewMode === 'preview' && htmlSnapshotRef.current ? (
+            <div dangerouslySetInnerHTML={{ __html: htmlSnapshotRef.current }} />
+          ) : viewMode === 'preview' ? (
             <ReactMarkdown
               remarkPlugins={[remarkGfm]}
               components={markdownComponents}
@@ -446,7 +655,17 @@ ${bodyContent}
               {generatedMarkdown}
             </ReactMarkdown>
           ) : (
-            <div dangerouslySetInnerHTML={{ __html: editedHtml }} />
+            /* In edit mode: initial render only, then contentEditable takes over */
+            !htmlSnapshotRef.current ? (
+              <ReactMarkdown
+                remarkPlugins={[remarkGfm]}
+                components={markdownComponents}
+              >
+                {generatedMarkdown}
+              </ReactMarkdown>
+            ) : (
+              <div dangerouslySetInnerHTML={{ __html: htmlSnapshotRef.current }} />
+            )
           )}
         </div>
       </div>
@@ -463,82 +682,6 @@ ${bodyContent}
 }
 
 /* ─────────────────────────────────────────
-   TOC Sidebar component (exported for use in cookie-generator-client)
-   ───────────────────────────────────────── */
-export function DocumentToc({
-  markdown,
-  onScrollTo,
-}: {
-  markdown: string
-  onScrollTo: (id: string) => void
-}) {
-  const tocItems = useMemo<TocItem[]>(() => {
-    const lines = markdown.split('\n')
-    const items: TocItem[] = []
-    for (const line of lines) {
-      const h2Match = line.match(/^## (.+)/)
-      const h1Match = line.match(/^# (.+)/)
-      if (h1Match) {
-        const title = h1Match[1].trim()
-        items.push({ id: slugify(title), title, level: 1 })
-      } else if (h2Match) {
-        const title = h2Match[1].trim()
-        items.push({ id: slugify(title), title, level: 2 })
-      }
-    }
-    return items
-  }, [markdown])
-
-  if (tocItems.length === 0) return null
-
-  return (
-    <div className="space-y-5">
-      <div className="rounded-xl border border-border bg-card p-5">
-        <h4 className="text-[11px] font-medium uppercase tracking-[0.1em] text-muted-foreground/70">
-          Содержание
-        </h4>
-        <nav className="mt-3 space-y-0.5">
-          {tocItems.map((item) => (
-            <button
-              key={item.id}
-              onClick={() => onScrollTo(item.id)}
-              className={`block w-full text-left text-[12px] leading-relaxed transition-colors duration-150 hover:text-foreground focus-visible:outline-none focus-visible:text-foreground ${
-                item.level === 1
-                  ? 'py-1.5 font-medium text-foreground/80'
-                  : 'py-1 pl-3 text-muted-foreground/70'
-              }`}
-            >
-              {item.title}
-            </button>
-          ))}
-        </nav>
-      </div>
-
-      <div className="rounded-xl border border-border bg-card p-5">
-        <h4 className="text-[11px] font-medium uppercase tracking-[0.1em] text-muted-foreground/70">
-          Подсказки
-        </h4>
-        <ul className="mt-3 space-y-2">
-          <TipItem>Документ создан автоматически по данным из шагов 1 и 2</TipItem>
-          <TipItem>Переключитесь в «Редактор» для правки текста</TipItem>
-          <TipItem>Скопируйте текст или скачайте файл (.html)</TipItem>
-          <TipItem>Сброс вернёт документ к оригинальной версии</TipItem>
-        </ul>
-      </div>
-    </div>
-  )
-}
-
-function TipItem({ children }: { children: React.ReactNode }) {
-  return (
-    <li className="flex items-start gap-2.5 text-[12px] leading-relaxed text-muted-foreground">
-      <span className="mt-[7px] size-1 shrink-0 rounded-full bg-foreground/20" aria-hidden="true" />
-      <span>{children}</span>
-    </li>
-  )
-}
-
-/* ─────────────────────────────────────────
    Helpers
    ───────────────────────────────────────── */
 function slugify(text: string): string {
@@ -551,13 +694,13 @@ function slugify(text: string): string {
 }
 
 /* ─────────────────────────────────────────
-   Markdown Component Mappings — with anchor IDs for TOC
+   Markdown Component Mappings — with anchor IDs
    ───────────────────────────────────────── */
 const markdownComponents = {
   h1: ({ children }: { children?: React.ReactNode }) => {
     const text = typeof children === 'string' ? children : getTextContent(children)
     return (
-      <h1 id={slugify(text)} className="scroll-mt-24 text-[24px] font-semibold tracking-tight text-foreground mb-4 mt-6 first:mt-0">
+      <h1 id={slugify(text)} className="mb-4 mt-6 scroll-mt-24 text-[24px] font-semibold tracking-tight text-foreground first:mt-0">
         {children}
       </h1>
     )
@@ -565,28 +708,28 @@ const markdownComponents = {
   h2: ({ children }: { children?: React.ReactNode }) => {
     const text = typeof children === 'string' ? children : getTextContent(children)
     return (
-      <h2 id={slugify(text)} className="scroll-mt-24 text-[20px] font-semibold tracking-tight text-foreground mb-3 mt-8 pt-4 border-t border-border/40 first:border-0 first:pt-0">
+      <h2 id={slugify(text)} className="mb-3 mt-8 scroll-mt-24 border-t border-border/40 pt-4 text-[20px] font-semibold tracking-tight text-foreground first:border-0 first:pt-0">
         {children}
       </h2>
     )
   },
   h3: ({ children }: { children?: React.ReactNode }) => (
-    <h3 className="text-[17px] font-semibold tracking-tight text-foreground mb-2 mt-5">
+    <h3 className="mb-2 mt-5 text-[17px] font-semibold tracking-tight text-foreground">
       {children}
     </h3>
   ),
   p: ({ children }: { children?: React.ReactNode }) => (
-    <p className="text-[15px] leading-relaxed text-foreground/90 mb-4">
+    <p className="mb-4 text-[15px] leading-relaxed text-foreground/90">
       {children}
     </p>
   ),
   ul: ({ children }: { children?: React.ReactNode }) => (
-    <ul className="space-y-2 mb-4 pl-6 list-disc marker:text-muted-foreground/40">
+    <ul className="mb-4 space-y-2 pl-6 list-disc marker:text-muted-foreground/40">
       {children}
     </ul>
   ),
   ol: ({ children }: { children?: React.ReactNode }) => (
-    <ol className="space-y-2 mb-4 pl-6 list-decimal marker:text-muted-foreground/40">
+    <ol className="mb-4 space-y-2 pl-6 list-decimal marker:text-muted-foreground/40">
       {children}
     </ol>
   ),
@@ -596,7 +739,7 @@ const markdownComponents = {
     </li>
   ),
   blockquote: ({ children }: { children?: React.ReactNode }) => (
-    <blockquote className="border-l-4 border-border pl-4 italic text-muted-foreground mb-4">
+    <blockquote className="mb-4 border-l-4 border-border pl-4 italic text-muted-foreground">
       {children}
     </blockquote>
   ),
@@ -615,7 +758,7 @@ const markdownComponents = {
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className="text-foreground underline decoration-muted-foreground hover:decoration-foreground transition-colors"
+      className="text-foreground underline decoration-muted-foreground transition-colors hover:decoration-foreground"
     >
       {children}
     </a>

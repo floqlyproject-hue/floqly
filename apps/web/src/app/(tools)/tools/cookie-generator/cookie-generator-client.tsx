@@ -5,11 +5,10 @@ import {
   CompanyForm,
   BannerPreview,
   DocumentPreview,
-  DocumentToc,
 } from './components'
 import { CookiePolicyForm } from './components/cookie-policy-form'
 import { DEFAULT_CONFIG, type CookieConfig } from './types'
-import { generateCookiePolicy, type CookiePolicyData } from '@/lib/templates/cookie-policy'
+import type { CookiePolicyData } from '@/lib/templates/cookie-policy'
 import { useSiteScreenshot } from '@/lib/hooks/use-site-screenshot'
 import { useSiteParser } from '@/lib/hooks/use-site-parser'
 
@@ -99,52 +98,8 @@ export function CookieGeneratorClient() {
     }
   }, [currentTabIndex, scrollToSteps])
 
-  // Generate markdown at parent level for sharing between DocumentPreview and DocumentToc
-  const generatedMarkdown = useMemo(() => {
-    const fullData: CookiePolicyData = {
-      companyName: config.company.name || '',
-      siteUrl: config.company.website || '',
-      email: config.company.email || '',
-      currentDate: new Date().toLocaleDateString('ru-RU', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-      }),
-      technicalFeatures: cookiePolicyData.technicalFeatures || {
-        cart: false, auth: false, payment: false,
-        preferences: false, security: false, externalServices: [],
-      },
-      analytics: cookiePolicyData.analytics || {
-        yandexMetrika: false, liveInternet: false, mailRu: false,
-        customAnalytics: false, other: [],
-      },
-      crossBorder: cookiePolicyData.crossBorder || {
-        googleServices: false, facebookPixel: false, other: [],
-      },
-      marketing: cookiePolicyData.marketing || {
-        vkPixel: false, myTarget: false, yandexDirect: false,
-        partnerNetworks: [], other: [],
-      },
-    }
-    return generateCookiePolicy(fullData)
-  }, [config, cookiePolicyData])
-
-  // Scroll to section handler (for DocumentToc)
-  const scrollToSection = useCallback((id: string) => {
-    const el = document.getElementById(id)
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth', block: 'start' })
-    }
-  }, [])
-
-  const isFullWidthStep = activeTab === 'design' || activeTab === 'company' || activeTab === 'cookies' || activeTab === 'result'
-
   return (
-    <div className={`grid gap-8 transition-all duration-300 ${
-      isFullWidthStep
-        ? 'lg:grid-cols-1'
-        : 'lg:grid-cols-[1fr_380px] xl:grid-cols-[1fr_420px]'
-    }`}>
+    <div className="grid gap-8 lg:grid-cols-1">
       {/* Left Column - Editor */}
       <div>
         {/* Steps */}
@@ -222,7 +177,6 @@ export function CookieGeneratorClient() {
               <DocumentPreview
                 config={config}
                 cookiePolicyData={cookiePolicyData}
-                markdown={generatedMarkdown}
               />
             )}
             {activeTab === 'design' && (
@@ -312,17 +266,6 @@ export function CookieGeneratorClient() {
         )}
       </div>
 
-      {/* Right Column - Sidebar (only for document step) */}
-      {!isFullWidthStep && activeTab === 'document' && (
-        <aside className="lg:sticky lg:top-24 lg:h-fit" aria-label="Навигация по документу">
-          <div key={activeTab} className="animate-enter">
-            <DocumentToc
-              markdown={generatedMarkdown}
-              onScrollTo={scrollToSection}
-            />
-          </div>
-        </aside>
-      )}
     </div>
   )
 }
