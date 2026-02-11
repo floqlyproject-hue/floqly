@@ -4,7 +4,7 @@ import { useMemo, useRef, useState, useCallback } from 'react'
 import type { CookieConfig } from '../types'
 import { LiquidGlassIsland, type BannerCustomization } from './liquid-glass-island'
 import { BackgroundSwitcherIsland, type PreviewBackground } from './background-switcher-island'
-import { ClassicBanner } from './banner-styles'
+import { ClassicBanner, GlassBanner } from './banner-styles'
 import { BG_COLORS, BTN_COLORS, TONE_TEXTS, type ShadowLabel, type PositionState } from './island-panels'
 import type { BannerStyleProps } from './banner-styles/types'
 
@@ -312,7 +312,10 @@ export function BannerPreview({
 
             {/* Cookie Banner Overlay — dynamic position from island panels */}
             <div style={bannerContainerStyle}>
-              <ClassicBanner {...bannerProps} />
+              {customization.design.bannerStyle === 'glass'
+                ? <GlassBanner {...bannerProps} />
+                : <ClassicBanner {...bannerProps} />
+              }
             </div>
           </div>
         </div>
