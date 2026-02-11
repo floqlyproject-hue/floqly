@@ -591,7 +591,7 @@ input[type="checkbox"].cb:focus-visible {
   }
 
   /* Tooltip — bottom-end variant (aligned to right edge, won't clip) */
-  .tooltip-content-bottom-end {
+  .tooltip-bottom-end {
     pointer-events: none;
     position: absolute;
     top: 100%;
@@ -605,7 +605,7 @@ input[type="checkbox"].cb:focus-visible {
       visibility 0ms 200ms;
   }
 
-  .tooltip-trigger:hover .tooltip-content-bottom-end {
+  .tooltip-trigger:hover .tooltip-bottom-end {
     opacity: 1;
     visibility: visible;
     transform: translateY(8px);
