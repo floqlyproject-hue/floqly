@@ -1,5 +1,7 @@
 'use client'
 
+import { useMemo } from 'react'
+import { Building2, Globe, Mail, Loader2, CheckCircle2 } from 'lucide-react'
 import type { CompanyInfo } from '../types'
 import type { ParserResult } from '@/lib/parser/types'
 
@@ -15,21 +17,47 @@ export function CompanyForm({ data, onChange, isParserLoading, parserData }: Com
     onChange({ ...data, [field]: value })
   }
 
+  // Count filled fields for progress indicator
+  const filledCount = useMemo(() => {
+    let count = 0
+    if (data.name.trim()) count++
+    if (data.website.trim()) count++
+    if (data.email.trim()) count++
+    return count
+  }, [data.name, data.website, data.email])
+
   return (
     <div>
       {/* Section Header */}
-      <div className="mb-12 max-w-lg">
+      <div className="mb-10 max-w-lg">
         <h3 className="text-[22px] font-semibold tracking-tight text-foreground">О вашем сайте</h3>
         <p className="mt-2.5 text-[14px] leading-relaxed text-muted-foreground/70">
           На основе этих данных мы составим документ политики cookie
         </p>
+        {/* Field completion progress */}
+        <div className="mt-5 flex items-center gap-3">
+          <div className="flex gap-1.5">
+            {[0, 1, 2].map((i) => (
+              <div
+                key={i}
+                className={`h-1 w-8 rounded-full transition-all duration-500 ${
+                  i < filledCount ? 'bg-foreground' : 'bg-border'
+                }`}
+              />
+            ))}
+          </div>
+          <span className="text-[12px] tabular-nums text-muted-foreground/50">
+            {filledCount} из 3
+          </span>
+        </div>
       </div>
 
       {/* Form Fields */}
-      <div className="max-w-lg space-y-8">
+      <div className="max-w-lg space-y-7">
         {/* Company Name */}
         <div>
-          <label htmlFor="company-name" className="mb-3 block text-[13px] font-medium text-foreground">
+          <label htmlFor="company-name" className="mb-3 flex items-center gap-2 text-[13px] font-medium text-foreground">
+            <Building2 className="size-3.5 text-muted-foreground/50" strokeWidth={1.5} />
             Название компании или сайта
           </label>
           <input
@@ -47,10 +75,11 @@ export function CompanyForm({ data, onChange, isParserLoading, parserData }: Com
         </div>
 
         {/* Website Domain + Email — related fields */}
-        <div className="space-y-6">
+        <div className="space-y-7">
           {/* Website Domain */}
           <div>
-            <label htmlFor="company-website" className="mb-3 block text-[13px] font-medium text-foreground">
+            <label htmlFor="company-website" className="mb-3 flex items-center gap-2 text-[13px] font-medium text-foreground">
+              <Globe className="size-3.5 text-muted-foreground/50" strokeWidth={1.5} />
               Домен вашего сайта
             </label>
             <div className="flex items-center border-b border-border transition-colors duration-200 focus-within:border-foreground/40">
@@ -69,48 +98,18 @@ export function CompanyForm({ data, onChange, isParserLoading, parserData }: Com
               />
             </div>
 
-            {/* Parser Status Indicator */}
+            {/* Parser Status — card style */}
             {isParserLoading && (
-              <div className="mt-2.5 flex items-center gap-2 text-[13px] text-muted-foreground">
-                <svg
-                  className="size-3 animate-spin"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
-                  aria-hidden="true"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  />
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  />
-                </svg>
-                <span>Анализирую скрипты на вашем сайте…</span>
+              <div className="mt-3 flex items-center gap-2.5 rounded-lg border border-border/50 bg-muted/30 px-3.5 py-2.5">
+                <Loader2 className="size-3.5 animate-spin text-muted-foreground" strokeWidth={2} />
+                <span className="text-[13px] text-muted-foreground">Анализирую скрипты на вашем сайте…</span>
               </div>
             )}
 
-            {/* Parser Success Indicator */}
             {!isParserLoading && parserData && parserData.detected.length > 0 && (
-              <div className="mt-2.5 flex items-center gap-2 text-[13px] text-success">
-                <svg
-                  className="size-3.5"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={2}
-                  aria-hidden="true"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                <span>
+              <div className="mt-3 flex items-center gap-2.5 rounded-lg border border-emerald-200/50 bg-emerald-50/50 px-3.5 py-2.5 dark:border-emerald-800/30 dark:bg-emerald-950/20">
+                <CheckCircle2 className="size-3.5 text-emerald-600 dark:text-emerald-400" strokeWidth={2} />
+                <span className="text-[13px] text-emerald-700 dark:text-emerald-300">
                   Найдено сервисов: {parserData.detected.length}
                   {parserData.chatWidgets.length > 0 && ` · ${parserData.chatWidgets.length} виджет(ов)`}
                 </span>
@@ -120,7 +119,8 @@ export function CompanyForm({ data, onChange, isParserLoading, parserData }: Com
 
           {/* Email */}
           <div>
-            <label htmlFor="company-email" className="mb-3 block text-[13px] font-medium text-foreground">
+            <label htmlFor="company-email" className="mb-3 flex items-center gap-2 text-[13px] font-medium text-foreground">
+              <Mail className="size-3.5 text-muted-foreground/50" strokeWidth={1.5} />
               Контактный email
             </label>
             <input

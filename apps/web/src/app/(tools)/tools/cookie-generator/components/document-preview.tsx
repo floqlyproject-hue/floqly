@@ -1,6 +1,7 @@
 'use client'
 
 import { useMemo, useState, useEffect, useRef, useCallback } from 'react'
+import { Eye, Pen, Copy, Check, Download, RotateCcw } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import type { CookieConfig } from '../types'
@@ -9,13 +10,25 @@ import { generateCookiePolicy, type CookiePolicyData } from '@/lib/templates/coo
 interface DocumentPreviewProps {
   config: CookieConfig
   cookiePolicyData: Partial<CookiePolicyData>
+  /** Pre-generated markdown (from parent) — avoids double generation */
+  markdown?: string
 }
 
 type ViewMode = 'preview' | 'edit'
 
+/* ─────────────────────────────────────────
+   TOC Section type
+   ───────────────────────────────────────── */
+interface TocItem {
+  id: string
+  title: string
+  level: number // 1 = h1, 2 = h2
+}
+
 export function DocumentPreview({
   config,
   cookiePolicyData,
+  markdown: externalMarkdown,
 }: DocumentPreviewProps) {
   const [copied, setCopied] = useState(false)
   const [viewMode, setViewMode] = useState<ViewMode>('preview')
@@ -29,8 +42,9 @@ export function DocumentPreview({
   const editorBtnRef = useRef<HTMLButtonElement>(null)
   const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0 })
 
-  // Generate markdown source from config
-  const generatedMarkdown = useMemo(() => {
+  // Use external markdown if provided, otherwise generate internally
+  const internalMarkdown = useMemo(() => {
+    if (externalMarkdown) return externalMarkdown
     const fullData: CookiePolicyData = {
       companyName: config.company.name || '',
       siteUrl: config.company.website || '',
@@ -57,7 +71,26 @@ export function DocumentPreview({
       },
     }
     return generateCookiePolicy(fullData)
-  }, [config, cookiePolicyData])
+  }, [config, cookiePolicyData, externalMarkdown])
+  const generatedMarkdown = internalMarkdown
+
+  // Extract TOC from markdown
+  const tocItems = useMemo<TocItem[]>(() => {
+    const lines = generatedMarkdown.split('\n')
+    const items: TocItem[] = []
+    for (const line of lines) {
+      const h2Match = line.match(/^## (.+)/)
+      const h1Match = line.match(/^# (.+)/)
+      if (h1Match) {
+        const title = h1Match[1].trim()
+        items.push({ id: slugify(title), title, level: 1 })
+      } else if (h2Match) {
+        const title = h2Match[1].trim()
+        items.push({ id: slugify(title), title, level: 2 })
+      }
+    }
+    return items
+  }, [generatedMarkdown])
 
   // Reset edited HTML when source markdown changes (user went back and changed config)
   useEffect(() => {
@@ -80,7 +113,6 @@ export function DocumentPreview({
 
   useEffect(() => {
     updateIndicator()
-    // Recalculate on resize
     window.addEventListener('resize', updateIndicator)
     return () => window.removeEventListener('resize', updateIndicator)
   }, [updateIndicator])
@@ -89,7 +121,6 @@ export function DocumentPreview({
   useEffect(() => {
     if (viewMode === 'edit' && contentRef.current) {
       contentRef.current.contentEditable = 'true'
-      // Place cursor at start
       const timer = setTimeout(() => {
         contentRef.current?.focus()
       }, 50)
@@ -129,7 +160,6 @@ export function DocumentPreview({
   }, [])
 
   const handleCopy = useCallback(async () => {
-    // Copy plain text (what user sees)
     const text = contentRef.current?.innerText || ''
     await navigator.clipboard.writeText(text)
     setCopied(true)
@@ -137,7 +167,6 @@ export function DocumentPreview({
   }, [])
 
   const handleDownloadMarkdown = useCallback(() => {
-    // Only available when no manual edits (original markdown)
     const blob = new Blob([generatedMarkdown], { type: 'text/markdown' })
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
@@ -209,19 +238,26 @@ ${bodyContent}
     setViewMode('preview')
   }, [])
 
-  // Switch mode handler — save HTML snapshot before leaving edit (only if user actually edited)
+  // Switch mode handler — save HTML snapshot before leaving edit
   const switchMode = useCallback((mode: ViewMode) => {
     if (viewMode === 'edit' && mode === 'preview' && contentRef.current && editedHtml !== null) {
-      // User made edits via onInput — persist latest innerHTML snapshot
       setEditedHtml(contentRef.current.innerHTML)
     }
     setViewMode(mode)
   }, [viewMode, editedHtml])
 
+  // Scroll to section
+  const scrollToSection = useCallback((id: string) => {
+    const el = document.getElementById(id)
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
+  }, [])
+
   return (
     <div>
       {/* Section Header */}
-      <div className="mb-12 max-w-lg">
+      <div className="mb-10 max-w-lg">
         <h3 className="text-[22px] font-semibold tracking-tight text-foreground">Текст документа</h3>
         <p className="mt-2.5 text-[14px] leading-relaxed text-muted-foreground/70">
           Проверьте и отредактируйте сгенерированную политику cookie
@@ -230,7 +266,7 @@ ${bodyContent}
 
       {/* Toolbar */}
       <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        {/* Left: Mode Toggle (segmented control with sliding indicator) */}
+        {/* Left: Mode Toggle with icons */}
         <div className="relative flex items-center gap-0.5 rounded-lg border border-border p-0.5">
           {/* Sliding indicator */}
           <div
@@ -245,24 +281,26 @@ ${bodyContent}
             ref={previewBtnRef}
             onClick={() => switchMode('preview')}
             aria-pressed={viewMode === 'preview'}
-            className={`relative z-10 rounded-md px-3.5 py-1.5 text-[13px] font-medium transition-colors duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
+            className={`relative z-10 flex items-center gap-1.5 rounded-md px-3.5 py-1.5 text-[13px] font-medium transition-colors duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
               viewMode === 'preview'
                 ? 'text-background'
                 : 'text-muted-foreground hover:text-foreground'
             }`}
           >
+            <Eye className="size-3.5" strokeWidth={1.5} />
             Просмотр
           </button>
           <button
             ref={editorBtnRef}
             onClick={() => switchMode('edit')}
             aria-pressed={viewMode === 'edit'}
-            className={`relative z-10 rounded-md px-3.5 py-1.5 text-[13px] font-medium transition-colors duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
+            className={`relative z-10 flex items-center gap-1.5 rounded-md px-3.5 py-1.5 text-[13px] font-medium transition-colors duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
               viewMode === 'edit'
                 ? 'text-background'
                 : 'text-muted-foreground hover:text-foreground'
             }`}
           >
+            <Pen className="size-3" strokeWidth={1.5} />
             Редактор
           </button>
         </div>
@@ -295,9 +333,7 @@ ${bodyContent}
                     aria-label="Сбросить к оригинальной версии"
                     className="flex size-8 items-center justify-center rounded-lg text-muted-foreground transition-colors duration-200 hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                   >
-                    <svg className="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
-                    </svg>
+                    <RotateCcw className="size-4" strokeWidth={1.5} />
                   </button>
                   <span className="tooltip-content mb-2.5 w-auto whitespace-nowrap rounded-lg bg-foreground px-3 py-2 text-[12px] font-normal text-background shadow-lg dark:bg-[oklch(25%_0.025_260)] dark:text-[oklch(90%_0.01_264)]">
                     Сбросить
@@ -314,18 +350,14 @@ ${bodyContent}
               aria-label={copied ? 'Текст скопирован' : 'Копировать текст'}
               className={`flex size-8 items-center justify-center rounded-lg transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
                 copied
-                  ? 'text-success'
+                  ? 'text-emerald-600 dark:text-emerald-400'
                   : 'text-muted-foreground hover:bg-muted hover:text-foreground'
               }`}
             >
               {copied ? (
-                <svg className="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-                </svg>
+                <Check className="size-4" strokeWidth={2} />
               ) : (
-                <svg className="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.666 3.888A2.25 2.25 0 0013.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 01-.75.75H9a.75.75 0 01-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 01-2.25 2.25H6.75A2.25 2.25 0 014.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 011.927-.184" />
-                </svg>
+                <Copy className="size-4" strokeWidth={1.5} />
               )}
             </button>
             <span className="tooltip-content mb-2.5 w-auto whitespace-nowrap rounded-lg bg-foreground px-3 py-2 text-[12px] font-normal text-background shadow-lg dark:bg-[oklch(25%_0.025_260)] dark:text-[oklch(90%_0.01_264)]">
@@ -343,9 +375,7 @@ ${bodyContent}
                 aria-haspopup="menu"
                 className="flex size-8 items-center justify-center rounded-lg text-muted-foreground transition-colors duration-200 hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               >
-                <svg className="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
-                </svg>
+                <Download className="size-4" strokeWidth={1.5} />
               </button>
               {!downloadMenuOpen && (
                 <span className="tooltip-content mb-2.5 w-auto whitespace-nowrap rounded-lg bg-foreground px-3 py-2 text-[12px] font-normal text-background shadow-lg dark:bg-[oklch(25%_0.025_260)] dark:text-[oklch(90%_0.01_264)]">
@@ -383,16 +413,23 @@ ${bodyContent}
         </div>
       </div>
 
-      {/* Document Content — single container, contentEditable in edit mode */}
+      {/* Document Content — paper-like container */}
       <div
         className={`overflow-hidden rounded-xl border transition-all duration-300 ${
           viewMode === 'edit'
-            ? 'border-foreground/20 ring-1 ring-foreground/10'
-            : 'border-border'
+            ? 'border-foreground/20 ring-2 ring-foreground/5 shadow-sm'
+            : 'border-border shadow-[0_1px_6px_rgba(0,0,0,0.04)] dark:shadow-[0_1px_6px_rgba(0,0,0,0.2)]'
         }`}
         role="document"
         aria-label={viewMode === 'edit' ? 'Редактор документа' : 'Предпросмотр политики cookie'}
       >
+        {/* Edit mode indicator bar */}
+        <div
+          className={`h-0.5 w-full transition-all duration-300 ${
+            viewMode === 'edit' ? 'bg-foreground/20' : 'bg-transparent'
+          }`}
+        />
+
         <div
           ref={contentRef}
           onInput={viewMode === 'edit' ? handleInput : undefined}
@@ -416,7 +453,8 @@ ${bodyContent}
 
       {/* Edit mode hint */}
       {viewMode === 'edit' && (
-        <p className="mode-crossfade-enter mt-3 text-[12px] text-muted-foreground/60">
+        <p className="mode-crossfade-enter mt-3 flex items-center gap-1.5 text-[12px] text-muted-foreground/60">
+          <Pen className="size-3" strokeWidth={1.5} />
           Кликните на текст для редактирования. Изменения сохраняются автоматически.
         </p>
       )}
@@ -425,41 +463,135 @@ ${bodyContent}
 }
 
 /* ─────────────────────────────────────────
-   Markdown Component Mappings
+   TOC Sidebar component (exported for use in cookie-generator-client)
+   ───────────────────────────────────────── */
+export function DocumentToc({
+  markdown,
+  onScrollTo,
+}: {
+  markdown: string
+  onScrollTo: (id: string) => void
+}) {
+  const tocItems = useMemo<TocItem[]>(() => {
+    const lines = markdown.split('\n')
+    const items: TocItem[] = []
+    for (const line of lines) {
+      const h2Match = line.match(/^## (.+)/)
+      const h1Match = line.match(/^# (.+)/)
+      if (h1Match) {
+        const title = h1Match[1].trim()
+        items.push({ id: slugify(title), title, level: 1 })
+      } else if (h2Match) {
+        const title = h2Match[1].trim()
+        items.push({ id: slugify(title), title, level: 2 })
+      }
+    }
+    return items
+  }, [markdown])
+
+  if (tocItems.length === 0) return null
+
+  return (
+    <div className="space-y-5">
+      <div className="rounded-xl border border-border bg-card p-5">
+        <h4 className="text-[11px] font-medium uppercase tracking-[0.1em] text-muted-foreground/70">
+          Содержание
+        </h4>
+        <nav className="mt-3 space-y-0.5">
+          {tocItems.map((item) => (
+            <button
+              key={item.id}
+              onClick={() => onScrollTo(item.id)}
+              className={`block w-full text-left text-[12px] leading-relaxed transition-colors duration-150 hover:text-foreground focus-visible:outline-none focus-visible:text-foreground ${
+                item.level === 1
+                  ? 'py-1.5 font-medium text-foreground/80'
+                  : 'py-1 pl-3 text-muted-foreground/70'
+              }`}
+            >
+              {item.title}
+            </button>
+          ))}
+        </nav>
+      </div>
+
+      <div className="rounded-xl border border-border bg-card p-5">
+        <h4 className="text-[11px] font-medium uppercase tracking-[0.1em] text-muted-foreground/70">
+          Подсказки
+        </h4>
+        <ul className="mt-3 space-y-2">
+          <TipItem>Документ создан автоматически по данным из шагов 1 и 2</TipItem>
+          <TipItem>Переключитесь в «Редактор» для правки текста</TipItem>
+          <TipItem>Скопируйте текст или скачайте файл (.html)</TipItem>
+          <TipItem>Сброс вернёт документ к оригинальной версии</TipItem>
+        </ul>
+      </div>
+    </div>
+  )
+}
+
+function TipItem({ children }: { children: React.ReactNode }) {
+  return (
+    <li className="flex items-start gap-2.5 text-[12px] leading-relaxed text-muted-foreground">
+      <span className="mt-[7px] size-1 shrink-0 rounded-full bg-foreground/20" aria-hidden="true" />
+      <span>{children}</span>
+    </li>
+  )
+}
+
+/* ─────────────────────────────────────────
+   Helpers
+   ───────────────────────────────────────── */
+function slugify(text: string): string {
+  return text
+    .toLowerCase()
+    .replace(/[^\wа-яёА-ЯЁ\s-]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-')
+    .slice(0, 60)
+}
+
+/* ─────────────────────────────────────────
+   Markdown Component Mappings — with anchor IDs for TOC
    ───────────────────────────────────────── */
 const markdownComponents = {
-  h1: ({ children }: { children?: React.ReactNode }) => (
-    <h1 className="text-[24px] font-semibold tracking-tight text-foreground mb-4 mt-6 first:mt-0">
-      {children}
-    </h1>
-  ),
-  h2: ({ children }: { children?: React.ReactNode }) => (
-    <h2 className="text-[20px] font-semibold tracking-tight text-foreground mb-3 mt-6">
-      {children}
-    </h2>
-  ),
+  h1: ({ children }: { children?: React.ReactNode }) => {
+    const text = typeof children === 'string' ? children : getTextContent(children)
+    return (
+      <h1 id={slugify(text)} className="scroll-mt-24 text-[24px] font-semibold tracking-tight text-foreground mb-4 mt-6 first:mt-0">
+        {children}
+      </h1>
+    )
+  },
+  h2: ({ children }: { children?: React.ReactNode }) => {
+    const text = typeof children === 'string' ? children : getTextContent(children)
+    return (
+      <h2 id={slugify(text)} className="scroll-mt-24 text-[20px] font-semibold tracking-tight text-foreground mb-3 mt-8 pt-4 border-t border-border/40 first:border-0 first:pt-0">
+        {children}
+      </h2>
+    )
+  },
   h3: ({ children }: { children?: React.ReactNode }) => (
     <h3 className="text-[17px] font-semibold tracking-tight text-foreground mb-2 mt-5">
       {children}
     </h3>
   ),
   p: ({ children }: { children?: React.ReactNode }) => (
-    <p className="text-[15px] leading-relaxed text-foreground mb-4">
+    <p className="text-[15px] leading-relaxed text-foreground/90 mb-4">
       {children}
     </p>
   ),
   ul: ({ children }: { children?: React.ReactNode }) => (
-    <ul className="space-y-2 mb-4 pl-6 list-disc marker:text-muted-foreground">
+    <ul className="space-y-2 mb-4 pl-6 list-disc marker:text-muted-foreground/40">
       {children}
     </ul>
   ),
   ol: ({ children }: { children?: React.ReactNode }) => (
-    <ol className="space-y-2 mb-4 pl-6 list-decimal marker:text-muted-foreground">
+    <ol className="space-y-2 mb-4 pl-6 list-decimal marker:text-muted-foreground/40">
       {children}
     </ol>
   ),
   li: ({ children }: { children?: React.ReactNode }) => (
-    <li className="text-[15px] leading-relaxed text-foreground">
+    <li className="text-[15px] leading-relaxed text-foreground/90">
       {children}
     </li>
   ),
@@ -488,4 +620,16 @@ const markdownComponents = {
       {children}
     </a>
   ),
+}
+
+/** Recursively extract text content from React children */
+function getTextContent(children: React.ReactNode): string {
+  if (typeof children === 'string') return children
+  if (typeof children === 'number') return String(children)
+  if (Array.isArray(children)) return children.map(getTextContent).join('')
+  if (children && typeof children === 'object' && 'props' in children) {
+    const el = children as React.ReactElement<{ children?: React.ReactNode }>
+    return getTextContent(el.props.children)
+  }
+  return ''
 }

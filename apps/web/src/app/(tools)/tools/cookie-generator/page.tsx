@@ -35,7 +35,7 @@ const FAQ_ITEMS = [
 export default function CookieGeneratorPage() {
   return (
     <main className="min-h-screen">
-      <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8">
+      <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8">
         {/* Header */}
         <header className="mb-14">
           <h1 className="text-[28px] font-semibold tracking-tight text-foreground sm:text-[32px]">

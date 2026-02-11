@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useMemo } from 'react'
+import { Shield, BarChart3, Globe, Megaphone, Info, Lightbulb } from 'lucide-react'
 import type { CookiePolicyData } from '@/lib/templates/cookie-policy'
 
 interface CookiePolicyFormProps {
@@ -20,6 +21,50 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
   const [newPartnerNetwork, setNewPartnerNetwork] = useState('')
   const [showMarketingOtherForm, setShowMarketingOtherForm] = useState(false)
   const [newMarketingService, setNewMarketingService] = useState('')
+
+  // ============================================================================
+  // SECTION COUNTS
+  // ============================================================================
+  const techCount = useMemo(() => {
+    let c = 0
+    if (data.technicalFeatures?.cart) c++
+    if (data.technicalFeatures?.auth) c++
+    if (data.technicalFeatures?.payment) c++
+    if (data.technicalFeatures?.preferences) c++
+    if (data.technicalFeatures?.security) c++
+    c += data.technicalFeatures?.externalServices?.length ?? 0
+    return c
+  }, [data.technicalFeatures])
+
+  const analyticsCount = useMemo(() => {
+    let c = 0
+    if (data.analytics?.yandexMetrika) c++
+    if (data.analytics?.liveInternet) c++
+    if (data.analytics?.mailRu) c++
+    if (data.analytics?.customAnalytics) c++
+    c += data.analytics?.other?.length ?? 0
+    return c
+  }, [data.analytics])
+
+  const crossBorderCount = useMemo(() => {
+    let c = 0
+    if (data.crossBorder?.googleServices) c++
+    if (data.crossBorder?.facebookPixel) c++
+    c += data.crossBorder?.other?.length ?? 0
+    return c
+  }, [data.crossBorder])
+
+  const marketingCount = useMemo(() => {
+    let c = 0
+    if (data.marketing?.vkPixel) c++
+    if (data.marketing?.myTarget) c++
+    if (data.marketing?.yandexDirect) c++
+    c += data.marketing?.partnerNetworks?.length ?? 0
+    c += data.marketing?.other?.length ?? 0
+    return c
+  }, [data.marketing])
+
+  const totalCount = techCount + analyticsCount + crossBorderCount + marketingCount
 
   // ============================================================================
   // HANDLERS
@@ -272,13 +317,18 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
   return (
     <div>
       {/* Section Header — matches Step 1 */}
-      <div className="mb-12 max-w-lg">
+      <div className="mb-10 max-w-lg">
         <h3 className="text-[22px] font-semibold tracking-tight text-foreground">
           Что использует ваш сайт?
         </h3>
         <p className="mt-2.5 text-[14px] leading-relaxed text-muted-foreground/70">
           Отметьте функции и сервисы, которые работают на вашем сайте
         </p>
+        {totalCount > 0 && (
+          <div className="mt-4 text-[12px] tabular-nums text-muted-foreground/50">
+            Выбрано: {totalCount}
+          </div>
+        )}
       </div>
 
       {/* Form Blocks */}
@@ -286,9 +336,15 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
         {/* ========================================================================
             BLOCK 1: TECHNICAL FEATURES
             ======================================================================== */}
-        <fieldset className="space-y-4">
-          <legend className="text-[15px] font-semibold text-foreground">
+        <fieldset className="space-y-4 rounded-xl border border-border/50 p-5">
+          <legend className="flex items-center gap-2 px-1 text-[15px] font-semibold text-foreground">
+            <Shield className="size-4 text-muted-foreground/60" strokeWidth={1.5} />
             Функции сайта
+            {techCount > 0 && (
+              <span className="rounded-full bg-foreground/10 px-2 py-0.5 text-[11px] font-medium tabular-nums text-foreground/60">
+                {techCount}
+              </span>
+            )}
           </legend>
           <p className="text-[13px] leading-relaxed text-muted-foreground">
             Отметьте функции, которые есть на вашем сайте — это нужно для правильного оформления документа
@@ -367,9 +423,15 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
         {/* ========================================================================
             BLOCK 2: ANALYTICS
             ======================================================================== */}
-        <fieldset className="space-y-4">
-          <legend className="text-[15px] font-semibold text-foreground">
+        <fieldset className="space-y-4 rounded-xl border border-border/50 p-5">
+          <legend className="flex items-center gap-2 px-1 text-[15px] font-semibold text-foreground">
+            <BarChart3 className="size-4 text-muted-foreground/60" strokeWidth={1.5} />
             Аналитика
+            {analyticsCount > 0 && (
+              <span className="rounded-full bg-foreground/10 px-2 py-0.5 text-[11px] font-medium tabular-nums text-foreground/60">
+                {analyticsCount}
+              </span>
+            )}
           </legend>
           <p className="text-[13px] leading-relaxed text-muted-foreground">
             Сервисы для отслеживания посещаемости и поведения пользователей на сайте
@@ -433,9 +495,15 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
         {/* ========================================================================
             BLOCK 3: CROSS-BORDER TRANSFER
             ======================================================================== */}
-        <fieldset className="space-y-4">
-          <legend className="text-[15px] font-semibold text-foreground">
+        <fieldset className="space-y-4 rounded-xl border border-border/50 p-5">
+          <legend className="flex items-center gap-2 px-1 text-[15px] font-semibold text-foreground">
+            <Globe className="size-4 text-muted-foreground/60" strokeWidth={1.5} />
             Иностранные сервисы
+            {crossBorderCount > 0 && (
+              <span className="rounded-full bg-foreground/10 px-2 py-0.5 text-[11px] font-medium tabular-nums text-foreground/60">
+                {crossBorderCount}
+              </span>
+            )}
           </legend>
           <p className="text-[13px] leading-relaxed text-muted-foreground">
             Некоторые сервисы передают данные на серверы за пределами РФ — это требует указания в политике
@@ -443,9 +511,7 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
 
           {/* Legal notice — borderless */}
           <div className="flex items-start gap-2.5 rounded-lg bg-muted/50 px-3.5 py-3">
-            <svg aria-hidden="true" className="mt-px size-4 shrink-0 text-foreground/50" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
-            </svg>
+            <Info className="mt-px size-4 shrink-0 text-foreground/50" strokeWidth={1.5} aria-hidden="true" />
             <p className="text-[13px] leading-relaxed text-muted-foreground">
               <span className="font-medium text-foreground/80">ФЗ-152</span> требует указать передачу данных за границу для защиты от штрафов и претензий
             </p>
@@ -499,9 +565,15 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
         {/* ========================================================================
             BLOCK 4: MARKETING/RETARGETING
             ======================================================================== */}
-        <fieldset className="space-y-4">
-          <legend className="text-[15px] font-semibold text-foreground">
+        <fieldset className="space-y-4 rounded-xl border border-border/50 p-5">
+          <legend className="flex items-center gap-2 px-1 text-[15px] font-semibold text-foreground">
+            <Megaphone className="size-4 text-muted-foreground/60" strokeWidth={1.5} />
             Реклама и маркетинг
+            {marketingCount > 0 && (
+              <span className="rounded-full bg-foreground/10 px-2 py-0.5 text-[11px] font-medium tabular-nums text-foreground/60">
+                {marketingCount}
+              </span>
+            )}
           </legend>
           <p className="text-[13px] leading-relaxed text-muted-foreground">
             Сервисы для показа рекламы и отслеживания её эффективности
@@ -590,9 +662,7 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
 
         {/* Bottom hint — borderless */}
         <div className="flex items-start gap-2.5 rounded-lg bg-muted/50 px-3.5 py-3">
-          <svg aria-hidden="true" className="mt-px size-4 shrink-0 text-muted-foreground/60" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z" />
-          </svg>
+          <Lightbulb className="mt-px size-4 shrink-0 text-muted-foreground/60" strokeWidth={1.5} aria-hidden="true" />
           <div>
             <p className="text-[13px] font-medium leading-relaxed text-foreground/80">
               Выбирайте только то, что действительно используется
