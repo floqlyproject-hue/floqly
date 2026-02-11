@@ -32,7 +32,7 @@ export default function SmartWidgetTemplate() {
               3. Добавьте диалоговое окно (чат с AI)
             </p>
             <p className="mt-2 text-muted-foreground">
-              4. Добавьте анимацию "раздумий" (thinking/typing)
+              4. Добавьте анимацию &quot;раздумий&quot; (thinking/typing)
             </p>
           </div>
         </div>

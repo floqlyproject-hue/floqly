@@ -84,6 +84,8 @@ export function DocumentPreview({
 
   // Snapshot HTML when leaving edit mode
   const htmlSnapshotRef = useRef<string | null>(null)
+  // Mirror ref value as state for safe render access (react-hooks/refs)
+  const [htmlSnapshot, setHtmlSnapshot] = useState<string | null>(null)
 
   // Use external markdown if provided, otherwise generate internally
   const generatedMarkdown = useMemo(() => {
@@ -116,11 +118,20 @@ export function DocumentPreview({
     return generateCookiePolicy(fullData)
   }, [config, cookiePolicyData, externalMarkdown])
 
-  // Reset edited state when source markdown changes (user went back and changed config)
-  useEffect(() => {
-    htmlSnapshotRef.current = null
+  // Reset edited state when source markdown changes — setState during render pattern
+  const [prevMarkdown, setPrevMarkdown] = useState(generatedMarkdown)
+  if (prevMarkdown !== generatedMarkdown) {
+    setPrevMarkdown(generatedMarkdown)
+    setHtmlSnapshot(null)
     setHasEdited(false)
-  }, [generatedMarkdown])
+  }
+
+  // Sync ref with state (ref used in effects/callbacks, state for render)
+  useEffect(() => {
+    if (htmlSnapshot === null) {
+      htmlSnapshotRef.current = null
+    }
+  }, [htmlSnapshot])
 
   // Update sliding indicator position
   const updateIndicator = useCallback(() => {
@@ -279,6 +290,7 @@ ${bodyContent}
 
   const handleReset = useCallback(() => {
     htmlSnapshotRef.current = null
+    setHtmlSnapshot(null)
     setHasEdited(false)
     setShowResetConfirm(false)
     setViewMode('preview')
@@ -288,7 +300,9 @@ ${bodyContent}
   const switchMode = useCallback((mode: ViewMode) => {
     if (viewMode === 'edit' && mode === 'preview' && contentRef.current) {
       // Snapshot current DOM before switching to preview
-      htmlSnapshotRef.current = contentRef.current.innerHTML
+      const snapshot = contentRef.current.innerHTML
+      htmlSnapshotRef.current = snapshot
+      setHtmlSnapshot(snapshot)
     }
     setViewMode(mode)
   }, [viewMode])
@@ -645,8 +659,8 @@ ${bodyContent}
             In edit mode → contentEditable manages its own DOM, no React re-renders
             We only re-render when switching modes, not on every keystroke
           */}
-          {viewMode === 'preview' && htmlSnapshotRef.current ? (
-            <div dangerouslySetInnerHTML={{ __html: htmlSnapshotRef.current }} />
+          {viewMode === 'preview' && htmlSnapshot ? (
+            <div dangerouslySetInnerHTML={{ __html: htmlSnapshot }} />
           ) : viewMode === 'preview' ? (
             <ReactMarkdown
               remarkPlugins={[remarkGfm]}
@@ -656,7 +670,7 @@ ${bodyContent}
             </ReactMarkdown>
           ) : (
             /* In edit mode: initial render only, then contentEditable takes over */
-            !htmlSnapshotRef.current ? (
+            !htmlSnapshot ? (
               <ReactMarkdown
                 remarkPlugins={[remarkGfm]}
                 components={markdownComponents}
@@ -664,7 +678,7 @@ ${bodyContent}
                 {generatedMarkdown}
               </ReactMarkdown>
             ) : (
-              <div dangerouslySetInnerHTML={{ __html: htmlSnapshotRef.current }} />
+              <div dangerouslySetInnerHTML={{ __html: htmlSnapshot }} />
             )
           )}
         </div>

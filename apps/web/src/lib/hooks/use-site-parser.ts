@@ -128,35 +128,37 @@ export function useSiteParser(websiteInput: string, options: UseParserOptions = 
   const { mode = 'all', enabled = true } = options
   const [parserData, setParserData] = useState<ParserResult | null>(null)
   const [isLoading, setIsLoading] = useState(false)
+  const [fetchKey, setFetchKey] = useState<string | null>(null)
   const requestIdRef = useRef(0)
 
+  // Нормализовать URL (вычислять при рендере, не в эффекте)
+  const url = enabled ? normalizeUrl(websiteInput) : null
+
+  // Проверить кеш (вычислять при рендере, не в эффекте)
+  const cached = url ? getCached(url) : null
+
+  // Нужен ли fetch: enabled + валидный URL + нет кеша
+  const needsFetch = enabled && url !== null && cached === null
+  // Ключ для запуска эффекта (url + mode)
+  const currentFetchKey = needsFetch ? `${url}|${mode}` : null
+
+  // Синхронизация состояния при изменении входных данных (setState during render)
+  if (fetchKey !== currentFetchKey) {
+    setFetchKey(currentFetchKey)
+    if (!needsFetch) {
+      // Установить данные из кеша или сбросить
+      setParserData(cached ?? null)
+      setIsLoading(false)
+    } else {
+      setIsLoading(true)
+    }
+  }
+
   useEffect(() => {
-    // Если отключено — сбросить состояние
-    if (!enabled) {
-      setParserData(null)
-      setIsLoading(false)
-      return
-    }
-
-    // Нормализовать URL
-    const url = normalizeUrl(websiteInput)
-    if (!url) {
-      setParserData(null)
-      setIsLoading(false)
-      return
-    }
-
-    // Проверить кеш
-    const cached = getCached(url)
-    if (cached) {
-      setParserData(cached)
-      setIsLoading(false)
-      return
-    }
+    if (!needsFetch || !url) return
 
     // Increment request ID для cancellation
     const currentId = ++requestIdRef.current
-    setIsLoading(true)
 
     // Debounce запрос
     const timer = setTimeout(async () => {
@@ -205,7 +207,7 @@ export function useSiteParser(websiteInput: string, options: UseParserOptions = 
 
     // Cleanup
     return () => clearTimeout(timer)
-  }, [websiteInput, mode, enabled])
+  }, [needsFetch, url, mode])
 
   return { parserData, isLoading }
 }
