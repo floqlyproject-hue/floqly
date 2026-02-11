@@ -1,17 +1,22 @@
 'use client'
 
 import { useRef, useState } from 'react'
+import { Pipette } from 'lucide-react'
 
 /* ── Banner Style Presets ── */
 type StyleId = 'classic' | 'glass' | 'neo' | 'minimal' | 'gradient' | 'outlined'
 
-const BANNER_STYLES: { id: StyleId; label: string }[] = [
-  { id: 'classic', label: 'Классика' },
-  { id: 'glass', label: 'Стекло' },
-  { id: 'neo', label: 'Нео' },
-  { id: 'minimal', label: 'Минимал' },
-  { id: 'gradient', label: 'Градиент' },
-  { id: 'outlined', label: 'Контур' },
+const STYLE_ROWS: { id: StyleId; label: string }[][] = [
+  [
+    { id: 'classic', label: 'Классика' },
+    { id: 'glass', label: 'Стекло' },
+    { id: 'neo', label: 'Нео' },
+  ],
+  [
+    { id: 'minimal', label: 'Минимал' },
+    { id: 'gradient', label: 'Градиент' },
+    { id: 'outlined', label: 'Контур' },
+  ],
 ]
 
 /* ── Preset Colors ── */
@@ -45,32 +50,39 @@ function ColorPickerRow({
   onPresetSelect: (id: string) => void
   onCustomSelect: (color: string) => void
 }) {
-  const inputRef = useRef<HTMLInputElement>(null)
-  const isCustomActive = selected === 'custom'
+  const nativeRef = useRef<HTMLInputElement>(null)
+  const isCustom = selected === 'custom'
 
   return (
     <div>
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-1.5">
         {presets.map((c) => (
           <button
             key={c.id}
             type="button"
             aria-label={c.label}
             onClick={() => onPresetSelect(c.id)}
-            className={`island-color-circle ${selected === c.id ? 'ring-2 ring-foreground ring-offset-2 ring-offset-background' : ''}`}
+            className={`island-color-dot ${selected === c.id ? 'island-color-dot-active' : ''}`}
             style={{ backgroundColor: c.color }}
           />
         ))}
-        {/* Custom color — rainbow circle wrapping native input */}
+        {/* Custom color — subtle + button */}
         <button
           type="button"
           aria-label="Свой цвет"
-          onClick={() => inputRef.current?.click()}
-          className={`island-color-circle island-color-custom ${isCustomActive ? 'ring-2 ring-foreground ring-offset-2 ring-offset-background' : ''}`}
-          style={isCustomActive ? { background: customColor } : undefined}
-        />
+          onClick={() => {
+            if (!isCustom) {
+              onCustomSelect(customColor)
+            }
+            nativeRef.current?.click()
+          }}
+          className={`island-color-dot island-color-dot-plus ${isCustom ? 'island-color-dot-active' : ''}`}
+          style={isCustom ? { backgroundColor: customColor, borderStyle: 'solid' } : undefined}
+        >
+          {!isCustom && <span className="text-[11px] leading-none text-foreground/30">+</span>}
+        </button>
         <input
-          ref={inputRef}
+          ref={nativeRef}
           type="color"
           value={customColor}
           onChange={(e) => onCustomSelect(e.target.value)}
@@ -80,26 +92,37 @@ function ColorPickerRow({
         />
       </div>
 
-      {/* Inline hex input — visible when custom is active */}
-      {isCustomActive && (
-        <div className="mt-2 flex items-center gap-2">
-          <div
-            className="size-5 shrink-0 rounded-full border border-foreground/10"
-            style={{ backgroundColor: customColor }}
-          />
-          <input
-            type="text"
-            value={customColor.toUpperCase()}
-            onChange={(e) => {
-              const v = e.target.value
-              if (/^#[0-9A-Fa-f]{0,6}$/.test(v)) onCustomSelect(v)
-            }}
-            maxLength={7}
-            className="island-input font-mono text-[12px]"
-            placeholder="#000000"
-          />
+      {/* Expanded custom color editor — smooth reveal */}
+      <div className={`island-color-expand ${isCustom ? 'island-color-expand-open' : ''}`}>
+        <div className="island-color-expand-inner">
+          <div className="flex items-center gap-2 pt-2.5">
+            <div
+              className="size-6 shrink-0 rounded-md border border-foreground/8 shadow-sm"
+              style={{ backgroundColor: customColor }}
+            />
+            <input
+              type="text"
+              value={customColor.toUpperCase()}
+              onChange={(e) => {
+                const v = e.target.value
+                if (/^#[0-9A-Fa-f]{0,6}$/.test(v)) onCustomSelect(v)
+              }}
+              maxLength={7}
+              spellCheck={false}
+              className="island-hex-input"
+              placeholder="#000000"
+            />
+            <button
+              type="button"
+              aria-label="Выбрать цвет"
+              onClick={() => nativeRef.current?.click()}
+              className="flex size-6 shrink-0 items-center justify-center rounded-md text-foreground/30 transition-colors hover:bg-foreground/5 hover:text-foreground/60"
+            >
+              <Pipette className="size-3.5" strokeWidth={1.5} />
+            </button>
+          </div>
         </div>
-      )}
+      </div>
     </div>
   )
 }
@@ -115,32 +138,31 @@ export function DesignPanel() {
   const [shadow, setShadow] = useState<string>('Мягкая')
 
   return (
-    <div className="space-y-4">
-      {/* ── Стиль виджета: Grid 3×2 ── */}
+    <div className="space-y-3.5">
+      {/* ── Стиль: compact 2-row pills ── */}
       <div>
         <label className="island-label">Стиль</label>
-        <div className="grid grid-cols-3 gap-1.5">
-          {BANNER_STYLES.map((s) => (
-            <button
-              key={s.id}
-              type="button"
-              onClick={() => setBannerStyle(s.id)}
-              className={`island-style-card ${bannerStyle === s.id ? 'island-style-card-active' : ''}`}
-            >
-              {/* Mini banner preview */}
-              <div className={`island-style-preview island-style-preview--${s.id}`}>
-                <div className="island-style-preview-bar" />
-                <div className="island-style-preview-btn" />
-              </div>
-              <span className="island-style-card-label">{s.label}</span>
-            </button>
+        <div className="flex flex-col gap-1">
+          {STYLE_ROWS.map((row, i) => (
+            <div key={i} className="island-segmented">
+              {row.map((s) => (
+                <button
+                  key={s.id}
+                  type="button"
+                  onClick={() => setBannerStyle(s.id)}
+                  className={`island-segment ${bannerStyle === s.id ? 'island-segment-active' : ''}`}
+                >
+                  {s.label}
+                </button>
+              ))}
+            </div>
           ))}
         </div>
       </div>
 
       {/* ── Фон баннера ── */}
       <div>
-        <label className="island-label">Фон баннера</label>
+        <label className="island-label">Фон</label>
         <ColorPickerRow
           presets={BG_COLORS}
           selected={bgColor}
@@ -155,7 +177,7 @@ export function DesignPanel() {
 
       {/* ── Цвет кнопок ── */}
       <div>
-        <label className="island-label">Цвет кнопок</label>
+        <label className="island-label">Кнопки</label>
         <ColorPickerRow
           presets={BTN_COLORS}
           selected={btnColor}

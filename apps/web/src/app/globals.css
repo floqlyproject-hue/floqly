@@ -598,23 +598,6 @@ input[type="checkbox"].cb:focus-visible {
     opacity: 0.5;
   }
 
-  .island-color-circle {
-    width: 28px;
-    height: 28px;
-    border-radius: 9999px;
-    border: 1.5px solid rgba(0, 0, 0, 0.08);
-    cursor: pointer;
-    transition: transform 150ms ease;
-  }
-
-  .island-color-circle:hover {
-    transform: scale(1.1);
-  }
-
-  .dark .island-color-circle {
-    border-color: rgba(255, 255, 255, 0.12);
-  }
-
   /* Segmented control */
   .island-segmented {
     display: flex;
@@ -720,161 +703,88 @@ input[type="checkbox"].cb:focus-visible {
     opacity: 0.4;
   }
 
-  /* ── Style Preset Cards (grid 3×2) ── */
-  .island-style-card {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-    padding: 6px 4px 5px;
-    border-radius: 8px;
-    border: 1.5px solid var(--color-border);
-    background: var(--color-background);
+  /* ── Color Dots (compact circles) ── */
+  .island-color-dot {
+    width: 26px;
+    height: 26px;
+    border-radius: 9999px;
+    border: 1.5px solid rgba(0, 0, 0, 0.08);
     cursor: pointer;
-    transition: all 150ms ease;
-  }
-
-  .island-style-card:hover {
-    border-color: var(--color-foreground);
-    opacity: 0.7;
-  }
-
-  .island-style-card-active {
-    border-color: var(--color-foreground);
-    background: var(--color-foreground);
-    color: var(--color-background);
-  }
-
-  .island-style-card-label {
-    font-size: 10px;
-    font-weight: 600;
-    letter-spacing: 0.02em;
-    line-height: 1;
-  }
-
-  /* Mini banner preview inside style card */
-  .island-style-preview {
-    position: relative;
-    width: 100%;
-    height: 28px;
-    border-radius: 4px;
-    background: var(--color-muted);
-    overflow: hidden;
+    transition: all 180ms cubic-bezier(0, 0, 0.2, 1);
     display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 3px;
-    padding: 4px 6px;
   }
 
-  .island-style-preview-bar {
-    width: 70%;
-    height: 3px;
-    border-radius: 1px;
-    background: currentColor;
-    opacity: 0.25;
+  .island-color-dot:hover {
+    transform: scale(1.1);
   }
 
-  .island-style-preview-btn {
-    width: 40%;
-    height: 5px;
-    border-radius: 2px;
-    background: currentColor;
-    opacity: 0.4;
-  }
-
-  /* Classic — clean, white */
-  .island-style-preview--classic {
-    background: #f8f8f8;
-  }
-  .island-style-card-active .island-style-preview--classic {
-    background: rgba(255, 255, 255, 0.15);
-  }
-
-  /* Glass — translucent, blur hint */
-  .island-style-preview--glass {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.5), rgba(200, 220, 255, 0.3));
-    border: 1px solid rgba(255, 255, 255, 0.4);
-  }
-  .island-style-card-active .island-style-preview--glass {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(200, 220, 255, 0.1));
-    border-color: rgba(255, 255, 255, 0.2);
-  }
-
-  /* Neo — neumorphic shadows */
-  .island-style-preview--neo {
-    background: #e8e8e8;
+  .island-color-dot-active {
+    ring: none;
     box-shadow:
-      inset 2px 2px 3px rgba(255, 255, 255, 0.7),
-      inset -2px -2px 3px rgba(0, 0, 0, 0.08);
-  }
-  .island-style-card-active .island-style-preview--neo {
-    background: rgba(255, 255, 255, 0.1);
-    box-shadow:
-      inset 2px 2px 3px rgba(255, 255, 255, 0.15),
-      inset -2px -2px 3px rgba(0, 0, 0, 0.2);
+      0 0 0 2px var(--color-background),
+      0 0 0 3.5px var(--color-foreground);
   }
 
-  /* Minimal — thin lines, airy */
-  .island-style-preview--minimal {
+  .dark .island-color-dot {
+    border-color: rgba(255, 255, 255, 0.12);
+  }
+
+  /* Plus button for custom color */
+  .island-color-dot-plus {
     background: transparent;
-    border: 1px solid var(--color-border);
-  }
-  .island-style-preview--minimal .island-style-preview-bar {
-    opacity: 0.15;
-    height: 2px;
-  }
-  .island-style-preview--minimal .island-style-preview-btn {
+    border: 1.5px dashed var(--color-foreground);
     opacity: 0.2;
-    height: 4px;
-    border-radius: 1px;
-  }
-  .island-style-card-active .island-style-preview--minimal {
-    background: transparent;
-    border-color: rgba(255, 255, 255, 0.2);
   }
 
-  /* Gradient — colorful bg */
-  .island-style-preview--gradient {
-    background: linear-gradient(135deg, #667eea, #764ba2);
-  }
-  .island-style-preview--gradient .island-style-preview-bar,
-  .island-style-preview--gradient .island-style-preview-btn {
-    background: #fff;
-    opacity: 0.5;
-  }
-  .island-style-card-active .island-style-preview--gradient {
-    background: linear-gradient(135deg, rgba(102, 126, 234, 0.4), rgba(118, 75, 162, 0.4));
+  .island-color-dot-plus:hover {
+    opacity: 0.45;
   }
 
-  /* Outlined — transparent bg, thick border */
-  .island-style-preview--outlined {
-    background: transparent;
-    border: 2px solid currentColor;
-    opacity: 0.7;
-  }
-  .island-style-preview--outlined .island-style-preview-btn {
-    background: transparent;
-    border: 1.5px solid currentColor;
-    opacity: 0.5;
-    height: 4px;
-  }
-  .island-style-card-active .island-style-preview--outlined {
-    opacity: 0.5;
+  .island-color-dot-plus.island-color-dot-active {
+    opacity: 1;
+    border-style: solid;
   }
 
-  /* Custom color picker — rainbow circle */
-  .island-color-custom {
-    background: conic-gradient(
-      hsl(0, 80%, 60%),
-      hsl(60, 80%, 60%),
-      hsl(120, 80%, 60%),
-      hsl(180, 80%, 60%),
-      hsl(240, 80%, 60%),
-      hsl(300, 80%, 60%),
-      hsl(360, 80%, 60%)
-    ) !important;
+  /* Smooth expand for custom color editor */
+  .island-color-expand {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 250ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .island-color-expand-open {
+    grid-template-rows: 1fr;
+  }
+
+  .island-color-expand-inner {
+    overflow: hidden;
+  }
+
+  /* Hex input — monospaced, underline style */
+  .island-hex-input {
+    flex: 1;
+    min-width: 0;
+    border: none;
+    border-bottom: 1px solid var(--color-border);
+    background: transparent;
+    padding: 4px 0;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 12px;
+    letter-spacing: 0.05em;
+    color: var(--color-foreground);
+    outline: none;
+    transition: border-color 200ms ease;
+  }
+
+  .island-hex-input:focus {
+    border-bottom-color: var(--color-foreground);
+  }
+
+  .island-hex-input::placeholder {
+    color: var(--color-muted-foreground);
+    opacity: 0.4;
   }
 }
 
