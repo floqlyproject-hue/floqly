@@ -10,7 +10,9 @@
       "WebFetch(*)",
       "WebSearch(*)",
       "mcp__*",
-      "mcp__memory__create_entities"
+      "mcp__memory__create_entities",
+      "mcp__memory__read_graph",
+      "mcp__memory__create_relations"
     ],
     "deny": []
   }

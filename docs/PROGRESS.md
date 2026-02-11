@@ -2,7 +2,7 @@
 
 > Последнее обновление: 2026-02-11
 > Текущая фаза: **Подготовка к разработке Smart Widget**
-> Актуальные задачи: см. TODO в [CLAUDE.md](../CLAUDE.md)
+> Задачи: обсуждаются в сессии, история фиксируется ниже
 
 ---
 
@@ -72,14 +72,17 @@
 - Событие `floqly:parser-complete` для Smart Widget
 - Commit: `9873cf2`
 
-### 2026-02-09 — Smart Widget UX/UI Design Guide
-- Создан `docs/SMART_WIDGET_UX_GUIDE.md` (10 разделов, 500+ строк)
-- Анимации, thinking indicator, диалоговое окно, триггеры, референсы
-- Opensource библиотеки, Material Design Guidelines, roadmap (6 фаз)
-
 ---
 
 ## Полная история (старше 5 сессий)
+
+<details>
+<summary>2026-02-09 — Smart Widget UX/UI Design Guide</summary>
+
+- Создан `docs/SMART_WIDGET_UX_GUIDE.md` (10 разделов, 500+ строк)
+- Анимации, thinking indicator, диалоговое окно, триггеры, референсы
+- Opensource библиотеки, Material Design Guidelines, roadmap (6 фаз)
+</details>
 
 <details>
 <summary>2026-02-08 — Cookie Generator Step 3 (полный редизайн)</summary>
