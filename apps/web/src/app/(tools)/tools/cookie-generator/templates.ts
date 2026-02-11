@@ -1,6 +1,6 @@
 // Шаблоны текстов для Cookie Generator
 
-import type { CookieConfig, CookieType } from './types'
+import type { CookieConfig } from './types'
 
 /**
  * Генерирует короткий текст для баннера
@@ -78,6 +78,7 @@ export const BANNER_TEMPLATES = {
     id: 'minimal',
     name: 'Минимальный',
     description: 'Краткое сообщение без деталей',
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     generate: (config: CookieConfig) => {
       return 'Мы используем cookie для улучшения работы сайта.'
     },

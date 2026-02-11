@@ -1,10 +1,6 @@
 'use client'
 
-import { useState } from 'react'
-
 export default function SimpleWidgetTemplate() {
-  const [isOpen, setIsOpen] = useState(false)
-
   return (
     <main className="flex min-h-screen items-center justify-center bg-gradient-to-br from-background to-muted">
       {/* Widget Preview Container */}

@@ -96,6 +96,7 @@ export function BannerPreview({
 
             {/* Screenshot / Custom image */}
             {displayImage && (
+              // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={displayImage}
                 alt="Превью сайта"

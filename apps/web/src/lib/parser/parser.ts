@@ -9,7 +9,6 @@ import { PARSER_SIGNATURES } from './signatures'
 import type {
   ParserOptions,
   ParserResult,
-  ParserError,
   DetectedService,
   ParserResponse,
 } from './types'

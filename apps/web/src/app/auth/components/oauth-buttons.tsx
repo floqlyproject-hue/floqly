@@ -16,7 +16,8 @@ interface OAuthButtonsProps {
 
 type OAuthProvider = 'yandex' | 'vk' | 'telegram'
 
-export function OAuthButtons({ redirect: _redirect }: OAuthButtonsProps) {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function OAuthButtons({ redirect }: OAuthButtonsProps) {
   const [loading, setLoading] = useState<OAuthProvider | null>(null)
   const [error, setError] = useState<string | null>(null)
   // const supabase = createClient()

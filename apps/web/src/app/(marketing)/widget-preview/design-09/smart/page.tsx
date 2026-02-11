@@ -1,11 +1,6 @@
 'use client'
 
-import { useState } from 'react'
-
 export default function SmartWidgetTemplate() {
-  const [isOpen, setIsOpen] = useState(false)
-  const [messages, setMessages] = useState<Array<{ role: 'user' | 'bot'; text: string }>>([])
-
   return (
     <main className="flex min-h-screen items-center justify-center bg-gradient-to-br from-background to-muted">
       {/* Widget Preview Container */}

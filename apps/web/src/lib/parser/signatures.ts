@@ -140,6 +140,7 @@ export function getServiceById(id: ServiceId) {
  */
 export function getServicesByCategory(category: ServiceCategory) {
   return Object.entries(PARSER_SIGNATURES)
-    .filter(([_, service]) => service.category === category)
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    .filter(([id, service]) => service.category === category)
     .map(([id, service]) => ({ id: id as ServiceId, ...service }))
 }

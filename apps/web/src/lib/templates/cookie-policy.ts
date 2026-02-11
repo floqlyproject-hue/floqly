@@ -390,6 +390,7 @@ ${services.join('\n\n')}
  * Helper: Check if cross-border transfer should be auto-enabled
  * (currently not used as we removed foreign ad services from marketing)
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function shouldEnableCrossBorder(data: CookiePolicyData): boolean {
   return false // No auto-enable, user must manually select cross-border services
 }

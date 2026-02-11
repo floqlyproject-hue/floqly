@@ -7,7 +7,7 @@ import { useTheme } from '@/providers/theme-provider'
  * Использует SVG иконки вместо emojis (следуя ui-ux-pro-max)
  */
 export function ThemeToggle() {
-  const { resolvedTheme, setTheme, theme } = useTheme()
+  const { setTheme, theme } = useTheme()
 
   const cycleTheme = () => {
     if (theme === 'light') setTheme('dark')
@@ -66,7 +66,7 @@ export function ThemeToggle() {
  * Компактная версия для navbar
  */
 export function ThemeToggleCompact() {
-  const { resolvedTheme, setTheme, theme } = useTheme()
+  const { resolvedTheme, setTheme } = useTheme()
 
   return (
     <button

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 
 // GET /api/widgets - Получить список виджетов
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export async function GET(request: NextRequest) {
   // TODO: Подключить Supabase
   return NextResponse.json({
