@@ -1,6 +1,6 @@
 # Floqly — Прогресс разработки
 
-> Последнее обновление: 2026-02-10
+> Последнее обновление: 2026-02-11
 > Текущая фаза: **Подготовка к разработке Smart Widget**
 > Актуальные задачи: см. TODO в [CLAUDE.md](../CLAUDE.md)
 
@@ -10,7 +10,7 @@
 
 | Компонент | Статус | Детали |
 |-----------|--------|--------|
-| Cookie Generator | 92% | Steps 1-5 дизайн унифицирован. Step 3 WYSIWYG. Нужно: доработать Step 2, auto-fill, тесты |
+| Cookie Generator | 93% | Steps 1-5 дизайн. Step 4: ClassicBanner, liquid-glass islands. Нужно: morph-панели, доработать Step 2, auto-fill |
 | Парсер сайтов | MVP готов | 3-слойная архитектура, 16 сигнатур, интеграция в Cookie Generator |
 | Smart Widget UX Guide | Готов | `docs/SMART_WIDGET_UX_GUIDE.md` (гайд по анимациям, UI, триггерам) |
 | Simple Widget дизайны | Design-01 ready | Sandbox: `widget-preview/design-XX/` |
@@ -22,6 +22,19 @@
 ---
 
 ## Последние 5 сессий
+
+### 2026-02-11 — ClassicBanner + ESLint fixes + liquid-glass restore
+- **ClassicBanner** — премиальный стиль cookie-баннера для Step 4 preview
+  - Extensible `BannerStyleProps` интерфейс для будущих стилей (glass, neo, minimal и др.)
+  - Adaptive color system: `perceivedBrightness()` → авто light/dark адаптация
+  - 3-tier button hierarchy: ghost (Отклонить) → outlined (Настроить) → solid (Принять все)
+  - Custom cookie SVG icon с адаптивным акцентным цветом
+  - Hover micro-interactions: underline animation, translateY lift + shadow
+- **30 ESLint errors fixed** — разблокировали CI/CD (20 × unescaped entities, 2 × refs, 1 × setState-in-effect)
+- **74 ESLint warnings fixed** — чистый lint output (0 errors, 0 warnings)
+- **Liquid-glass restored** на background switcher island (без SVG feTurbulence filter)
+- **Tooltip CSS fix** — Tailwind v4 name collision: `tooltip-content-bottom-end` → `tooltip-bottom-end`
+- Commits: `0a85f20`, `393b0fa`, `a4ab814`, `6886fae`, `7542329`
 
 ### 2026-02-10 — Откат Step 4: 3 неудачные итерации → возврат к 5e3b32a
 - **Итерация 1:** Премиальный конструктор (15 компонентов, 10 пресетов, SVG-позиции) — перегруз
@@ -64,21 +77,27 @@
 - Анимации, thinking indicator, диалоговое окно, триггеры, референсы
 - Opensource библиотеки, Material Design Guidelines, roadmap (6 фаз)
 
-### 2026-02-08 — Cookie Generator Step 3 (полный редизайн)
+---
+
+## Полная история (старше 5 сессий)
+
+<details>
+<summary>2026-02-08 — Cookie Generator Step 3 (полный редизайн)</summary>
+
 - HTML preview вместо Markdown textarea (react-markdown)
 - WYSIWYG редактирование (contentEditable) + кнопка "Сбросить"
 - Seamless preview (документ сливается с фоном), решение двойных границ
 - Упрощение UI (удалены кнопки режимов)
+</details>
 
-### 2026-02-08 — Cookie Generator: информационные блоки + PLG-стратегия
+<details>
+<summary>2026-02-08 — Cookie Generator: информационные блоки + PLG-стратегия</summary>
+
 - Единый стиль информационных блоков для всех 5 шагов
 - Создана PLG-стратегия: `docs/PLG_STRATEGY.md`
 - Новый шаблон документа (`cookie-policy.ts`) с 4 блоками
 - Git Recovery Guide
-
----
-
-## Полная история (старше 5 сессий)
+</details>
 
 <details>
 <summary>2026-02-07 — Cookie Generator: Precision Minimalism</summary>
