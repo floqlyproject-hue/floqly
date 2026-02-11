@@ -10,7 +10,6 @@ interface BackgroundSwitcherIslandProps {
   activeBackground: PreviewBackground
   onBackgroundChange: (bg: PreviewBackground) => void
   onCustomImageUpload: (url: string) => void
-  hasScreenshot: boolean
   containerRef: React.RefObject<HTMLDivElement | null>
 }
 
@@ -30,7 +29,6 @@ export function BackgroundSwitcherIsland({
   activeBackground,
   onBackgroundChange,
   onCustomImageUpload,
-  hasScreenshot,
   containerRef,
 }: BackgroundSwitcherIslandProps) {
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -45,7 +43,6 @@ export function BackgroundSwitcherIsland({
       if (!file) return
       const url = URL.createObjectURL(file)
       onCustomImageUpload(url)
-      // Reset input so the same file can be re-uploaded
       e.target.value = ''
     },
     [onCustomImageUpload]
@@ -78,27 +75,23 @@ export function BackgroundSwitcherIsland({
         <div className="flex items-center gap-0.5 p-1">
           {BACKGROUNDS.map((bg) => {
             const isActive = activeBackground === bg.id
-            const isDisabled = bg.id === 'screenshot' && !hasScreenshot
 
             return (
               <span key={bg.id} className="tooltip-trigger relative">
                 <button
                   type="button"
-                  disabled={isDisabled}
                   aria-label={bg.label}
                   onClick={() => onBackgroundChange(bg.id)}
                   className={`flex size-7 items-center justify-center rounded-md transition-colors duration-150 ${
                     isActive
                       ? 'bg-white/30 text-foreground dark:bg-white/15'
-                      : isDisabled
-                        ? 'cursor-not-allowed text-foreground/25 dark:text-foreground/20'
-                        : 'text-foreground/60 hover:bg-white/20 hover:text-foreground dark:text-foreground/50 dark:hover:bg-white/10 dark:hover:text-foreground'
+                      : 'text-foreground/60 hover:bg-white/20 hover:text-foreground dark:text-foreground/50 dark:hover:bg-white/10 dark:hover:text-foreground'
                   }`}
                 >
                   <bg.icon className="size-[14px]" strokeWidth={1.75} />
                 </button>
                 <span className="tooltip-content-bottom whitespace-nowrap rounded-lg bg-foreground px-2 py-1 text-[10px] font-medium text-background shadow-lg">
-                  {isDisabled ? 'Введите домен на шаге 1' : bg.label}
+                  {bg.label}
                 </span>
               </span>
             )
@@ -121,8 +114,14 @@ export function BackgroundSwitcherIsland({
             >
               <Upload className="size-[14px]" strokeWidth={1.75} />
             </button>
-            <span className="tooltip-content-bottom whitespace-nowrap rounded-lg bg-foreground px-2 py-1 text-[10px] font-medium text-background shadow-lg">
-              Загрузить свой скриншот
+            {/* Right-aligned tooltip with format hint */}
+            <span className="tooltip-content-bottom-end w-52 rounded-lg bg-foreground px-2.5 py-1.5 shadow-lg">
+              <span className="block text-[10px] font-medium text-background">
+                Загрузить свой скриншот
+              </span>
+              <span className="mt-0.5 block text-[9px] text-background/60">
+                PNG, JPG или WebP · пропорция 16:10
+              </span>
             </span>
           </span>
 
@@ -130,7 +129,7 @@ export function BackgroundSwitcherIsland({
           <input
             ref={fileInputRef}
             type="file"
-            accept="image/*"
+            accept="image/png,image/jpeg,image/webp"
             className="hidden"
             onChange={handleFileChange}
           />

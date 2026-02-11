@@ -590,6 +590,32 @@ input[type="checkbox"].cb:focus-visible {
       visibility 0ms 0ms;
   }
 
+  /* Tooltip — bottom-end variant (aligned to right edge, won't clip) */
+  .tooltip-content-bottom-end {
+    pointer-events: none;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    transform: translateY(4px);
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      opacity 200ms cubic-bezier(0.0, 0.0, 0.2, 1),
+      transform 200ms cubic-bezier(0.0, 0.0, 0.2, 1),
+      visibility 0ms 200ms;
+  }
+
+  .tooltip-trigger:hover .tooltip-content-bottom-end {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(8px);
+    pointer-events: auto;
+    transition:
+      opacity 200ms cubic-bezier(0.0, 0.0, 0.2, 1),
+      transform 200ms cubic-bezier(0.0, 0.0, 0.2, 1),
+      visibility 0ms 0ms;
+  }
+
   /* ── Island Panel Controls ── */
 
   .island-label {
