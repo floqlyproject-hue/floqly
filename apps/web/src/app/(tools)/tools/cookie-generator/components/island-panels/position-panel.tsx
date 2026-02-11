@@ -2,53 +2,19 @@
 
 import { useState } from 'react'
 
-type Position = 'bottom' | 'top' | 'floating' | 'corner'
-
-const POSITIONS: { id: Position; label: string }[] = [
-  { id: 'top', label: 'Сверху' },
-  { id: 'corner', label: 'В углу' },
-  { id: 'bottom', label: 'Снизу' },
-  { id: 'floating', label: 'Плавающий' },
-]
-
-const WIDTHS = ['Полная', 'Компакт'] as const
+const WIDTHS = ['Полная', 'Средняя', 'Компакт'] as const
+const VERT = ['Сверху', 'Центр', 'Снизу'] as const
+const HORIZ = ['Слева', 'Центр', 'Справа'] as const
 
 export function PositionPanel() {
-  const [position, setPosition] = useState<Position>('bottom')
   const [width, setWidth] = useState<string>('Полная')
-  const [padding, setPadding] = useState(16)
+  const [vert, setVert] = useState<string>('Снизу')
+  const [horiz, setHoriz] = useState<string>('Центр')
+  const [offsetX, setOffsetX] = useState(0)
+  const [offsetY, setOffsetY] = useState(0)
 
   return (
-    <div className="space-y-4">
-      {/* Расположение — Visual Picker 2×2 */}
-      <div>
-        <label className="island-label">Расположение</label>
-        <div className="grid grid-cols-2 gap-1.5">
-          {POSITIONS.map((p) => (
-            <button
-              key={p.id}
-              type="button"
-              onClick={() => setPosition(p.id)}
-              className={`island-position-cell ${position === p.id ? 'island-position-cell-active' : ''}`}
-            >
-              {/* Mini banner indicator */}
-              <div
-                className={`island-position-indicator ${
-                  p.id === 'top'
-                    ? 'left-1 right-1 top-1 h-1.5'
-                    : p.id === 'bottom'
-                      ? 'bottom-1 left-1 right-1 h-1.5'
-                      : p.id === 'corner'
-                        ? 'bottom-1 right-1 h-3 w-4'
-                        : 'bottom-2 left-2 right-2 h-2 rounded-sm'
-                }`}
-              />
-              <span className="relative z-10 text-[10px] font-medium">{p.label}</span>
-            </button>
-          ))}
-        </div>
-      </div>
-
+    <div className="space-y-3.5">
       {/* Ширина */}
       <div>
         <label className="island-label">Ширина</label>
@@ -66,19 +32,70 @@ export function PositionPanel() {
         </div>
       </div>
 
-      {/* Отступы */}
+      {/* Вертикаль */}
+      <div>
+        <label className="island-label">Вертикаль</label>
+        <div className="island-segmented">
+          {VERT.map((v) => (
+            <button
+              key={v}
+              type="button"
+              onClick={() => setVert(v)}
+              className={`island-segment ${vert === v ? 'island-segment-active' : ''}`}
+            >
+              {v}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Горизонталь */}
+      <div>
+        <label className="island-label">Горизонталь</label>
+        <div className="island-segmented">
+          {HORIZ.map((h) => (
+            <button
+              key={h}
+              type="button"
+              onClick={() => setHoriz(h)}
+              className={`island-segment ${horiz === h ? 'island-segment-active' : ''}`}
+            >
+              {h}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Отступ X */}
       <div>
         <div className="flex items-center justify-between">
-          <label className="island-label mb-0">Отступы</label>
-          <span className="text-[11px] tabular-nums text-muted-foreground">{padding}px</span>
+          <label className="island-label mb-0">Отступ X</label>
+          <span className="text-[11px] tabular-nums text-muted-foreground">{offsetX}px</span>
         </div>
         <input
           type="range"
           min={0}
-          max={32}
+          max={48}
           step={4}
-          value={padding}
-          onChange={(e) => setPadding(Number(e.target.value))}
+          value={offsetX}
+          onChange={(e) => setOffsetX(Number(e.target.value))}
+          className="island-slider mt-1.5 w-full"
+        />
+      </div>
+
+      {/* Отступ Y */}
+      <div>
+        <div className="flex items-center justify-between">
+          <label className="island-label mb-0">Отступ Y</label>
+          <span className="text-[11px] tabular-nums text-muted-foreground">{offsetY}px</span>
+        </div>
+        <input
+          type="range"
+          min={0}
+          max={48}
+          step={4}
+          value={offsetY}
+          onChange={(e) => setOffsetY(Number(e.target.value))}
           className="island-slider mt-1.5 w-full"
         />
       </div>

@@ -5,7 +5,7 @@ import { motion, AnimatePresence, LayoutGroup } from 'framer-motion'
 import { Palette, Sparkles, Type, LayoutTemplate, X } from 'lucide-react'
 import { DesignPanel, AnimationPanel, TextPanel, PositionPanel } from './island-panels'
 
-type PanelId = 'design' | 'animation' | 'text' | 'position'
+type PanelId = 'text' | 'design' | 'position' | 'animation'
 
 const ISLAND_CATEGORIES: {
   id: PanelId
@@ -13,10 +13,10 @@ const ISLAND_CATEGORIES: {
   icon: typeof Palette
   panel: () => ReactNode
 }[] = [
-  { id: 'design', label: 'Дизайн', icon: Palette, panel: () => <DesignPanel /> },
-  { id: 'animation', label: 'Анимация', icon: Sparkles, panel: () => <AnimationPanel /> },
   { id: 'text', label: 'Текст', icon: Type, panel: () => <TextPanel /> },
+  { id: 'design', label: 'Стиль', icon: Palette, panel: () => <DesignPanel /> },
   { id: 'position', label: 'Позиция', icon: LayoutTemplate, panel: () => <PositionPanel /> },
+  { id: 'animation', label: 'Анимация', icon: Sparkles, panel: () => <AnimationPanel /> },
 ]
 
 const SPRING = { type: 'spring' as const, stiffness: 350, damping: 30 }
