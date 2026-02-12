@@ -1,7 +1,7 @@
 # Floqly — Прогресс разработки
 
 > Последнее обновление: 2026-02-12
-> Текущая фаза: **Cookie Generator Step 4 — полировка UI**
+> Текущая фаза: **Регистрация + Dashboard**
 > Задачи: обсуждаются в сессии, история фиксируется ниже
 
 ---
@@ -10,7 +10,7 @@
 
 | Компонент | Статус | Детали |
 |-----------|--------|--------|
-| Cookie Generator | 92% | Step 4: визуальный редактор с dynamic islands, анимации баннера работают. Нужно: auto-fill, финальная полировка |
+| Cookie Generator | 95% | Step 5 «Результат» готов (embed code + dashboard upsell). TODO: доработка Step 4 (auto-fill) + Step 5 (финальная полировка) |
 | Парсер сайтов | MVP готов | 3-слойная архитектура, 16 сигнатур, интеграция в Cookie Generator |
 | Smart Widget UX Guide | Готов | `docs/SMART_WIDGET_UX_GUIDE.md` (гайд по анимациям, UI, триггерам) |
 | Simple Widget дизайны | Design-01 ready | Sandbox: `widget-preview/design-XX/` |
@@ -21,7 +21,26 @@
 
 ---
 
+## TODO (отложенные доработки)
+
+- **Cookie Generator Step 4:** auto-fill из парсера, финальная полировка UI
+- **Cookie Generator Step 5:** финальная полировка (тексты, responsive, edge cases)
+
+---
+
 ## Последние 5 сессий
+
+### 2026-02-12 — Step 5 «Результат» + интерактивный мокап дашборда
+- **Step 5 создан с нуля:** embed code генератор + dashboard upsell карточка + инструкции по установке
+  - `generate-embed-code.ts` — self-contained vanilla JS код (~120 строк) из всех настроек пользователя
+  - `result-step.tsx` — двухколоночный layout (ЛК-карточка слева, код+инструкции справа)
+  - State lifting: BannerCustomization поднят из banner-preview → cookie-generator-client (controlled/uncontrolled pattern)
+  - Accordion с инструкциями для 5 платформ (HTML, WordPress, Tilda, Bitrix, другие CMS)
+- **Мокап дашборда** стилизован как «окно ЛК» (три точки + заголовок + pointer-events контроль)
+- **Тултипы по hover:** shadcn/ui Tooltip на CDN-коде и каждой метрике с информативными подсказками
+- **Анимация чисел:** useCountUp хук (requestAnimationFrame + easeOutExpo) + useInView (IntersectionObserver) — числа набегают при попадании во viewport
+- **Персонализация:** заголовок окна «Личный кабинет {company.name}» из шага 1
+- **Метрики:** Показы / Приняли / Ср. время (вместо скучной «конверсии»)
 
 ### 2026-02-12 — Анимации cookie popup + фиксы UI + настройки Claude Code
 - **Анимации баннера реализованы:** 5 типов (slide, fade, bounce, scale, none) через Framer Motion AnimatePresence
