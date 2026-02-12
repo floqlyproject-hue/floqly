@@ -474,12 +474,44 @@ input[type="checkbox"].cb:focus-visible {
   .liquid-glass {
     position: relative;
     display: flex;
-    overflow: visible;
+    overflow: hidden;
     border-radius: 1rem;
     box-shadow:
       0 4px 12px rgba(0, 0, 0, 0.12),
       0 0 0 1px rgba(255, 255, 255, 0.1);
-    transition: box-shadow 0.3s ease;
+    /* CSS morph — smooth size + shape transition (Apple Dynamic Island style) */
+    transition:
+      width 380ms cubic-bezier(0.32, 0.72, 0, 1),
+      height 380ms cubic-bezier(0.32, 0.72, 0, 1),
+      border-radius 300ms cubic-bezier(0.4, 0, 0.2, 1),
+      box-shadow 300ms ease;
+    will-change: width, height;
+  }
+
+  /* ── Island Morph Content Layers ── */
+
+  /* Collapsed state: icon column */
+  .island-layer-collapsed {
+    opacity: 1;
+    transition: opacity 120ms cubic-bezier(0.4, 0, 1, 1);
+  }
+
+  .island-layer-collapsed[data-hidden="true"] {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 80ms cubic-bezier(0.4, 0, 1, 1);
+  }
+
+  /* Expanded state: full panel */
+  .island-layer-expanded {
+    opacity: 1;
+    transition: opacity 200ms cubic-bezier(0, 0, 0.2, 1) 140ms;
+  }
+
+  .island-layer-expanded[data-hidden="true"] {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 100ms cubic-bezier(0.4, 0, 1, 1) 0ms;
   }
 
   .liquid-glass:hover {
@@ -522,6 +554,9 @@ input[type="checkbox"].cb:focus-visible {
   .liquid-glass-content {
     position: relative;
     z-index: 3;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
   }
 
   .dark .liquid-glass {

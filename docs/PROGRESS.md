@@ -23,6 +23,21 @@
 
 ## Последние 5 сессий
 
+### 2026-02-12 — Dynamic Island: CSS morph animation (Apple Dynamic Island style)
+- **Полный рерайт анимации morphing:** убран Framer Motion `layout="size"` + `LayoutGroup` + spring physics
+  - Причина: spring-based size interpolation вызывал overshoot (остров увеличивался и уменьшался дёргано)
+  - Решение: чистые CSS transitions на `width`, `height`, `border-radius` с Apple easing `cubic-bezier(0.32, 0.72, 0, 1)`
+  - Длительность: 380ms — баланс между плавностью и отзывчивостью
+- **Два слоя контента (collapsed + expanded):** рендерятся одновременно, переключаются через `opacity` + `data-hidden` attr
+  - Collapsed fade-out: 80ms, expanded fade-in: 200ms с задержкой 140ms (контент появляется после начала расширения)
+  - При закрытии: expanded fade-out 100ms instant, collapsed fade-in 120ms
+- **Динамическое измерение высоты:** `useLayoutEffect` + `ResizeObserver` на expanded ref
+  - Корректная работа при переключении панелей (text/design/position/animation имеют разную высоту)
+  - `lastPanel` state сохраняет контент для pre-measuring даже когда панель закрыта
+- **Убрано:** `layout="size"`, `LayoutGroup`, `SMOOTH_SPRING`, `whileDrag={{ scale: 1.04 }}`
+- **Сохранено:** `useDragControls` (drag по-прежнему работает через handle), `AnimatePresence mode="wait"` (crossfade между панелями)
+- **Вдохновение:** Apple Dynamic Island, Material Design 3 Container Transform
+
 ### 2026-02-12 — Dynamic Island: drag fix, content clipping fix, design polish
 - **Критический баг исправлен:** слайдеры (Скругление, Отступ X/Y и др.) двигали весь остров при перемещении
   - Причина: Framer Motion `drag` на motion.div ловил pointer events от shadcn Slider
