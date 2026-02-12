@@ -72,6 +72,12 @@ apps/widget/dist/
 docs/drafts/*
 !docs/drafts/README.md
 
+# Playwright MCP screenshots
+.playwright-mcp/
+
+# Windows artifacts
+nul
+
 # Source maps in production (security)
 *.map
 !*.css.map

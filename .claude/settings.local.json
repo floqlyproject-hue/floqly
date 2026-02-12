@@ -18,7 +18,13 @@
       "mcp__playwright__browser_press_key",
       "mcp__playwright__browser_evaluate",
       "mcp__playwright__browser_resize",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(pnpm dev:*)",
+      "mcp__shadcn__list_items_in_registries",
+      "Bash(pnpm add:*)",
+      "mcp__memory__search_nodes",
+      "mcp__memory__create_entities"
     ],
     "deny": []
   }
