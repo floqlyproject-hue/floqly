@@ -212,6 +212,7 @@ export function DesignPanel({ value, onChange }: DesignPanelProps) {
           type="single"
           value={value.shadow}
           onValueChange={(v) => { if (v) onChange({ ...value, shadow: v as ShadowLabel }) }}
+          spacing={1}
           className="flex gap-1"
         >
           {SHADOWS.map((s) => (
@@ -219,7 +220,7 @@ export function DesignPanel({ value, onChange }: DesignPanelProps) {
               key={s}
               value={s}
               size="sm"
-              className="h-[26px] flex-1 px-2 text-[11px] font-medium data-[state=on]:bg-foreground data-[state=on]:text-background"
+              className="h-[26px] flex-1 rounded-full px-2.5 text-[11px] font-medium data-[state=on]:bg-foreground data-[state=on]:text-background"
             >
               {s}
             </ToggleGroupItem>

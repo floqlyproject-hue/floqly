@@ -72,6 +72,7 @@ export function AnimationPanel({ value, onChange }: AnimationPanelProps) {
           type="single"
           value={value.trigger}
           onValueChange={(v) => { if (v) onChange({ ...value, trigger: v as TriggerId }) }}
+          spacing={1}
           className="flex gap-1"
         >
           {TRIGGERS.map((t) => (
@@ -79,7 +80,7 @@ export function AnimationPanel({ value, onChange }: AnimationPanelProps) {
               key={t.id}
               value={t.id}
               size="sm"
-              className="h-[26px] flex-1 px-2 text-[11px] font-medium data-[state=on]:bg-foreground data-[state=on]:text-background"
+              className="h-[26px] flex-1 rounded-full px-2.5 text-[11px] font-medium data-[state=on]:bg-foreground data-[state=on]:text-background"
             >
               {t.label}
             </ToggleGroupItem>
@@ -90,7 +91,7 @@ export function AnimationPanel({ value, onChange }: AnimationPanelProps) {
         <div className={`island-trigger-expand ${value.trigger === 'time' ? 'island-trigger-expand-time' : 'island-trigger-expand-scroll'}`}>
           <div className="island-trigger-expand-inner">
             {value.trigger === 'time' ? (
-              <div className="pb-1 pt-3">
+              <div className="pb-2 pt-3">
                 <div className="flex items-center justify-between">
                   <label className="island-label mb-0">Задержка</label>
                   <span className="text-[11px] text-muted-foreground" style={{ fontVariantNumeric: 'tabular-nums' }}>{value.delay}с</span>
@@ -105,7 +106,7 @@ export function AnimationPanel({ value, onChange }: AnimationPanelProps) {
                 />
               </div>
             ) : (
-              <div className="pb-1 pt-3">
+              <div className="pb-2 pt-3">
                 <div className="flex items-center justify-between">
                   <label className="island-label mb-0">Прокрутка</label>
                   <span className="text-[11px] text-muted-foreground" style={{ fontVariantNumeric: 'tabular-nums' }}>{value.scrollPx}px</span>
@@ -131,6 +132,7 @@ export function AnimationPanel({ value, onChange }: AnimationPanelProps) {
           type="single"
           value={value.backdrop}
           onValueChange={(v) => { if (v) onChange({ ...value, backdrop: v as BackdropOption }) }}
+          spacing={1}
           className="flex gap-1"
         >
           {BACKDROPS.map((b) => (
@@ -138,7 +140,7 @@ export function AnimationPanel({ value, onChange }: AnimationPanelProps) {
               key={b}
               value={b}
               size="sm"
-              className="h-[26px] flex-1 px-2 text-[11px] font-medium data-[state=on]:bg-foreground data-[state=on]:text-background"
+              className="h-[26px] flex-1 rounded-full px-2.5 text-[11px] font-medium data-[state=on]:bg-foreground data-[state=on]:text-background"
             >
               {b}
             </ToggleGroupItem>

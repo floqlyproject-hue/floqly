@@ -34,6 +34,7 @@ export function PositionPanel({ value, onChange }: PositionPanelProps) {
           type="single"
           value={value.width}
           onValueChange={(v) => { if (v) onChange({ ...value, width: v as WidthOption }) }}
+          spacing={1}
           className="flex gap-1"
         >
           {WIDTHS.map((w) => (
@@ -41,7 +42,7 @@ export function PositionPanel({ value, onChange }: PositionPanelProps) {
               key={w}
               value={w}
               size="sm"
-              className="h-[26px] flex-1 px-2 text-[11px] font-medium data-[state=on]:bg-foreground data-[state=on]:text-background"
+              className="h-[26px] flex-1 rounded-full px-2.5 text-[11px] font-medium data-[state=on]:bg-foreground data-[state=on]:text-background"
             >
               {w}
             </ToggleGroupItem>
@@ -56,6 +57,7 @@ export function PositionPanel({ value, onChange }: PositionPanelProps) {
           type="single"
           value={value.vert}
           onValueChange={(v) => { if (v) onChange({ ...value, vert: v as VertOption }) }}
+          spacing={1}
           className="flex gap-1"
         >
           {VERT.map((v) => (
@@ -63,7 +65,7 @@ export function PositionPanel({ value, onChange }: PositionPanelProps) {
               key={v}
               value={v}
               size="sm"
-              className="h-[26px] flex-1 px-2 text-[11px] font-medium data-[state=on]:bg-foreground data-[state=on]:text-background"
+              className="h-[26px] flex-1 rounded-full px-2.5 text-[11px] font-medium data-[state=on]:bg-foreground data-[state=on]:text-background"
             >
               {v}
             </ToggleGroupItem>
@@ -78,6 +80,7 @@ export function PositionPanel({ value, onChange }: PositionPanelProps) {
           type="single"
           value={value.horiz}
           onValueChange={(v) => { if (v) onChange({ ...value, horiz: v as HorizOption }) }}
+          spacing={1}
           className="flex gap-1"
         >
           {HORIZ.map((h) => (
@@ -85,7 +88,7 @@ export function PositionPanel({ value, onChange }: PositionPanelProps) {
               key={h}
               value={h}
               size="sm"
-              className="h-[26px] flex-1 px-2 text-[11px] font-medium data-[state=on]:bg-foreground data-[state=on]:text-background"
+              className="h-[26px] flex-1 rounded-full px-2.5 text-[11px] font-medium data-[state=on]:bg-foreground data-[state=on]:text-background"
             >
               {h}
             </ToggleGroupItem>
