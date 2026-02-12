@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
+import { Eye, EyeOff, Check, AlertTriangle } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@floqly/ui'
 import { Input, Label } from '@floqly/ui'
@@ -12,6 +13,19 @@ interface AuthFormProps {
   mode: 'login' | 'register'
 }
 
+/* ── Helpers ── */
+
+const CYRILLIC_RE = /[а-яёА-ЯЁ]/
+
+function getPasswordChecks(password: string) {
+  return {
+    length: password.length >= 6,
+    noCyrillic: !CYRILLIC_RE.test(password),
+  }
+}
+
+/* ── Component ── */
+
 export function AuthForm({ mode }: AuthFormProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -20,14 +34,28 @@ export function AuthForm({ mode }: AuthFormProps) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [name, setName] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
+  const [honeypot, setHoneypot] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [message, setMessage] = useState<string | null>(null)
 
   const supabase = createClient()
+  const checks = getPasswordChecks(password)
+  const hasCyrillic = password.length > 0 && !checks.noCyrillic
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+
+    // Honeypot: если заполнено — тихо «успешно»
+    if (honeypot) {
+      setMessage(mode === 'register'
+        ? 'Проверьте почту для подтверждения регистрации'
+        : 'Выполняется вход...',
+      )
+      return
+    }
+
     setLoading(true)
     setError(null)
     setMessage(null)
@@ -102,7 +130,7 @@ export function AuthForm({ mode }: AuthFormProps) {
           <p className="mt-2 text-sm text-muted-foreground">
             {mode === 'login'
               ? 'Войдите, чтобы управлять виджетами'
-              : 'Зарегистрируйтесь, чтобы начать'}
+              : 'Бесплатно. Без привязки карты.'}
           </p>
         </div>
 
@@ -123,6 +151,20 @@ export function AuthForm({ mode }: AuthFormProps) {
 
         {/* Email Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Honeypot — invisible to humans, filled by bots */}
+          <div className="absolute left-[-9999px]" aria-hidden="true">
+            <label htmlFor="website_url">Не заполняйте это поле</label>
+            <input
+              type="text"
+              id="website_url"
+              name="website_url"
+              tabIndex={-1}
+              autoComplete="off"
+              value={honeypot}
+              onChange={(e) => setHoneypot(e.target.value)}
+            />
+          </div>
+
           {mode === 'register' && (
             <div className="space-y-2">
               <Label htmlFor="name">Имя</Label>
@@ -165,16 +207,47 @@ export function AuthForm({ mode }: AuthFormProps) {
                 </button>
               )}
             </div>
-            <Input
-              id="password"
-              type="password"
-              placeholder="••••••••"
-              value={password}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
-              required
-              minLength={6}
-              disabled={loading}
-            />
+
+            {/* Password field with eye toggle */}
+            <div className="relative">
+              <Input
+                id="password"
+                type={showPassword ? 'text' : 'password'}
+                placeholder="••••••••"
+                value={password}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
+                required
+                minLength={6}
+                disabled={loading}
+                className="pr-10"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground/50 transition-colors hover:text-muted-foreground"
+                tabIndex={-1}
+                aria-label={showPassword ? 'Скрыть пароль' : 'Показать пароль'}
+              >
+                {showPassword ? (
+                  <EyeOff className="size-4" strokeWidth={1.5} />
+                ) : (
+                  <Eye className="size-4" strokeWidth={1.5} />
+                )}
+              </button>
+            </div>
+
+            {/* Password requirements (register only, shown when typing) */}
+            {mode === 'register' && password.length > 0 && (
+              <div className="space-y-1 pt-1">
+                <PasswordCheck passed={checks.length} label="Минимум 6 символов" />
+                {hasCyrillic && (
+                  <div className="flex items-center gap-1.5 text-[12px] text-amber-600 dark:text-amber-400">
+                    <AlertTriangle className="size-3 shrink-0" strokeWidth={2} />
+                    <span>Вы вводите кириллицей — возможно, не та раскладка</span>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
 
           {error && (
@@ -240,6 +313,19 @@ export function AuthForm({ mode }: AuthFormProps) {
           </>
         )}
       </p>
+    </div>
+  )
+}
+
+/* ── Sub-components ── */
+
+function PasswordCheck({ passed, label }: { passed: boolean; label: string }) {
+  return (
+    <div className={`flex items-center gap-1.5 text-[12px] transition-colors ${
+      passed ? 'text-emerald-600 dark:text-emerald-400' : 'text-muted-foreground/50'
+    }`}>
+      <Check className={`size-3 shrink-0 ${passed ? 'opacity-100' : 'opacity-30'}`} strokeWidth={2} />
+      <span>{label}</span>
     </div>
   )
 }

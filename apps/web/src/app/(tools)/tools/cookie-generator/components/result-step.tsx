@@ -229,7 +229,7 @@ export function ResultStep({
 
             {/* CTA */}
             <a
-              href="/auth/login?redirect=/dashboard/tools/cookie-generator"
+              href="/auth/register?redirect=/dashboard/tools/cookie-generator"
               className="mt-6 inline-flex items-center gap-2 rounded-lg bg-foreground px-6 py-3 text-[14px] font-medium text-background transition-opacity duration-150 hover:opacity-85"
             >
               Создать аккаунт бесплатно
