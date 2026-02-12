@@ -2,9 +2,6 @@
 
 import { useState, useMemo } from 'react'
 import { ChevronRight } from 'lucide-react'
-import { Switch } from '@/components/ui/switch'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import type { BannerCustomization } from './liquid-glass-island'
 import { TONE_TEXTS, type ToneId, type TextState } from './island-panels/text-panel'
 import { ClassicBanner, GlassBanner } from './banner-styles'
@@ -36,15 +33,6 @@ function resolveBgColor(bgColor: string, bgCustom: string): string {
 function resolveBtnColor(btnColor: string, btnCustom: string): string {
   if (btnColor === 'custom') return btnCustom
   return BTN_COLOR_MAP[btnColor] ?? '#000000'
-}
-
-/* ── Tiny section label ── */
-function SLabel({ children }: { children: React.ReactNode }) {
-  return (
-    <p className="mb-1.5 text-[11px] font-medium text-muted-foreground/50">
-      {children}
-    </p>
-  )
 }
 
 /* ── Component ── */
@@ -95,21 +83,23 @@ export function Step4ContentTab({
   const BannerComponent = customization.design.bannerStyle === 'glass' ? GlassBanner : ClassicBanner
 
   return (
-    <div className="grid items-start gap-8 lg:grid-cols-[280px,1fr]">
+    <div className="grid items-start gap-8 md:grid-cols-2">
 
-      {/* ── LEFT: Compact settings ── */}
-      <div className="space-y-5">
+      {/* ── LEFT: Settings ── */}
+      <div className="space-y-6">
 
         {/* Tone */}
         <div>
-          <SLabel>Тон сообщения</SLabel>
+          <p className="mb-2.5 text-[12px] font-medium uppercase tracking-[0.06em] text-muted-foreground/50">
+            Тон сообщения
+          </p>
           <div className="flex flex-wrap gap-1">
             {TONES.map((t) => (
               <button
                 key={t.id}
                 type="button"
                 onClick={() => applyTone(t.id)}
-                className={`rounded-md px-2.5 py-1 text-[12px] font-medium transition-all duration-150 ${
+                className={`rounded-md px-2.5 py-1.5 text-[12px] font-medium transition-all duration-150 ${
                   text.tone === t.id
                     ? 'bg-foreground text-background'
                     : 'bg-muted/50 text-muted-foreground hover:bg-muted hover:text-foreground/80'
@@ -123,50 +113,73 @@ export function Step4ContentTab({
 
         {/* Buttons */}
         <div>
-          <SLabel>Кнопки</SLabel>
-          <div className="space-y-1">
+          <p className="mb-2.5 text-[12px] font-medium uppercase tracking-[0.06em] text-muted-foreground/50">
+            Кнопки
+          </p>
+          <div className="space-y-0.5">
             {/* Accept — always on */}
-            <div className="flex items-center gap-2.5 rounded-md bg-muted/30 px-2.5 py-1.5">
-              <Switch checked disabled size="sm" className="opacity-40" aria-label="Принять" />
-              <Input
+            <div className="flex items-center gap-3 py-2.5">
+              <label className="flex shrink-0 cursor-not-allowed items-center">
+                <input
+                  type="checkbox"
+                  className="cb"
+                  checked
+                  disabled
+                  style={{ opacity: 0.35 }}
+                />
+              </label>
+              <input
+                type="text"
                 value={text.accept}
                 onChange={(e) => updateText({ accept: e.target.value })}
-                className="h-6 flex-1 border-0 bg-transparent px-0 text-[12px] shadow-none focus-visible:ring-0"
+                className="flex-1 border-b border-transparent bg-transparent px-0 py-0.5 text-[14px] font-medium text-foreground/90 transition-colors focus:border-border focus:outline-none"
                 placeholder="Принять"
                 spellCheck={false}
               />
-              <span className="text-[9px] text-muted-foreground/35">обяз.</span>
+              <span className="text-[11px] text-muted-foreground/35">обяз.</span>
             </div>
+
             {/* Decline */}
-            <div className={`flex items-center gap-2.5 rounded-md px-2.5 py-1.5 ${text.showDecline ? 'bg-muted/40' : 'bg-muted/20'}`}>
-              <Switch
-                checked={text.showDecline}
-                onCheckedChange={(v) => updateText({ showDecline: v })}
-                size="sm"
-                aria-label="Отклонить"
-              />
-              <Input
+            <div className="flex items-center gap-3 py-2.5">
+              <label className="flex shrink-0 cursor-pointer items-center">
+                <input
+                  type="checkbox"
+                  className="cb"
+                  checked={text.showDecline}
+                  onChange={(e) => updateText({ showDecline: e.target.checked })}
+                />
+              </label>
+              <input
+                type="text"
                 value={text.decline}
                 onChange={(e) => updateText({ decline: e.target.value })}
                 disabled={!text.showDecline}
-                className={`h-6 flex-1 border-0 bg-transparent px-0 text-[12px] shadow-none focus-visible:ring-0 ${!text.showDecline ? 'text-muted-foreground/30' : ''}`}
+                className={`flex-1 border-b border-transparent bg-transparent px-0 py-0.5 text-[14px] font-medium transition-colors focus:border-border focus:outline-none ${
+                  text.showDecline ? 'text-foreground/90' : 'text-muted-foreground/30'
+                }`}
                 placeholder="Отклонить"
                 spellCheck={false}
               />
             </div>
+
             {/* Settings */}
-            <div className={`flex items-center gap-2.5 rounded-md px-2.5 py-1.5 ${text.showSettings ? 'bg-muted/40' : 'bg-muted/20'}`}>
-              <Switch
-                checked={text.showSettings}
-                onCheckedChange={(v) => updateText({ showSettings: v })}
-                size="sm"
-                aria-label="Настроить"
-              />
-              <Input
+            <div className="flex items-center gap-3 py-2.5">
+              <label className="flex shrink-0 cursor-pointer items-center">
+                <input
+                  type="checkbox"
+                  className="cb"
+                  checked={text.showSettings}
+                  onChange={(e) => updateText({ showSettings: e.target.checked })}
+                />
+              </label>
+              <input
+                type="text"
                 value={text.settings}
                 onChange={(e) => updateText({ settings: e.target.value })}
                 disabled={!text.showSettings}
-                className={`h-6 flex-1 border-0 bg-transparent px-0 text-[12px] shadow-none focus-visible:ring-0 ${!text.showSettings ? 'text-muted-foreground/30' : ''}`}
+                className={`flex-1 border-b border-transparent bg-transparent px-0 py-0.5 text-[14px] font-medium transition-colors focus:border-border focus:outline-none ${
+                  text.showSettings ? 'text-foreground/90' : 'text-muted-foreground/30'
+                }`}
                 placeholder="Настроить"
                 spellCheck={false}
               />
@@ -176,25 +189,30 @@ export function Step4ContentTab({
 
         {/* Links */}
         <div>
-          <SLabel>Ссылка на политику</SLabel>
-          <div className="space-y-1.5">
+          <p className="mb-2.5 text-[12px] font-medium uppercase tracking-[0.06em] text-muted-foreground/50">
+            Ссылка на политику
+          </p>
+          <div className="space-y-0.5">
             {/* Word link */}
-            <div className={`rounded-md border px-2.5 py-2 transition-colors ${text.linkWordEnabled ? 'border-border/50 bg-muted/30' : 'border-border/30'}`}>
-              <div className="flex items-center gap-2.5">
-                <Switch
+            <div>
+              <label className="group flex cursor-pointer items-center gap-3 py-2.5 transition-colors duration-150">
+                <input
+                  type="checkbox"
+                  className="cb"
                   checked={text.linkWordEnabled}
-                  onCheckedChange={(v) => updateText({ linkWordEnabled: v })}
-                  size="sm"
-                  aria-label="Слово-ссылка"
+                  onChange={() => updateText({ linkWordEnabled: !text.linkWordEnabled })}
                 />
-                <span className="flex-1 text-[12px] text-foreground/70">Слово-ссылка в тексте</span>
-              </div>
+                <span className="text-[14px] font-medium text-foreground/90 group-hover:text-foreground">
+                  Слово-ссылка в тексте
+                </span>
+              </label>
               {text.linkWordEnabled && (
-                <div className="mt-2 pl-9">
-                  <Input
+                <div className="expand-enter ml-[1.875rem] mt-1 space-y-2 border-l-2 border-border pl-4">
+                  <input
+                    type="text"
                     value={text.linkWord}
                     onChange={(e) => updateText({ linkWord: e.target.value })}
-                    className="h-7 text-[12px]"
+                    className="w-full border-b border-border bg-transparent px-0 py-2 text-[13px] text-foreground transition-colors placeholder:text-muted-foreground/40 focus:border-foreground/40 focus:outline-none"
                     placeholder="cookie"
                     spellCheck={false}
                   />
@@ -203,38 +221,43 @@ export function Step4ContentTab({
             </div>
 
             {/* Line link */}
-            <div className={`rounded-md border px-2.5 py-2 transition-colors ${text.linkLineEnabled ? 'border-border/50 bg-muted/30' : 'border-border/30'}`}>
-              <div className="flex items-center gap-2.5">
-                <Switch
+            <div>
+              <label className="group flex cursor-pointer items-center gap-3 py-2.5 transition-colors duration-150">
+                <input
+                  type="checkbox"
+                  className="cb"
                   checked={text.linkLineEnabled}
-                  onCheckedChange={(v) => updateText({ linkLineEnabled: v })}
-                  size="sm"
-                  aria-label="Строка-ссылка"
+                  onChange={() => updateText({ linkLineEnabled: !text.linkLineEnabled })}
                 />
-                <span className="flex-1 text-[12px] text-foreground/70">Строка «Подробнее»</span>
-              </div>
+                <span className="text-[14px] font-medium text-foreground/90 group-hover:text-foreground">
+                  Строка «Подробнее»
+                </span>
+              </label>
               {text.linkLineEnabled && (
-                <div className="mt-2 pl-9">
-                  <Input
+                <div className="expand-enter ml-[1.875rem] mt-1 space-y-2 border-l-2 border-border pl-4">
+                  <input
+                    type="text"
                     value={text.linkLineText}
                     onChange={(e) => updateText({ linkLineText: e.target.value })}
-                    className="h-7 text-[12px]"
-                    placeholder="Подробнее о cookie…"
+                    className="w-full border-b border-border bg-transparent px-0 py-2 text-[13px] text-foreground transition-colors placeholder:text-muted-foreground/40 focus:border-foreground/40 focus:outline-none"
+                    placeholder="Подробнее о cookie..."
                     spellCheck={false}
                   />
                 </div>
               )}
             </div>
 
-            {/* Link target */}
+            {/* Link target — shown when at least one link type is enabled */}
             {(text.linkWordEnabled || text.linkLineEnabled) && (
-              <div className="rounded-md bg-muted/20 px-2.5 py-2">
-                <p className="mb-1.5 text-[10px] font-medium text-muted-foreground/40">Куда ведёт</p>
+              <div className="expand-enter ml-[1.875rem] mt-2 border-l-2 border-border pl-4">
+                <p className="mb-2 text-[12px] font-medium uppercase tracking-[0.06em] text-muted-foreground/50">
+                  Куда ведёт
+                </p>
                 <div className="flex gap-1">
                   <button
                     type="button"
                     onClick={() => updateText({ linkTarget: 'popup' })}
-                    className={`flex-1 rounded px-2 py-1 text-[11px] font-medium transition-all ${
+                    className={`flex-1 rounded-md px-2.5 py-1.5 text-[12px] font-medium transition-all duration-150 ${
                       text.linkTarget === 'popup'
                         ? 'bg-foreground text-background'
                         : 'text-muted-foreground hover:text-foreground/70'
@@ -245,7 +268,7 @@ export function Step4ContentTab({
                   <button
                     type="button"
                     onClick={() => updateText({ linkTarget: 'page' })}
-                    className={`flex-1 rounded px-2 py-1 text-[11px] font-medium transition-all ${
+                    className={`flex-1 rounded-md px-2.5 py-1.5 text-[12px] font-medium transition-all duration-150 ${
                       text.linkTarget === 'page'
                         ? 'bg-foreground text-background'
                         : 'text-muted-foreground hover:text-foreground/70'
@@ -255,11 +278,11 @@ export function Step4ContentTab({
                   </button>
                 </div>
                 {text.linkTarget === 'page' && (
-                  <Input
+                  <input
                     type="url"
                     value={text.linkUrl}
                     onChange={(e) => updateText({ linkUrl: e.target.value })}
-                    className="mt-1.5 h-7 text-[11px]"
+                    className="mt-2 w-full border-b border-border bg-transparent px-0 py-2 text-[13px] text-foreground transition-colors placeholder:text-muted-foreground/40 focus:border-foreground/40 focus:outline-none"
                     placeholder="https://site.ru/cookie-policy"
                     spellCheck={false}
                   />
@@ -274,41 +297,52 @@ export function Step4ContentTab({
           <button
             type="button"
             onClick={() => setShowManualEdit(!showManualEdit)}
-            className="flex items-center gap-1.5 text-[11px] font-medium text-muted-foreground/45 transition-colors hover:text-muted-foreground/70"
+            className="flex items-center gap-2 text-[13px] font-medium text-muted-foreground/60 transition-colors duration-150 hover:text-foreground/70"
           >
             <ChevronRight
-              className={`size-3 transition-transform duration-150 ${showManualEdit ? 'rotate-90' : ''}`}
+              className={`size-3.5 transition-transform duration-150 ${showManualEdit ? 'rotate-90' : ''}`}
               strokeWidth={2}
             />
             Редактировать вручную
           </button>
 
           <div
-            className="grid transition-[grid-template-rows] duration-150 ease-out"
+            className="grid transition-[grid-template-rows] duration-200 ease-out"
             style={{ gridTemplateRows: showManualEdit ? '1fr' : '0fr' }}
           >
             <div className="overflow-hidden">
-              <div className="space-y-2 pt-2.5">
+              <div className="space-y-4 pt-3">
                 <div>
-                  <Label htmlFor="m-title" className="mb-1 text-[10px] text-muted-foreground/40">Заголовок</Label>
-                  <Input
+                  <label
+                    htmlFor="m-title"
+                    className="mb-2 block text-[12px] font-medium uppercase tracking-[0.06em] text-muted-foreground/50"
+                  >
+                    Заголовок
+                  </label>
+                  <input
                     id="m-title"
+                    type="text"
                     value={text.title}
                     onChange={(e) => updateText({ title: e.target.value })}
-                    className="h-7 text-[12px]"
+                    className="w-full border-b border-border bg-transparent px-0 py-2 text-[14px] text-foreground transition-colors placeholder:text-muted-foreground/40 focus:border-foreground/40 focus:outline-none"
                     placeholder="Мы используем cookie"
                     spellCheck={false}
                   />
                 </div>
                 <div>
-                  <Label htmlFor="m-desc" className="mb-1 text-[10px] text-muted-foreground/40">Описание</Label>
+                  <label
+                    htmlFor="m-desc"
+                    className="mb-2 block text-[12px] font-medium uppercase tracking-[0.06em] text-muted-foreground/50"
+                  >
+                    Описание
+                  </label>
                   <textarea
                     id="m-desc"
                     value={text.desc}
                     onChange={(e) => updateText({ desc: e.target.value })}
                     rows={2}
-                    className="w-full resize-none rounded-md border border-input bg-transparent px-2.5 py-1.5 text-[12px] text-foreground shadow-xs outline-none transition-[color,box-shadow] placeholder:text-muted-foreground/40 focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
-                    placeholder="Текст описания…"
+                    className="w-full resize-none border-b border-border bg-transparent px-0 py-2 text-[14px] text-foreground transition-colors placeholder:text-muted-foreground/40 focus:border-foreground/40 focus:outline-none"
+                    placeholder="Текст описания..."
                     spellCheck={false}
                   />
                 </div>
@@ -319,28 +353,28 @@ export function Step4ContentTab({
       </div>
 
       {/* ── RIGHT: Banner preview ── */}
-      <div className="lg:sticky lg:top-20">
-        <div className="overflow-hidden rounded-xl border border-border/50 bg-muted/10">
-          {/* Tiny header */}
-          <div className="flex items-center justify-between px-3 py-1.5">
-            <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground/35">
+      <div className="md:sticky md:top-20">
+        <div className="overflow-hidden rounded-xl border border-border/50 bg-muted/5">
+          {/* Header */}
+          <div className="flex items-center justify-between border-b border-border/30 px-4 py-2">
+            <span className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground/40">
               Предпросмотр
             </span>
-            <span className="text-[10px] text-muted-foreground/30">
+            <span className="text-[11px] text-muted-foreground/30">
               {TONES.find(t => t.id === text.tone)?.label}
             </span>
           </div>
 
-          {/* Banner on neutral background — vertically centered */}
-          <div className="flex min-h-[180px] items-end bg-gradient-to-b from-muted/5 to-muted/20 p-4 pt-8">
+          {/* Banner */}
+          <div className="flex items-end px-4 py-6">
             <div className="w-full">
               <BannerComponent {...bannerProps} />
             </div>
           </div>
         </div>
 
-        <p className="mt-2 text-center text-[10px] text-muted-foreground/30">
-          Стиль → вкладка «Оформление»
+        <p className="mt-2.5 text-center text-[11px] text-muted-foreground/30">
+          Стиль — вкладка «Оформление»
         </p>
       </div>
     </div>

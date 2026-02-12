@@ -1,18 +1,24 @@
 {
   "permissions": {
     "allow": [
-      "Bash(*)",
-      "Read(*)",
-      "Write(*)",
-      "Edit(*)",
-      "Glob(*)",
-      "Grep(*)",
-      "WebFetch(*)",
-      "WebSearch(*)",
-      "mcp__*",
-      "mcp__memory__create_entities",
-      "mcp__memory__read_graph",
-      "mcp__memory__create_relations"
+      "*",
+      "WebFetch(domain:secureprivacy.ai)",
+      "WebFetch(domain:cookiebanner.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "mcp__shadcn__search_items_in_registries",
+      "Bash(npx shadcn@latest add:*)",
+      "Bash(npx next build:*)",
+      "Bash(netstat:*)",
+      "Bash(findstr:*)",
+      "Bash(taskkill:*)",
+      "Bash(curl:*)",
+      "Bash(npx tsc:*)",
+      "mcp__playwright__browser_click",
+      "mcp__playwright__browser_take_screenshot",
+      "mcp__playwright__browser_press_key",
+      "mcp__playwright__browser_evaluate",
+      "mcp__playwright__browser_resize",
+      "Bash(git add:*)"
     ],
     "deny": []
   }

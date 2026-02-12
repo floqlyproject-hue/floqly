@@ -23,6 +23,16 @@
 
 ## Последние 5 сессий
 
+### 2026-02-12 — Step 4 «Содержание»: полный редизайн для консистентности со Steps 1-3
+- **Tailwind v4 баг:** `md:grid-cols-[260px,1fr]` не генерировал CSS — запятая → подчёркивание `_`
+- **Полный рерайт step4-content-tab.tsx:** убраны Switch/Input/Label из shadcn, SLabel, bg-подложки
+- **Паттерны из Step 2:** `.cb` чекбоксы, `expand-enter` + `border-l-2` для раскрытия, `group` hover
+- **Паттерны из Step 1:** bottom-border инпуты (`border-b border-border bg-transparent`)
+- **Секционные лейблы:** `text-[12px] font-medium uppercase tracking-[0.06em] text-muted-foreground/50`
+- **Превью баннера:** компактный с `scale(0.85)`, хедер с border-b разделителем, без градиентного фона
+- **Layout:** `grid-cols-[280px_1fr]` с gap-8, настройки слева, sticky превью справа
+- **Урок:** Tailwind CSS v4 arbitrary values: `_` вместо `,`
+
 ### 2026-02-12 — Step 4 редизайн: суб-табы + GlassBanner + ссылки
 - **Step 4 разбит на два суб-таба:** «Содержание» (текст, кнопки, ссылки) и «Оформление» (визуальный редактор)
 - **GlassBanner** — 5-слойный glass-эффект (backdrop blur, tint, shine, borders), адаптивные цвета
