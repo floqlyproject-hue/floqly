@@ -10,7 +10,7 @@
 
 | Компонент | Статус | Детали |
 |-----------|--------|--------|
-| Cookie Generator | 90% | Step 4: визуальный редактор с dynamic islands, shadcn/ui контролы. Нужно: остальные стили, auto-fill |
+| Cookie Generator | 92% | Step 4: визуальный редактор с dynamic islands, анимации баннера работают. Нужно: auto-fill, финальная полировка |
 | Парсер сайтов | MVP готов | 3-слойная архитектура, 16 сигнатур, интеграция в Cookie Generator |
 | Smart Widget UX Guide | Готов | `docs/SMART_WIDGET_UX_GUIDE.md` (гайд по анимациям, UI, триггерам) |
 | Simple Widget дизайны | Design-01 ready | Sandbox: `widget-preview/design-XX/` |
@@ -22,6 +22,18 @@
 ---
 
 ## Последние 5 сессий
+
+### 2026-02-12 — Анимации cookie popup + фиксы UI + настройки Claude Code
+- **Анимации баннера реализованы:** 5 типов (slide, fade, bounce, scale, none) через Framer Motion AnimatePresence
+  - Направление slide/bounce автоматически зависит от позиции баннера (Сверху → сверху, Снизу → снизу)
+  - Bounce использует spring transition (stiffness: 400, damping: 15)
+  - Скорость управляется слайдером из панели Анимация
+- **Backdrop overlay:** Выкл / Лёгкое (20%) / Сильное (50%) с плавным появлением
+- **Кнопка «Воспроизвести»:** replay через AnimatePresence key increment + setBannerVisible toggle
+- **Конфликт CSS transform и Framer Motion:** позиционирование баннера переведено на CSS `translate` и `scale` properties (не `transform`), чтобы Framer Motion мог свободно анимировать transform
+- **Фикс видимости слайдеров:** `text-muted-foreground` → `text-foreground/60` во всех 3 панелях — теперь секунды/пиксели видны при тёмном фоне
+- **Фикс ClassicBanner borderRadius:** добавлен `borderRadius` к внешнему контейнеру + `borderTop` → `border`
+- **Настройки Claude Code:** `bypassPermissions: true` в `.claude/settings.local.json` — убраны все запросы подтверждений
 
 ### 2026-02-12 — Dynamic Island: CSS morph animation (Apple Dynamic Island style)
 - **Полный рерайт анимации morphing:** убран Framer Motion `layout="size"` + `LayoutGroup` + spring physics
