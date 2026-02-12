@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, useCallback } from 'react'
+import { useState, useCallback } from 'react'
 import { motion, useDragControls, AnimatePresence, LayoutGroup } from 'framer-motion'
 import { Palette, Sparkles, Type, LayoutTemplate, X, GripVertical } from 'lucide-react'
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@/components/ui/tooltip'
@@ -29,7 +29,8 @@ const ISLAND_CATEGORIES: {
   { id: 'animation', label: 'Анимация', icon: Sparkles },
 ]
 
-const SPRING = { type: 'spring' as const, stiffness: 350, damping: 30 }
+// Soft spring for layout morph — smooth, no overshoot
+const SMOOTH_SPRING = { type: 'spring' as const, stiffness: 200, damping: 28, mass: 0.8 }
 
 interface LiquidGlassIslandProps {
   containerRef: React.RefObject<HTMLDivElement | null>
@@ -43,24 +44,17 @@ export function LiquidGlassIsland({
   onCustomizationChange,
 }: LiquidGlassIslandProps) {
   const [activePanel, setActivePanel] = useState<PanelId | null>(null)
-  const prevPanelRef = useRef<number>(0)
   const dragControls = useDragControls()
   const isExpanded = activePanel !== null
   const activeCategory = ISLAND_CATEGORIES.find((c) => c.id === activePanel)
-  const activeIndex = activePanel ? ISLAND_CATEGORIES.findIndex((c) => c.id === activePanel) : 0
 
   const handleIconClick = useCallback((id: PanelId) => {
-    prevPanelRef.current = activeIndex
     setActivePanel((prev) => (prev === id ? null : id))
-  }, [activeIndex])
+  }, [])
 
   const handleDotClick = useCallback((id: PanelId) => {
-    prevPanelRef.current = activeIndex
     setActivePanel(id)
-  }, [activeIndex])
-
-  // Direction for slide animation
-  const direction = activeIndex >= prevPanelRef.current ? 1 : -1
+  }, [])
 
   // Start drag from handle areas only
   const startDrag = useCallback((e: React.PointerEvent) => {
@@ -151,7 +145,7 @@ export function LiquidGlassIsland({
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{
-            layout: SPRING,
+            layout: SMOOTH_SPRING,
             opacity: { delay: 0.15, duration: 0.3 },
             scale: { delay: 0.15, duration: 0.3 },
           }}
@@ -172,17 +166,15 @@ export function LiquidGlassIsland({
                 {ISLAND_CATEGORIES.map((cat) => (
                   <Tooltip key={cat.id}>
                     <TooltipTrigger asChild>
-                      <motion.button
-                        layout
+                      <button
                         type="button"
                         aria-label={cat.label}
                         onClick={() => handleIconClick(cat.id)}
                         onPointerDown={(e) => e.stopPropagation()}
                         className="flex size-9 items-center justify-center rounded-lg text-foreground/70 transition-colors duration-150 hover:bg-white/20 hover:text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-foreground/30 dark:text-foreground/60 dark:hover:bg-white/10 dark:hover:text-foreground"
-                        transition={{ layout: SPRING }}
                       >
                         <cat.icon className="size-[18px]" strokeWidth={1.75} />
-                      </motion.button>
+                      </button>
                     </TooltipTrigger>
                     <TooltipContent side="right" sideOffset={8} className="text-xs">
                       {cat.label}
@@ -224,16 +216,15 @@ export function LiquidGlassIsland({
                 {/* Separator */}
                 <div className="mx-3 mt-2.5 border-t border-foreground/[0.06]" />
 
-                {/* Panel content — overflow-x-clip prevents horizontal bleed from slide animation, overflow-y stays visible */}
-                <div className="overflow-x-clip px-3 pb-3 pt-2.5">
-                  <AnimatePresence mode="popLayout" initial={false} custom={direction}>
+                {/* Panel content */}
+                <div className="px-3 pb-3 pt-2.5">
+                  <AnimatePresence mode="wait" initial={false}>
                     <motion.div
                       key={activePanel}
-                      custom={direction}
-                      initial={{ opacity: 0, x: direction * 16 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      exit={{ opacity: 0, x: direction * -16 }}
-                      transition={{ duration: 0.18, ease: [0.25, 0.1, 0.25, 1] }}
+                      initial={{ opacity: 0, y: 6 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -4 }}
+                      transition={{ duration: 0.15, ease: [0.4, 0, 0.2, 1] }}
                     >
                       {renderPanel(activePanel!)}
                     </motion.div>

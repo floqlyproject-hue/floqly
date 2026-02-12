@@ -79,6 +79,7 @@ export function TextPanel({ value, onChange }: TextPanelProps) {
           type="single"
           value={value.tone}
           onValueChange={(v) => { if (v) applyTone(v as ToneId) }}
+          spacing={1}
           className="flex flex-wrap gap-1"
         >
           {TONES.map((t) => (
@@ -86,7 +87,7 @@ export function TextPanel({ value, onChange }: TextPanelProps) {
               key={t.id}
               value={t.id}
               size="sm"
-              className="h-7 rounded-md px-2.5 text-[11px] font-medium data-[state=on]:bg-foreground data-[state=on]:text-background"
+              className="h-[26px] rounded-full px-2.5 text-[11px] font-medium data-[state=on]:bg-foreground data-[state=on]:text-background"
             >
               {t.label}
             </ToggleGroupItem>

@@ -49,6 +49,7 @@ export function AnimationPanel({ value, onChange }: AnimationPanelProps) {
           type="single"
           value={value.anim}
           onValueChange={(v) => { if (v) onChange({ ...value, anim: v as AnimId }) }}
+          spacing={1}
           className="flex flex-wrap gap-1"
         >
           {ANIMS.map((a) => (
@@ -56,7 +57,7 @@ export function AnimationPanel({ value, onChange }: AnimationPanelProps) {
               key={a.id}
               value={a.id}
               size="sm"
-              className="h-7 rounded-md px-2.5 text-[11px] font-medium data-[state=on]:bg-foreground data-[state=on]:text-background"
+              className="h-[26px] rounded-full px-2.5 text-[11px] font-medium data-[state=on]:bg-foreground data-[state=on]:text-background"
             >
               {a.label}
             </ToggleGroupItem>
@@ -78,7 +79,7 @@ export function AnimationPanel({ value, onChange }: AnimationPanelProps) {
               key={t.id}
               value={t.id}
               size="sm"
-              className="h-7 flex-1 rounded-md px-2 text-[11px] font-medium data-[state=on]:bg-foreground data-[state=on]:text-background"
+              className="h-[26px] flex-1 px-2 text-[11px] font-medium data-[state=on]:bg-foreground data-[state=on]:text-background"
             >
               {t.label}
             </ToggleGroupItem>
@@ -89,7 +90,7 @@ export function AnimationPanel({ value, onChange }: AnimationPanelProps) {
         <div className={`island-trigger-expand ${value.trigger === 'time' ? 'island-trigger-expand-time' : 'island-trigger-expand-scroll'}`}>
           <div className="island-trigger-expand-inner">
             {value.trigger === 'time' ? (
-              <div className="pt-3">
+              <div className="pb-1 pt-3">
                 <div className="flex items-center justify-between">
                   <label className="island-label mb-0">Задержка</label>
                   <span className="text-[11px] text-muted-foreground" style={{ fontVariantNumeric: 'tabular-nums' }}>{value.delay}с</span>
@@ -100,11 +101,11 @@ export function AnimationPanel({ value, onChange }: AnimationPanelProps) {
                   step={0.5}
                   value={[value.delay]}
                   onValueChange={([v]) => onChange({ ...value, delay: v })}
-                  className="mt-2 [&_[role=slider]]:size-3.5 [&_[role=slider]]:border-0 [&_[role=slider]]:bg-foreground [&_[role=slider]]:shadow-sm"
+                  className="mt-2 [&_[data-slot=slider-track]]:h-[3px] [&_[data-slot=slider-thumb]]:size-3 [&_[data-slot=slider-thumb]]:border-0 [&_[data-slot=slider-thumb]]:bg-foreground [&_[data-slot=slider-thumb]]:shadow-sm [&_[data-slot=slider-range]]:bg-foreground/40"
                 />
               </div>
             ) : (
-              <div className="pt-3">
+              <div className="pb-1 pt-3">
                 <div className="flex items-center justify-between">
                   <label className="island-label mb-0">Прокрутка</label>
                   <span className="text-[11px] text-muted-foreground" style={{ fontVariantNumeric: 'tabular-nums' }}>{value.scrollPx}px</span>
@@ -115,7 +116,7 @@ export function AnimationPanel({ value, onChange }: AnimationPanelProps) {
                   step={50}
                   value={[value.scrollPx]}
                   onValueChange={([v]) => onChange({ ...value, scrollPx: v })}
-                  className="mt-2 [&_[role=slider]]:size-3.5 [&_[role=slider]]:border-0 [&_[role=slider]]:bg-foreground [&_[role=slider]]:shadow-sm"
+                  className="mt-2 [&_[data-slot=slider-track]]:h-[3px] [&_[data-slot=slider-thumb]]:size-3 [&_[data-slot=slider-thumb]]:border-0 [&_[data-slot=slider-thumb]]:bg-foreground [&_[data-slot=slider-thumb]]:shadow-sm [&_[data-slot=slider-range]]:bg-foreground/40"
                 />
               </div>
             )}
@@ -137,7 +138,7 @@ export function AnimationPanel({ value, onChange }: AnimationPanelProps) {
               key={b}
               value={b}
               size="sm"
-              className="h-7 flex-1 rounded-md px-2 text-[11px] font-medium data-[state=on]:bg-foreground data-[state=on]:text-background"
+              className="h-[26px] flex-1 px-2 text-[11px] font-medium data-[state=on]:bg-foreground data-[state=on]:text-background"
             >
               {b}
             </ToggleGroupItem>
@@ -157,7 +158,7 @@ export function AnimationPanel({ value, onChange }: AnimationPanelProps) {
           step={0.1}
           value={[value.speed]}
           onValueChange={([v]) => onChange({ ...value, speed: v })}
-          className="mt-2 [&_[role=slider]]:size-3.5 [&_[role=slider]]:border-0 [&_[role=slider]]:bg-foreground [&_[role=slider]]:shadow-sm"
+          className="mt-2 [&_[data-slot=slider-track]]:h-[3px] [&_[data-slot=slider-thumb]]:size-3 [&_[data-slot=slider-thumb]]:border-0 [&_[data-slot=slider-thumb]]:bg-foreground [&_[data-slot=slider-thumb]]:shadow-sm [&_[data-slot=slider-range]]:bg-foreground/40"
         />
       </div>
 

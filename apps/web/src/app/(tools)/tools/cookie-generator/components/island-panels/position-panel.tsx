@@ -41,7 +41,7 @@ export function PositionPanel({ value, onChange }: PositionPanelProps) {
               key={w}
               value={w}
               size="sm"
-              className="h-7 flex-1 rounded-md px-2 text-[11px] font-medium data-[state=on]:bg-foreground data-[state=on]:text-background"
+              className="h-[26px] flex-1 px-2 text-[11px] font-medium data-[state=on]:bg-foreground data-[state=on]:text-background"
             >
               {w}
             </ToggleGroupItem>
@@ -63,7 +63,7 @@ export function PositionPanel({ value, onChange }: PositionPanelProps) {
               key={v}
               value={v}
               size="sm"
-              className="h-7 flex-1 rounded-md px-2 text-[11px] font-medium data-[state=on]:bg-foreground data-[state=on]:text-background"
+              className="h-[26px] flex-1 px-2 text-[11px] font-medium data-[state=on]:bg-foreground data-[state=on]:text-background"
             >
               {v}
             </ToggleGroupItem>
@@ -85,7 +85,7 @@ export function PositionPanel({ value, onChange }: PositionPanelProps) {
               key={h}
               value={h}
               size="sm"
-              className="h-7 flex-1 rounded-md px-2 text-[11px] font-medium data-[state=on]:bg-foreground data-[state=on]:text-background"
+              className="h-[26px] flex-1 px-2 text-[11px] font-medium data-[state=on]:bg-foreground data-[state=on]:text-background"
             >
               {h}
             </ToggleGroupItem>
@@ -105,7 +105,7 @@ export function PositionPanel({ value, onChange }: PositionPanelProps) {
           step={4}
           value={[value.offsetX]}
           onValueChange={([v]) => onChange({ ...value, offsetX: v })}
-          className="mt-2 [&_[role=slider]]:size-3.5 [&_[role=slider]]:border-0 [&_[role=slider]]:bg-foreground [&_[role=slider]]:shadow-sm"
+          className="mt-2 [&_[data-slot=slider-track]]:h-[3px] [&_[data-slot=slider-thumb]]:size-3 [&_[data-slot=slider-thumb]]:border-0 [&_[data-slot=slider-thumb]]:bg-foreground [&_[data-slot=slider-thumb]]:shadow-sm [&_[data-slot=slider-range]]:bg-foreground/40"
         />
       </div>
 
@@ -121,7 +121,7 @@ export function PositionPanel({ value, onChange }: PositionPanelProps) {
           step={4}
           value={[value.offsetY]}
           onValueChange={([v]) => onChange({ ...value, offsetY: v })}
-          className="mt-2 [&_[role=slider]]:size-3.5 [&_[role=slider]]:border-0 [&_[role=slider]]:bg-foreground [&_[role=slider]]:shadow-sm"
+          className="mt-2 [&_[data-slot=slider-track]]:h-[3px] [&_[data-slot=slider-thumb]]:size-3 [&_[data-slot=slider-thumb]]:border-0 [&_[data-slot=slider-thumb]]:bg-foreground [&_[data-slot=slider-thumb]]:shadow-sm [&_[data-slot=slider-range]]:bg-foreground/40"
         />
       </div>
     </div>

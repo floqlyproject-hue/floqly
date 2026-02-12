@@ -149,6 +149,7 @@ export function DesignPanel({ value, onChange }: DesignPanelProps) {
           type="single"
           value={value.bannerStyle}
           onValueChange={(v) => { if (v) onChange({ ...value, bannerStyle: v as StyleId }) }}
+          spacing={1}
           className="flex flex-wrap gap-1"
         >
           {STYLES.map((s) => (
@@ -156,7 +157,7 @@ export function DesignPanel({ value, onChange }: DesignPanelProps) {
               key={s.id}
               value={s.id}
               size="sm"
-              className="h-7 rounded-md px-2.5 text-[11px] font-medium data-[state=on]:bg-foreground data-[state=on]:text-background"
+              className="h-[26px] rounded-full px-2.5 text-[11px] font-medium data-[state=on]:bg-foreground data-[state=on]:text-background"
             >
               {s.label}
             </ToggleGroupItem>
@@ -200,7 +201,7 @@ export function DesignPanel({ value, onChange }: DesignPanelProps) {
           step={2}
           value={[value.radius]}
           onValueChange={([v]) => onChange({ ...value, radius: v })}
-          className="mt-2 [&_[role=slider]]:size-3.5 [&_[role=slider]]:border-0 [&_[role=slider]]:bg-foreground [&_[role=slider]]:shadow-sm"
+          className="mt-2 [&_[data-slot=slider-track]]:h-[3px] [&_[data-slot=slider-thumb]]:size-3 [&_[data-slot=slider-thumb]]:border-0 [&_[data-slot=slider-thumb]]:bg-foreground [&_[data-slot=slider-thumb]]:shadow-sm [&_[data-slot=slider-range]]:bg-foreground/40"
         />
       </div>
 
@@ -218,7 +219,7 @@ export function DesignPanel({ value, onChange }: DesignPanelProps) {
               key={s}
               value={s}
               size="sm"
-              className="h-7 flex-1 rounded-md px-2 text-[11px] font-medium data-[state=on]:bg-foreground data-[state=on]:text-background"
+              className="h-[26px] flex-1 px-2 text-[11px] font-medium data-[state=on]:bg-foreground data-[state=on]:text-background"
             >
               {s}
             </ToggleGroupItem>
