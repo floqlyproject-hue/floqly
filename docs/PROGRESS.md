@@ -16,6 +16,7 @@
 | Simple Widget дизайны | Design-01 ready | Sandbox: `widget-preview/design-XX/` |
 | Smart Widget дизайны | Не начат | Ждёт утверждения Simple Widget |
 | **Dashboard** | **Редизайн готов** | Sidebar + Header + Main + Cookie Gen tab + заглушки |
+| **Embed-система** | **Спланировано** | План готов, реализация — следующая сессия |
 | Supabase Auth | Настроен | Авторизация, автологин, баннер подтверждения email |
 | Landing | Не начат | Ждёт дизайнов виджетов |
 
@@ -62,6 +63,13 @@
   - `use-breadcrumbs.ts` — добавлены роуты «Текст», «Дизайн»
 - **TypeScript:** `tsc --noEmit` без ошибок
 - **TODO (мелкие корректировки):** визуальная полировка редакторов текста/дизайна после тестирования
+- **Embed-система — планирование (NEW):**
+  - Полный технический план: `docs/plans/PLAN-embed-system.md` (17 файлов, 5 фаз, 3 этапа)
+  - Руководство для пользователя: `docs/plans/PLAN-embed-system-setup.md` (TimeWeb, DNS, Supabase, для Ильи)
+  - **Решение:** per-widget embed (каждый виджет — свой `<script data-widget-id>`), обратимо
+  - **Архитектура:** сервисный слой `embed-service.ts` для абстракции от Supabase
+  - **Учтено на будущее:** визуальный редактор позиционирования, админ-панель, миграция БД
+  - **Реализация:** следующая сессия (этапы A → B → C)
 
 ### 2026-02-12 — Auth: автологин + email confirmation banner + premium redesign
 - Премиальный редизайн формы авторизации (commit `3231d08`)
