@@ -26,7 +26,7 @@ interface PositionPanelProps {
 
 export function PositionPanel({ value, onChange }: PositionPanelProps) {
   return (
-    <div className="space-y-3.5">
+    <div className="space-y-4">
       {/* Ширина */}
       <div>
         <label className="island-label">Ширина</label>
@@ -97,7 +97,7 @@ export function PositionPanel({ value, onChange }: PositionPanelProps) {
       <div>
         <div className="flex items-center justify-between">
           <label className="island-label mb-0">Отступ X</label>
-          <span className="text-[11px] tabular-nums text-muted-foreground">{value.offsetX}px</span>
+          <span className="text-[11px] text-muted-foreground" style={{ fontVariantNumeric: 'tabular-nums' }}>{value.offsetX}px</span>
         </div>
         <Slider
           min={0}
@@ -105,7 +105,7 @@ export function PositionPanel({ value, onChange }: PositionPanelProps) {
           step={4}
           value={[value.offsetX]}
           onValueChange={([v]) => onChange({ ...value, offsetX: v })}
-          className="mt-1.5 [&_[role=slider]]:size-3.5 [&_[role=slider]]:border-0 [&_[role=slider]]:bg-foreground [&_[role=slider]]:shadow-sm"
+          className="mt-2 [&_[role=slider]]:size-3.5 [&_[role=slider]]:border-0 [&_[role=slider]]:bg-foreground [&_[role=slider]]:shadow-sm"
         />
       </div>
 
@@ -113,7 +113,7 @@ export function PositionPanel({ value, onChange }: PositionPanelProps) {
       <div>
         <div className="flex items-center justify-between">
           <label className="island-label mb-0">Отступ Y</label>
-          <span className="text-[11px] tabular-nums text-muted-foreground">{value.offsetY}px</span>
+          <span className="text-[11px] text-muted-foreground" style={{ fontVariantNumeric: 'tabular-nums' }}>{value.offsetY}px</span>
         </div>
         <Slider
           min={0}
@@ -121,7 +121,7 @@ export function PositionPanel({ value, onChange }: PositionPanelProps) {
           step={4}
           value={[value.offsetY]}
           onValueChange={([v]) => onChange({ ...value, offsetY: v })}
-          className="mt-1.5 [&_[role=slider]]:size-3.5 [&_[role=slider]]:border-0 [&_[role=slider]]:bg-foreground [&_[role=slider]]:shadow-sm"
+          className="mt-2 [&_[role=slider]]:size-3.5 [&_[role=slider]]:border-0 [&_[role=slider]]:bg-foreground [&_[role=slider]]:shadow-sm"
         />
       </div>
     </div>

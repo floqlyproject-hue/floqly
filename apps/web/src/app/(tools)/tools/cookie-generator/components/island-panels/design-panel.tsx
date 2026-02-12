@@ -141,7 +141,7 @@ function ColorPickerRow({
 /* ── Design Panel ── */
 export function DesignPanel({ value, onChange }: DesignPanelProps) {
   return (
-    <div className="space-y-3.5">
+    <div className="space-y-4">
       {/* Стиль — shadcn ToggleGroup wrapping */}
       <div>
         <label className="island-label">Стиль</label>
@@ -192,7 +192,7 @@ export function DesignPanel({ value, onChange }: DesignPanelProps) {
       <div>
         <div className="flex items-center justify-between">
           <label className="island-label mb-0">Скругление</label>
-          <span className="text-[11px] tabular-nums text-muted-foreground">{value.radius}px</span>
+          <span className="font-variant-numeric-tabular text-[11px] text-muted-foreground" style={{ fontVariantNumeric: 'tabular-nums' }}>{value.radius}px</span>
         </div>
         <Slider
           min={0}
@@ -200,7 +200,7 @@ export function DesignPanel({ value, onChange }: DesignPanelProps) {
           step={2}
           value={[value.radius]}
           onValueChange={([v]) => onChange({ ...value, radius: v })}
-          className="mt-1.5 [&_[role=slider]]:size-3.5 [&_[role=slider]]:border-0 [&_[role=slider]]:bg-foreground [&_[role=slider]]:shadow-sm"
+          className="mt-2 [&_[role=slider]]:size-3.5 [&_[role=slider]]:border-0 [&_[role=slider]]:bg-foreground [&_[role=slider]]:shadow-sm"
         />
       </div>
 

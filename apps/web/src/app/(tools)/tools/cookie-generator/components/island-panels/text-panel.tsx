@@ -71,7 +71,7 @@ export function TextPanel({ value, onChange }: TextPanelProps) {
   }
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-4">
       {/* Tone selector — shadcn ToggleGroup wrapping */}
       <div>
         <label className="island-label">Шаблон</label>

@@ -1,7 +1,7 @@
 # Floqly — Прогресс разработки
 
 > Последнее обновление: 2026-02-12
-> Текущая фаза: **Доработка Cookie Generator Step 4**
+> Текущая фаза: **Cookie Generator Step 4 — полировка UI**
 > Задачи: обсуждаются в сессии, история фиксируется ниже
 
 ---
@@ -10,7 +10,7 @@
 
 | Компонент | Статус | Детали |
 |-----------|--------|--------|
-| Cookie Generator | 95% | Step 4: суб-табы Содержание/Оформление, GlassBanner, ссылки в баннере. Нужно: остальные стили, auto-fill |
+| Cookie Generator | 90% | Step 4: визуальный редактор с dynamic islands, shadcn/ui контролы. Нужно: остальные стили, auto-fill |
 | Парсер сайтов | MVP готов | 3-слойная архитектура, 16 сигнатур, интеграция в Cookie Generator |
 | Smart Widget UX Guide | Готов | `docs/SMART_WIDGET_UX_GUIDE.md` (гайд по анимациям, UI, триггерам) |
 | Simple Widget дизайны | Design-01 ready | Sandbox: `widget-preview/design-XX/` |
@@ -22,6 +22,24 @@
 ---
 
 ## Последние 5 сессий
+
+### 2026-02-12 — Dynamic Island: drag fix, content clipping fix, design polish
+- **Критический баг исправлен:** слайдеры (Скругление, Отступ X/Y и др.) двигали весь остров при перемещении
+  - Причина: Framer Motion `drag` на motion.div ловил pointer events от shadcn Slider
+  - Решение: `dragListener={false}` + `useDragControls` — drag только через header/handle
+  - В collapsed state — кнопки stopPropagation, между ними — drag
+  - В expanded state — GripVertical handle в заголовке, панель контента свободна
+- **Обрезка контента исправлена:** `overflow-hidden` → `overflow-x-clip` — горизонтальная анимация скрыта, вертикальное содержимое не обрезается
+- **Background Switcher Island:** тот же fix с dragControls
+- **Дизайн-улучшения (по web-design-guidelines + Material Design 3 + frontend-design):**
+  - `focus-visible:ring-1` на всех интерактивных элементах (кнопки, dots, close)
+  - Ширина панели 240px → 260px для лучшего дыхания контента
+  - Separator между header и контентом, spacing space-y-3.5 → space-y-4
+  - `fontVariantNumeric: tabular-nums` на всех числовых значениях (по Vercel guidelines)
+  - `select-none` на заголовке (drag handle)
+  - GripVertical иконка — визуальная affordance для drag
+- **CSS cleanup:** удалены 7 устаревших классов (island-segmented, island-segment, island-slider, tooltip-content-right/bottom/bottom-end)
+- **Применённые гайдлайны:** Vercel Web Interface Guidelines, Material Design 3, frontend-design skill
 
 ### 2026-02-12 — Step 4 «Содержание»: полный редизайн для консистентности со Steps 1-3
 - **Tailwind v4 баг:** `md:grid-cols-[260px,1fr]` не генерировал CSS — запятая → подчёркивание `_`

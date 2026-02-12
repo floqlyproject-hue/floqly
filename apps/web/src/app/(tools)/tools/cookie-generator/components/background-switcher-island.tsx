@@ -1,7 +1,7 @@
 'use client'
 
 import { useRef, useCallback } from 'react'
-import { motion } from 'framer-motion'
+import { motion, useDragControls } from 'framer-motion'
 import { Globe, Sun, Moon, Upload } from 'lucide-react'
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@/components/ui/tooltip'
 import { Separator } from '@/components/ui/separator'
@@ -34,6 +34,7 @@ export function BackgroundSwitcherIsland({
   containerRef,
 }: BackgroundSwitcherIslandProps) {
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const dragControls = useDragControls()
 
   const handleUploadClick = useCallback(() => {
     fileInputRef.current?.click()
@@ -50,16 +51,22 @@ export function BackgroundSwitcherIsland({
     [onCustomImageUpload]
   )
 
+  const startDrag = useCallback((e: React.PointerEvent) => {
+    dragControls.start(e)
+  }, [dragControls])
+
   return (
     <TooltipProvider delayDuration={200}>
       <motion.div
         drag
+        dragListener={false}
+        dragControls={dragControls}
         dragConstraints={containerRef}
         dragMomentum={false}
         dragElastic={0.05}
-        whileDrag={{ scale: 1.06, cursor: 'grabbing' }}
+        whileDrag={{ scale: 1.06 }}
         className="liquid-glass absolute right-5 top-3 z-20"
-        style={{ cursor: 'grab', touchAction: 'none' }}
+        style={{ touchAction: 'none' }}
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{
@@ -73,9 +80,12 @@ export function BackgroundSwitcherIsland({
         <div className="liquid-glass-tint" />
         <div className="liquid-glass-shine" />
 
-        {/* Content */}
+        {/* Content — entire bar is drag handle, buttons stop propagation */}
         <div className="liquid-glass-content">
-          <div className="flex items-center gap-0.5 p-1">
+          <div
+            className="flex cursor-grab items-center gap-0.5 p-1 active:cursor-grabbing"
+            onPointerDown={startDrag}
+          >
             {BACKGROUNDS.map((bg) => {
               const isActive = activeBackground === bg.id
 
@@ -86,7 +96,8 @@ export function BackgroundSwitcherIsland({
                       type="button"
                       aria-label={bg.label}
                       onClick={() => onBackgroundChange(bg.id)}
-                      className={`flex size-7 items-center justify-center rounded-lg transition-colors duration-150 ${
+                      onPointerDown={(e) => e.stopPropagation()}
+                      className={`flex size-7 items-center justify-center rounded-lg transition-colors duration-150 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-foreground/30 ${
                         isActive
                           ? 'bg-white/30 text-foreground dark:bg-white/15'
                           : 'text-foreground/60 hover:bg-white/20 hover:text-foreground dark:text-foreground/50 dark:hover:bg-white/10 dark:hover:text-foreground'
@@ -112,7 +123,8 @@ export function BackgroundSwitcherIsland({
                   type="button"
                   aria-label="Загрузить свой скриншот"
                   onClick={handleUploadClick}
-                  className={`flex size-7 items-center justify-center rounded-lg transition-colors duration-150 ${
+                  onPointerDown={(e) => e.stopPropagation()}
+                  className={`flex size-7 items-center justify-center rounded-lg transition-colors duration-150 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-foreground/30 ${
                     activeBackground === 'custom'
                       ? 'bg-white/30 text-foreground dark:bg-white/15'
                       : 'text-foreground/60 hover:bg-white/20 hover:text-foreground dark:text-foreground/50 dark:hover:bg-white/10 dark:hover:text-foreground'

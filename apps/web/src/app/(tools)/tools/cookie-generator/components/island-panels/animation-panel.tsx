@@ -41,7 +41,7 @@ interface AnimationPanelProps {
 
 export function AnimationPanel({ value, onChange }: AnimationPanelProps) {
   return (
-    <div className="space-y-3.5">
+    <div className="space-y-4">
       {/* Тип появления — shadcn ToggleGroup wrapping */}
       <div>
         <label className="island-label">Появление</label>
@@ -92,7 +92,7 @@ export function AnimationPanel({ value, onChange }: AnimationPanelProps) {
               <div className="pt-3">
                 <div className="flex items-center justify-between">
                   <label className="island-label mb-0">Задержка</label>
-                  <span className="text-[11px] tabular-nums text-muted-foreground">{value.delay}с</span>
+                  <span className="text-[11px] text-muted-foreground" style={{ fontVariantNumeric: 'tabular-nums' }}>{value.delay}с</span>
                 </div>
                 <Slider
                   min={0}
@@ -100,14 +100,14 @@ export function AnimationPanel({ value, onChange }: AnimationPanelProps) {
                   step={0.5}
                   value={[value.delay]}
                   onValueChange={([v]) => onChange({ ...value, delay: v })}
-                  className="mt-1.5 [&_[role=slider]]:size-3.5 [&_[role=slider]]:border-0 [&_[role=slider]]:bg-foreground [&_[role=slider]]:shadow-sm"
+                  className="mt-2 [&_[role=slider]]:size-3.5 [&_[role=slider]]:border-0 [&_[role=slider]]:bg-foreground [&_[role=slider]]:shadow-sm"
                 />
               </div>
             ) : (
               <div className="pt-3">
                 <div className="flex items-center justify-between">
                   <label className="island-label mb-0">Прокрутка</label>
-                  <span className="text-[11px] tabular-nums text-muted-foreground">{value.scrollPx}px</span>
+                  <span className="text-[11px] text-muted-foreground" style={{ fontVariantNumeric: 'tabular-nums' }}>{value.scrollPx}px</span>
                 </div>
                 <Slider
                   min={50}
@@ -115,7 +115,7 @@ export function AnimationPanel({ value, onChange }: AnimationPanelProps) {
                   step={50}
                   value={[value.scrollPx]}
                   onValueChange={([v]) => onChange({ ...value, scrollPx: v })}
-                  className="mt-1.5 [&_[role=slider]]:size-3.5 [&_[role=slider]]:border-0 [&_[role=slider]]:bg-foreground [&_[role=slider]]:shadow-sm"
+                  className="mt-2 [&_[role=slider]]:size-3.5 [&_[role=slider]]:border-0 [&_[role=slider]]:bg-foreground [&_[role=slider]]:shadow-sm"
                 />
               </div>
             )}
@@ -149,7 +149,7 @@ export function AnimationPanel({ value, onChange }: AnimationPanelProps) {
       <div>
         <div className="flex items-center justify-between">
           <label className="island-label mb-0">Скорость</label>
-          <span className="text-[11px] tabular-nums text-muted-foreground">{value.speed}с</span>
+          <span className="text-[11px] text-muted-foreground" style={{ fontVariantNumeric: 'tabular-nums' }}>{value.speed}с</span>
         </div>
         <Slider
           min={0.1}
@@ -157,7 +157,7 @@ export function AnimationPanel({ value, onChange }: AnimationPanelProps) {
           step={0.1}
           value={[value.speed]}
           onValueChange={([v]) => onChange({ ...value, speed: v })}
-          className="mt-1.5 [&_[role=slider]]:size-3.5 [&_[role=slider]]:border-0 [&_[role=slider]]:bg-foreground [&_[role=slider]]:shadow-sm"
+          className="mt-2 [&_[role=slider]]:size-3.5 [&_[role=slider]]:border-0 [&_[role=slider]]:bg-foreground [&_[role=slider]]:shadow-sm"
         />
       </div>
 
