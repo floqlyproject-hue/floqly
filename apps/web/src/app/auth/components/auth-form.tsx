@@ -72,7 +72,9 @@ export function AuthForm({ mode }: AuthFormProps) {
 
         if (error) throw error
 
-        setMessage('Проверьте почту для подтверждения регистрации')
+        // Автологин — сразу в dashboard, подтверждение email через баннер
+        router.push(redirect)
+        router.refresh()
       } else {
         const { error } = await supabase.auth.signInWithPassword({
           email,
