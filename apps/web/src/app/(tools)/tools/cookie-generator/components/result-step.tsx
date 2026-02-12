@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback, useMemo } from 'react'
+import { useState, useCallback, useMemo, useEffect, useRef } from 'react'
 import { Copy, Check, ChevronRight, Code2, Globe, LayoutTemplate, Building2, HelpCircle } from 'lucide-react'
 import {
   Accordion,
@@ -8,6 +8,12 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion'
+import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+  TooltipProvider,
+} from '@/components/ui/tooltip'
 import type { BannerCustomization } from './liquid-glass-island'
 import type { CookieConfig } from '../types'
 import type { CookiePolicyData } from '@/lib/templates/cookie-policy'
@@ -19,6 +25,60 @@ interface ResultStepProps {
   config: CookieConfig
   cookiePolicyData: Partial<CookiePolicyData>
   bannerCustomization: BannerCustomization
+}
+
+/* ── Hooks ── */
+
+/** Отслеживает попадание элемента во viewport (однократно) */
+function useInView(threshold = 0.3) {
+  const ref = useRef<HTMLDivElement>(null)
+  const [inView, setInView] = useState(false)
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setInView(true)
+          observer.disconnect() // один раз за сессию
+        }
+      },
+      { threshold },
+    )
+
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [threshold])
+
+  return { ref, inView }
+}
+
+/** Анимация числа от 0 до target. Запускается только когда started=true */
+function useCountUp(target: number, started: boolean, duration = 800) {
+  const [value, setValue] = useState(0)
+  const rafRef = useRef<number>(0)
+
+  useEffect(() => {
+    if (!started) return
+
+    const start = performance.now()
+
+    function tick(now: number) {
+      const elapsed = now - start
+      const progress = Math.min(elapsed / duration, 1)
+      // easeOutExpo: быстро разгоняется, плавно тормозит
+      const eased = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress)
+      setValue(eased * target)
+      if (progress < 1) rafRef.current = requestAnimationFrame(tick)
+    }
+
+    rafRef.current = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(rafRef.current)
+  }, [target, duration, started])
+
+  return value
 }
 
 /* ── Component ── */
@@ -38,6 +98,7 @@ export function ResultStep({
   )
 
   const lineCount = useMemo(() => countCodeLines(embedCode), [embedCode])
+  const { ref: mockupRef, inView: mockupInView } = useInView(0.3)
 
   const handleCopy = useCallback(async () => {
     await navigator.clipboard.writeText(embedCode)
@@ -100,28 +161,70 @@ export function ResultStep({
               />
             </div>
 
-            {/* Mini Dashboard Mockup */}
-            <div className="mt-6 rounded-lg border border-border bg-muted/20 p-4">
-              {/* CDN Code Preview */}
-              <div className="rounded-lg border border-border bg-background p-3">
-                <div className="mb-1.5 text-[10px] font-medium text-muted-foreground/50">
-                  Код для вашего сайта
-                </div>
-                <code className="block break-all font-mono text-[10px] leading-relaxed text-emerald-600 dark:text-emerald-400">
-                  &lt;script src=&quot;cdn.floqly.ru/c/
-                  {config.company.name
-                    ? config.company.name.toLowerCase().replace(/[^a-zа-я0-9]/gi, '').slice(0, 6)
-                    : 'abc123'}
-                  .js&quot;&gt;&lt;/script&gt;
-                </code>
+            {/* Mini Dashboard Mockup — styled as a "window preview" */}
+            <div ref={mockupRef} className="mt-6 select-none overflow-hidden rounded-xl border border-border bg-muted/20">
+              {/* Window title bar */}
+              <div className="flex items-center gap-2 border-b border-border px-3.5 py-2.5">
+                <span className="flex items-center gap-1.5">
+                  <span className="size-2 rounded-full bg-muted-foreground/15" />
+                  <span className="size-2 rounded-full bg-muted-foreground/15" />
+                  <span className="size-2 rounded-full bg-muted-foreground/15" />
+                </span>
+                <span className="ml-1 text-[10px] font-medium text-muted-foreground/40">
+                  Личный кабинет {config.company.name || 'Floqly'}
+                </span>
               </div>
 
-              {/* Mini Analytics */}
-              <div className="mt-3 grid grid-cols-3 gap-2">
-                <MiniStat value="1,247" label="Показы" />
-                <MiniStat value="892" label="Согласия" />
-                <MiniStat value="71.5%" label="Конверсия" highlight />
-              </div>
+              {/* Window content */}
+              <TooltipProvider delayDuration={300}>
+                <div className="p-4">
+                  {/* CDN Code Preview */}
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div className="cursor-help rounded-lg border border-border bg-background p-3 transition-colors duration-150 hover:border-foreground/20">
+                        <div className="mb-1.5 text-[10px] font-medium text-muted-foreground/50">
+                          Ваш код для сайта
+                        </div>
+                        <code className="block break-all font-mono text-[10px] leading-relaxed text-emerald-600 dark:text-emerald-400">
+                          &lt;script src=&quot;cdn.floqly.ru/c/
+                          {config.company.name
+                            ? config.company.name.toLowerCase().replace(/[^a-zа-я0-9]/gi, '').slice(0, 6)
+                            : 'abc123'}
+                          .js&quot;&gt;&lt;/script&gt;
+                        </code>
+                      </div>
+                    </TooltipTrigger>
+                    <TooltipContent side="top" sideOffset={6} className="max-w-[220px] text-[11px] leading-relaxed">
+                      Короткий скрипт вместо ~{lineCount} строк — подключается через CDN, обновляется без правок на сайте
+                    </TooltipContent>
+                  </Tooltip>
+
+                  {/* Mini Analytics */}
+                  <div className="mt-3 grid grid-cols-3 gap-2">
+                    <MiniStat
+                      numericValue={1247}
+                      label="Показы"
+                      animate={mockupInView}
+                      tooltip="Сколько раз баннер был показан посетителям вашего сайта"
+                    />
+                    <MiniStat
+                      numericValue={892}
+                      label="Приняли"
+                      animate={mockupInView}
+                      tooltip="Сколько посетителей согласились на cookie. Низкий показатель? Возможно, баннер плохо заметен — попробуйте другую позицию"
+                    />
+                    <MiniStat
+                      numericValue={2.3}
+                      suffix="с"
+                      decimals={1}
+                      label="Ср. время"
+                      highlight
+                      animate={mockupInView}
+                      tooltip="Среднее время от показа баннера до клика. Чем быстрее — тем меньше баннер мешает посетителям"
+                    />
+                  </div>
+                </div>
+              </TooltipProvider>
             </div>
 
             {/* CTA */}
@@ -368,26 +471,46 @@ function BenefitItem({
 }
 
 function MiniStat({
-  value,
+  numericValue,
+  suffix = '',
+  decimals = 0,
   label,
   highlight,
+  animate,
+  tooltip,
 }: {
-  value: string
+  numericValue: number
+  suffix?: string
+  decimals?: number
   label: string
   highlight?: boolean
+  animate: boolean
+  tooltip: string
 }) {
+  const animated = useCountUp(numericValue, animate, 800)
+  const display = decimals > 0
+    ? animated.toFixed(decimals)
+    : animated.toLocaleString('ru-RU', { maximumFractionDigits: 0 })
+
   return (
-    <div className="rounded-lg border border-border bg-background p-2 text-center">
-      <div
-        className={`text-[14px] font-semibold ${
-          highlight
-            ? 'text-emerald-600 dark:text-emerald-400'
-            : 'text-foreground'
-        }`}
-      >
-        {value}
-      </div>
-      <div className="text-[9px] text-muted-foreground/50">{label}</div>
-    </div>
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <div className="cursor-help rounded-lg border border-border bg-background p-2 text-center transition-colors duration-150 hover:border-foreground/20">
+          <div
+            className={`text-[14px] font-semibold tabular-nums ${
+              highlight
+                ? 'text-emerald-600 dark:text-emerald-400'
+                : 'text-foreground'
+            }`}
+          >
+            {display}{suffix}
+          </div>
+          <div className="text-[9px] text-muted-foreground/50">{label}</div>
+        </div>
+      </TooltipTrigger>
+      <TooltipContent side="top" sideOffset={6} className="max-w-[220px] text-[11px] leading-relaxed">
+        {tooltip}
+      </TooltipContent>
+    </Tooltip>
   )
 }
