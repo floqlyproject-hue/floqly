@@ -15,6 +15,8 @@ interface DocumentPreviewProps {
   cookiePolicyData: Partial<CookiePolicyData>
   /** Pre-generated markdown (from parent) — avoids double generation */
   markdown?: string
+  /** Callback when user edits content in the editor (returns innerHTML) */
+  onContentChange?: (html: string) => void
 }
 
 type ViewMode = 'preview' | 'edit'
@@ -64,6 +66,7 @@ export function DocumentPreview({
   config,
   cookiePolicyData,
   markdown: externalMarkdown,
+  onContentChange,
 }: DocumentPreviewProps) {
   const [copied, setCopied] = useState(false)
   const [viewMode, setViewMode] = useState<ViewMode>('preview')
@@ -212,8 +215,10 @@ export function DocumentPreview({
     if (contentRef.current) {
       // Only mark as edited, don't store HTML (prevents re-render & cursor jump)
       setHasEdited(true)
+      // Notify parent about content change (for save functionality)
+      onContentChange?.(contentRef.current.innerHTML)
     }
-  }, [])
+  }, [onContentChange])
 
   const handleCopy = useCallback(async () => {
     const text = contentRef.current?.innerText || ''

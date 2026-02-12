@@ -1,7 +1,7 @@
 # Floqly — Прогресс разработки
 
-> Последнее обновление: 2026-02-12
-> Текущая фаза: **Регистрация + Dashboard**
+> Последнее обновление: 2026-02-13
+> Текущая фаза: **Dashboard Redesign**
 > Задачи: обсуждаются в сессии, история фиксируется ниже
 
 ---
@@ -10,14 +10,14 @@
 
 | Компонент | Статус | Детали |
 |-----------|--------|--------|
-| Cookie Generator | 95% | Step 5 «Результат» готов (embed code + dashboard upsell). TODO: доработка Step 4 (auto-fill) + Step 5 (финальная полировка) |
-| Парсер сайтов | MVP готов | 3-слойная архитектура, 16 сигнатур, интеграция в Cookie Generator |
-| Smart Widget UX Guide | Готов | `docs/SMART_WIDGET_UX_GUIDE.md` (гайд по анимациям, UI, триггерам) |
+| Cookie Generator | 95% | Step 5 «Результат» готов. TODO: Step 4 auto-fill + Step 5 полировка |
+| Парсер сайтов | MVP готов | 3-слойная архитектура, 16 сигнатур |
+| Smart Widget UX Guide | Готов | `docs/SMART_WIDGET_UX_GUIDE.md` |
 | Simple Widget дизайны | Design-01 ready | Sandbox: `widget-preview/design-XX/` |
-| Smart Widget дизайны | Не начат | Ждёт утверждения Simple Widget дизайнов |
-| Dashboard | Каркас | Базовая структура, импорт компонентов из (tools) |
+| Smart Widget дизайны | Не начат | Ждёт утверждения Simple Widget |
+| **Dashboard** | **Редизайн готов** | Sidebar + Header + Main + Cookie Gen tab + заглушки |
+| Supabase Auth | Настроен | Авторизация, автологин, баннер подтверждения email |
 | Landing | Не начат | Ждёт дизайнов виджетов |
-| Supabase Auth | Не начат | Проект настроен, типы — placeholder |
 
 ---
 
@@ -29,6 +29,43 @@
 ---
 
 ## Последние 5 сессий
+
+### 2026-02-13 — Полный редизайн дашборда + страница «Инструменты»
+- **Sidebar полностью переписан:** Lucide icons, группы (Продукты/Данные), секции mt-auto (Settings/Subscription), Sheet mobile menu, убраны ВСЕ бейджи «Скоро»
+- **Header переписан:** shadcn Breadcrumb (useBreadcrumbs хук), shadcn DropdownMenu (user menu с email из Supabase), компактный ThemeButton, MobileSidebar trigger
+- **Главная страница:** DashboardGreeting (время суток + имя из Supabase), ProjectCard (cookie project с quick actions), DashboardStats (4 метрики), SmartWidgetUpsell (деликатный), ConnectMoreTools (тизеры)
+- **Cookie Generator tab:** переписан — ProjectCard + DashboardStats, empty state, чистый layout
+- **Заглушки:** Widget, Dialogs, Integrations, Analytics → InDevelopmentPage (без «Скоро» бейджей)
+- **Новые компоненты (8):** in-development-page, dashboard-greeting, project-card, dashboard-stats, smart-widget-upsell, connect-more-tools, use-breadcrumbs hook
+- **Новый роут:** /dashboard/analytics
+- **Design system:** bg-foreground CTA, rounded-xl, text-[13px] typography, нейтральные active states
+- **Удалены зависимости:** убраны экспорты BentoGrid, ActivityFeed, ComingSoonPage, ProjectSwitcher из index.ts
+- **Страница «Инструменты» (tools/page.tsx):** полная переработка
+  - Карточки компактные, 3 в ряд на десктопе, без цветных категорийных фонов
+  - Lucide иконки (Shield, FileText, Sparkles и т.д.) вместо инлайн SVG
+  - Убраны: PRO gradient badge, features pill badges, цветные status badges, footer с border-t
+  - Фильтры: `bg-foreground text-background` для активного (как CTA), нейтральные неактивные
+  - Hover: subtle `bg-muted/30` + "Открыть" с ArrowRight на карточках
+- **Hydration fix:** `<li>` inside `<li>` в breadcrumbs → `React.Fragment` wrapping
+- **Active status:** зелёная точка `bg-emerald-500` с `animate-ping` пульсацией для статуса «Активен»
+- **dev.cmd:** скрипт для автоматического убийства порта 3000 + удаления lock файла перед запуском dev server
+- **Tools registry:** Simple Widget → `coming_soon` (некликабельный), Smart Widget удалён из реестра (своя вкладка в сайдбаре)
+- **Cleanup:** 4 скриншота из корня проекта перемещены в `.debug/screenshots/`
+- **Тестовые данные:** проект `example-shop.ru` + cookie виджет вставлены в Supabase для `test@floqly.ru`
+- **Редакторы текста и дизайна cookie (NEW):**
+  - `use-widget.ts` — хук загрузки/сохранения виджета из Supabase (React Query + JSONB config)
+  - `editor-header.tsx` — общий хедер с кнопками «Сбросить» и «Сохранить»
+  - `/edit/text/page.tsx` — фокусированный редактор текста документа (DocumentPreview)
+  - `/edit/design/page.tsx` — фокусированный редактор дизайна баннера (BannerPreview controlled mode)
+  - `document-preview.tsx` — добавлен `onContentChange` callback (non-breaking)
+  - `project-card.tsx` — ссылки обновлены: `edit/text`, `edit/design`
+  - `use-breadcrumbs.ts` — добавлены роуты «Текст», «Дизайн»
+- **TypeScript:** `tsc --noEmit` без ошибок
+- **TODO (мелкие корректировки):** визуальная полировка редакторов текста/дизайна после тестирования
+
+### 2026-02-12 — Auth: автологин + email confirmation banner + premium redesign
+- Премиальный редизайн формы авторизации (commit `3231d08`)
+- Автологин после регистрации + баннер подтверждения email (commit `c01a86d`)
 
 ### 2026-02-12 — Step 5 «Результат» + интерактивный мокап дашборда
 - **Step 5 создан с нуля:** embed code генератор + dashboard upsell карточка + инструкции по установке
