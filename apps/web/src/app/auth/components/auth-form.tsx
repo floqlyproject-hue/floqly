@@ -3,9 +3,8 @@
 import { useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
-import { Eye, EyeOff, Check, AlertTriangle } from 'lucide-react'
+import { Eye, EyeOff, Check, AlertTriangle, ArrowRight, X } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
-import { Button } from '@floqly/ui'
 import { Input, Label } from '@floqly/ui'
 import { OAuthButtons } from './oauth-buttons'
 
@@ -120,31 +119,41 @@ export function AuthForm({ mode }: AuthFormProps) {
   }
 
   return (
-    <div className="w-full max-w-md">
-      <div className="rounded-2xl border border-border bg-card p-8 shadow-xl">
+    <div className="w-full max-w-[400px]">
+      {/* Card */}
+      <div className="relative rounded-2xl border border-border/80 bg-card px-7 pb-8 pt-7 shadow-sm">
+        {/* Close button — top-right corner of card */}
+        <button
+          onClick={() => router.back()}
+          className="absolute top-4 right-4 inline-flex size-8 items-center justify-center rounded-lg text-muted-foreground/40 transition-colors hover:bg-muted hover:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+          aria-label="Закрыть"
+        >
+          <X className="size-4" strokeWidth={1.5} />
+        </button>
+
         {/* Header */}
-        <div className="mb-8 text-center">
-          <h1 className="text-2xl font-bold text-foreground">
+        <div className="mb-7 pr-8">
+          <h1 className="text-[22px] font-semibold tracking-tight text-foreground">
             {mode === 'login' ? 'Вход в аккаунт' : 'Создать аккаунт'}
           </h1>
-          <p className="mt-2 text-sm text-muted-foreground">
+          <p className="mt-1.5 text-[13px] text-muted-foreground">
             {mode === 'login'
               ? 'Войдите, чтобы управлять виджетами'
               : 'Бесплатно. Без привязки карты.'}
           </p>
         </div>
 
-        {/* OAuth Buttons */}
+        {/* OAuth Buttons — compact row */}
         <OAuthButtons redirect={redirect} />
 
         {/* Divider */}
         <div className="relative my-6">
           <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-border" />
+            <div className="w-full border-t border-border/60" />
           </div>
-          <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-card px-2 text-muted-foreground">
-              или по email
+          <div className="relative flex justify-center">
+            <span className="bg-card px-3 text-[11px] font-medium uppercase tracking-widest text-muted-foreground/60">
+              или
             </span>
           </div>
         </div>
@@ -166,44 +175,52 @@ export function AuthForm({ mode }: AuthFormProps) {
           </div>
 
           {mode === 'register' && (
-            <div className="space-y-2">
-              <Label htmlFor="name">Имя</Label>
+            <div className="space-y-1.5">
+              <Label htmlFor="name" className="text-[13px] font-medium text-foreground/80">
+                Имя
+              </Label>
               <Input
                 id="name"
                 type="text"
-                placeholder="Иван"
+                placeholder="Как вас зовут?"
                 value={name}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
                 required
                 disabled={loading}
+                className="h-11 rounded-lg border-border/60 bg-background text-[14px] shadow-none ring-0 placeholder:text-muted-foreground/40 focus-visible:border-foreground/25 focus-visible:ring-0"
               />
             </div>
           )}
 
-          <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
+          <div className="space-y-1.5">
+            <Label htmlFor="email" className="text-[13px] font-medium text-foreground/80">
+              Email
+            </Label>
             <Input
               id="email"
               type="email"
-              placeholder="ivan@example.com"
+              placeholder="name@company.com"
               value={email}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
               required
               disabled={loading}
+              className="h-11 rounded-lg border-border/60 bg-background text-[14px] shadow-none ring-0 placeholder:text-muted-foreground/40 focus-visible:border-foreground/25 focus-visible:ring-0"
             />
           </div>
 
-          <div className="space-y-2">
+          <div className="space-y-1.5">
             <div className="flex items-center justify-between">
-              <Label htmlFor="password">Пароль</Label>
+              <Label htmlFor="password" className="text-[13px] font-medium text-foreground/80">
+                Пароль
+              </Label>
               {mode === 'login' && (
                 <button
                   type="button"
                   onClick={handleMagicLink}
-                  className="text-xs text-primary hover:underline"
+                  className="text-[12px] text-muted-foreground transition-colors hover:text-foreground"
                   disabled={loading}
                 >
-                  Войти без пароля
+                  Войти по ссылке
                 </button>
               )}
             </div>
@@ -213,18 +230,18 @@ export function AuthForm({ mode }: AuthFormProps) {
               <Input
                 id="password"
                 type={showPassword ? 'text' : 'password'}
-                placeholder="••••••••"
+                placeholder="Минимум 6 символов"
                 value={password}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
                 required
                 minLength={6}
                 disabled={loading}
-                className="pr-10"
+                className="h-11 rounded-lg border-border/60 bg-background pr-10 text-[14px] shadow-none ring-0 placeholder:text-muted-foreground/40 focus-visible:border-foreground/25 focus-visible:ring-0"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground/50 transition-colors hover:text-muted-foreground"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground/40 transition-colors hover:text-muted-foreground"
                 tabIndex={-1}
                 aria-label={showPassword ? 'Скрыть пароль' : 'Показать пароль'}
               >
@@ -241,47 +258,58 @@ export function AuthForm({ mode }: AuthFormProps) {
               <div className="space-y-1 pt-1">
                 <PasswordCheck passed={checks.length} label="Минимум 6 символов" />
                 {hasCyrillic && (
-                  <div className="flex items-center gap-1.5 text-[12px] text-amber-600 dark:text-amber-400">
+                  <div className="flex items-center gap-1.5 text-[11px] text-amber-600 dark:text-amber-400">
                     <AlertTriangle className="size-3 shrink-0" strokeWidth={2} />
-                    <span>Вы вводите кириллицей — возможно, не та раскладка</span>
+                    <span>Кириллица — возможно, не та раскладка</span>
                   </div>
                 )}
               </div>
             )}
           </div>
 
+          {/* Error / Success messages */}
           {error && (
-            <div className="rounded-lg bg-destructive/10 p-3 text-sm text-destructive">
+            <div className="rounded-lg bg-destructive/8 px-3 py-2.5 text-[13px] text-destructive">
               {error}
             </div>
           )}
 
           {message && (
-            <div className="rounded-lg bg-success/10 p-3 text-sm text-success">
+            <div className="rounded-lg bg-success/8 px-3 py-2.5 text-[13px] text-success">
               {message}
             </div>
           )}
 
-          <Button
+          {/* Submit button — dark (foreground), not blue */}
+          <button
             type="submit"
-            className="w-full"
-            size="lg"
-            loading={loading}
+            disabled={loading}
+            className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-lg bg-foreground text-[14px] font-medium text-background transition-opacity hover:opacity-90 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"
           >
-            {mode === 'login' ? 'Войти' : 'Создать аккаунт'}
-          </Button>
+            {loading ? (
+              <svg className="size-4 animate-spin" viewBox="0 0 24 24" fill="none">
+                <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" className="opacity-20" />
+                <path d="M12 2a10 10 0 0 1 10 10" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+              </svg>
+            ) : (
+              <>
+                {mode === 'login' ? 'Войти' : 'Создать аккаунт'}
+                <ArrowRight className="size-4" strokeWidth={1.5} />
+              </>
+            )}
+          </button>
         </form>
 
-        {/* Footer */}
-        <p className="mt-6 text-center text-sm text-muted-foreground">
+        {/* Footer — switch mode */}
+        <p className="mt-6 text-center text-[13px] text-muted-foreground">
           {mode === 'login' ? (
             <>
               Нет аккаунта?{' '}
               <Link
                 href={`/auth/register${redirect !== '/dashboard' ? `?redirect=${encodeURIComponent(redirect)}` : ''}`}
-                className="font-medium text-primary hover:underline"
+                className="font-medium text-foreground transition-colors hover:text-foreground/70"
               >
-                Зарегистрируйтесь
+                Создать
               </Link>
             </>
           ) : (
@@ -289,30 +317,28 @@ export function AuthForm({ mode }: AuthFormProps) {
               Уже есть аккаунт?{' '}
               <Link
                 href={`/auth/login${redirect !== '/dashboard' ? `?redirect=${encodeURIComponent(redirect)}` : ''}`}
-                className="font-medium text-primary hover:underline"
+                className="font-medium text-foreground transition-colors hover:text-foreground/70"
               >
-                Войдите
+                Войти
               </Link>
             </>
           )}
         </p>
       </div>
 
-      {/* Terms */}
-      <p className="mt-4 text-center text-xs text-muted-foreground">
-        {mode === 'register' && (
-          <>
-            Регистрируясь, вы соглашаетесь с{' '}
-            <Link href="/terms" className="hover:underline">
-              условиями использования
-            </Link>{' '}
-            и{' '}
-            <Link href="/privacy" className="hover:underline">
-              политикой конфиденциальности
-            </Link>
-          </>
-        )}
-      </p>
+      {/* Terms — below the card */}
+      {mode === 'register' && (
+        <p className="mt-5 text-center text-[11px] leading-relaxed text-muted-foreground/60">
+          Нажимая «Создать аккаунт», вы соглашаетесь с{' '}
+          <Link href="/terms" className="underline decoration-muted-foreground/30 underline-offset-2 transition-colors hover:text-muted-foreground hover:decoration-muted-foreground/60">
+            условиями использования
+          </Link>{' '}
+          и{' '}
+          <Link href="/privacy" className="underline decoration-muted-foreground/30 underline-offset-2 transition-colors hover:text-muted-foreground hover:decoration-muted-foreground/60">
+            политикой конфиденциальности
+          </Link>
+        </p>
+      )}
     </div>
   )
 }
@@ -321,10 +347,14 @@ export function AuthForm({ mode }: AuthFormProps) {
 
 function PasswordCheck({ passed, label }: { passed: boolean; label: string }) {
   return (
-    <div className={`flex items-center gap-1.5 text-[12px] transition-colors ${
-      passed ? 'text-emerald-600 dark:text-emerald-400' : 'text-muted-foreground/50'
+    <div className={`flex items-center gap-1.5 text-[11px] transition-colors ${
+      passed ? 'text-emerald-600 dark:text-emerald-400' : 'text-muted-foreground/40'
     }`}>
-      <Check className={`size-3 shrink-0 ${passed ? 'opacity-100' : 'opacity-30'}`} strokeWidth={2} />
+      <div className={`flex size-3.5 items-center justify-center rounded-full transition-colors ${
+        passed ? 'bg-emerald-600/10 dark:bg-emerald-400/10' : 'bg-muted'
+      }`}>
+        <Check className={`size-2.5 ${passed ? 'opacity-100' : 'opacity-30'}`} strokeWidth={2.5} />
+      </div>
       <span>{label}</span>
     </div>
   )

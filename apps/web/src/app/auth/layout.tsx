@@ -7,29 +7,46 @@ export default function AuthLayout({
   children: React.ReactNode
 }) {
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="absolute top-0 left-0 right-0 z-10">
-        <div className="flex h-16 items-center justify-between px-4 sm:px-6">
-          <Link href="/" className="flex items-center gap-2">
-            <div className="size-8 rounded-lg bg-primary" />
-            <span className="text-xl font-semibold text-foreground">
+    <div className="relative min-h-screen bg-background">
+      {/* Header — floating, minimal */}
+      <header className="absolute top-0 right-0 left-0 z-10">
+        <div className="flex h-16 items-center justify-between px-5 sm:px-8">
+          {/* Logo */}
+          <Link
+            href="/"
+            className="flex items-center gap-2.5 transition-opacity hover:opacity-80"
+          >
+            <div className="size-7 rounded-lg bg-primary" />
+            <span className="text-lg font-semibold tracking-tight text-foreground">
               Floqly
             </span>
           </Link>
+
+          {/* Theme toggle */}
           <ThemeToggle />
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="flex min-h-screen items-center justify-center px-4 py-20">
+      <main className="flex min-h-screen items-center justify-center px-4 py-24">
         {children}
       </main>
 
-      {/* Background decoration */}
+      {/* Background — subtle radial gradient */}
       <div className="fixed inset-0 -z-10 overflow-hidden">
-        <div className="absolute -top-1/2 -right-1/2 size-[1000px] rounded-full bg-primary/5 blur-3xl" />
-        <div className="absolute -bottom-1/2 -left-1/2 size-[1000px] rounded-full bg-primary/5 blur-3xl" />
+        {/* Top-right glow */}
+        <div className="absolute -top-[300px] -right-[300px] size-[800px] rounded-full bg-primary/[0.04] blur-[120px]" />
+        {/* Bottom-left glow */}
+        <div className="absolute -bottom-[300px] -left-[300px] size-[800px] rounded-full bg-primary/[0.04] blur-[120px]" />
+        {/* Subtle dot pattern overlay */}
+        <div
+          className="absolute inset-0 opacity-[0.015]"
+          style={{
+            backgroundImage:
+              'radial-gradient(circle at 1px 1px, currentColor 1px, transparent 0)',
+            backgroundSize: '32px 32px',
+          }}
+        />
       </div>
     </div>
   )
