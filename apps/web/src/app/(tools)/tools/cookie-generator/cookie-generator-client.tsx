@@ -5,8 +5,11 @@ import {
   CompanyForm,
   BannerPreview,
   DocumentPreview,
+  ResultStep,
 } from './components'
 import { CookiePolicyForm } from './components/cookie-policy-form'
+import { DEFAULT_CUSTOMIZATION } from './components/banner-preview'
+import type { BannerCustomization } from './components/liquid-glass-island'
 import { DEFAULT_CONFIG, type CookieConfig } from './types'
 import type { CookiePolicyData } from '@/lib/templates/cookie-policy'
 import { useSiteScreenshot } from '@/lib/hooks/use-site-screenshot'
@@ -26,6 +29,7 @@ export function CookieGeneratorClient() {
   const stepsRef = useRef<HTMLElement>(null)
   const [config, setConfig] = useState<CookieConfig>(DEFAULT_CONFIG)
   const [activeTab, setActiveTab] = useState<ActiveTab>('company')
+  const [bannerCustomization, setBannerCustomization] = useState<BannerCustomization>(DEFAULT_CUSTOMIZATION)
   const { screenshotUrl, isLoading: isScreenshotLoading } = useSiteScreenshot(config.company.website)
   const { parserData, isLoading: isParserLoading } = useSiteParser(config.company.website, { mode: 'all' })
 
@@ -184,22 +188,16 @@ export function CookieGeneratorClient() {
                 config={config}
                 screenshotUrl={screenshotUrl}
                 isScreenshotLoading={isScreenshotLoading}
+                customization={bannerCustomization}
+                onCustomizationChange={setBannerCustomization}
               />
             )}
             {activeTab === 'result' && (
-              <div className="flex flex-col items-center justify-center py-16 text-center">
-                <div className="flex size-16 items-center justify-center rounded-full bg-muted">
-                  <svg className="size-7 text-muted-foreground/50" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5" />
-                  </svg>
-                </div>
-                <h3 className="mt-5 text-[22px] font-semibold tracking-tight text-foreground">
-                  Скоро здесь
-                </h3>
-                <p className="mt-2.5 max-w-sm text-[14px] leading-relaxed text-muted-foreground/70">
-                  Получение кода для вставки и экспорт настроек будут доступны в ближайшем обновлении
-                </p>
-              </div>
+              <ResultStep
+                config={config}
+                cookiePolicyData={cookiePolicyData}
+                bannerCustomization={bannerCustomization}
+              />
             )}
         </div>
 

@@ -338,6 +338,28 @@
 }
 
 /* ─────────────────────────────────────────
+   Success Pulse — Step 5 completion indicator
+   ───────────────────────────────────────── */
+.success-enter {
+  animation: success-pulse 500ms cubic-bezier(0.0, 0.0, 0.2, 1) both;
+}
+
+@keyframes success-pulse {
+  0% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ─────────────────────────────────────────
    Custom Checkbox — Material-inspired
    ───────────────────────────────────────── */
 input[type="checkbox"].cb {

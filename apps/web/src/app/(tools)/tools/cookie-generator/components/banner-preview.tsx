@@ -106,7 +106,7 @@ function computeBannerContainerStyle(pos: PositionState): React.CSSProperties {
 
 /* ── Default customization state ── */
 
-const DEFAULT_CUSTOMIZATION: BannerCustomization = {
+export const DEFAULT_CUSTOMIZATION: BannerCustomization = {
   text: {
     tone: 'friendly',
     title: TONE_TEXTS.friendly.title,
@@ -200,12 +200,16 @@ interface BannerPreviewProps {
   config: CookieConfig
   screenshotUrl: string | null
   isScreenshotLoading: boolean
+  customization?: BannerCustomization
+  onCustomizationChange?: (next: BannerCustomization) => void
 }
 
 export function BannerPreview({
   config,
   screenshotUrl,
   isScreenshotLoading,
+  customization: controlledCustomization,
+  onCustomizationChange,
 }: BannerPreviewProps) {
   const { company } = config
 
@@ -232,8 +236,10 @@ export function BannerPreview({
     setActiveBackground('custom')
   }, [])
 
-  // Banner customization — lifted state from island panels
-  const [customization, setCustomization] = useState<BannerCustomization>(DEFAULT_CUSTOMIZATION)
+  // Banner customization — supports controlled (from parent) and uncontrolled modes
+  const [internalCustomization, setInternalCustomization] = useState<BannerCustomization>(DEFAULT_CUSTOMIZATION)
+  const customization = controlledCustomization ?? internalCustomization
+  const setCustomization = onCustomizationChange ?? setInternalCustomization
 
   // Animation state — key increments to replay animation
   const [animKey, setAnimKey] = useState(0)
