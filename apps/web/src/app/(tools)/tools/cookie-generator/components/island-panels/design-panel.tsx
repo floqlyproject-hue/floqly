@@ -2,21 +2,19 @@
 
 import { useRef } from 'react'
 import { Pipette } from 'lucide-react'
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
+import { Slider } from '@/components/ui/slider'
 
 /* ── Banner Style Presets ── */
 export type StyleId = 'classic' | 'glass' | 'neo' | 'minimal' | 'gradient' | 'outlined'
 
-const STYLE_ROWS: { id: StyleId; label: string }[][] = [
-  [
-    { id: 'classic', label: 'Классика' },
-    { id: 'glass', label: 'Стекло' },
-    { id: 'neo', label: 'Нео' },
-  ],
-  [
-    { id: 'minimal', label: 'Минимал' },
-    { id: 'gradient', label: 'Градиент' },
-    { id: 'outlined', label: 'Контур' },
-  ],
+const STYLES: { id: StyleId; label: string }[] = [
+  { id: 'classic', label: 'Классика' },
+  { id: 'glass', label: 'Стекло' },
+  { id: 'neo', label: 'Нео' },
+  { id: 'minimal', label: 'Минимал' },
+  { id: 'gradient', label: 'Градиент' },
+  { id: 'outlined', label: 'Контур' },
 ]
 
 /* ── Preset Colors ── */
@@ -82,14 +80,11 @@ function ColorPickerRow({
             style={{ backgroundColor: c.color }}
           />
         ))}
-        {/* Custom color — subtle + button */}
         <button
           type="button"
           aria-label="Свой цвет"
           onClick={() => {
-            if (!isCustom) {
-              onCustomSelect(customColor)
-            }
+            if (!isCustom) onCustomSelect(customColor)
             nativeRef.current?.click()
           }}
           className={`island-color-dot island-color-dot-plus ${isCustom ? 'island-color-dot-active' : ''}`}
@@ -108,7 +103,7 @@ function ColorPickerRow({
         />
       </div>
 
-      {/* Expanded custom color editor — smooth reveal */}
+      {/* Expanded custom color editor */}
       <div className={`island-color-expand ${isCustom ? 'island-color-expand-open' : ''}`}>
         <div className="island-color-expand-inner">
           <div className="flex items-center gap-2 pt-2.5">
@@ -147,28 +142,29 @@ function ColorPickerRow({
 export function DesignPanel({ value, onChange }: DesignPanelProps) {
   return (
     <div className="space-y-3.5">
-      {/* ── Стиль: compact 2-row pills ── */}
+      {/* Стиль — shadcn ToggleGroup wrapping */}
       <div>
         <label className="island-label">Стиль</label>
-        <div className="flex flex-col gap-1">
-          {STYLE_ROWS.map((row, i) => (
-            <div key={i} className="island-segmented">
-              {row.map((s) => (
-                <button
-                  key={s.id}
-                  type="button"
-                  onClick={() => onChange({ ...value, bannerStyle: s.id })}
-                  className={`island-segment ${value.bannerStyle === s.id ? 'island-segment-active' : ''}`}
-                >
-                  {s.label}
-                </button>
-              ))}
-            </div>
+        <ToggleGroup
+          type="single"
+          value={value.bannerStyle}
+          onValueChange={(v) => { if (v) onChange({ ...value, bannerStyle: v as StyleId }) }}
+          className="flex flex-wrap gap-1"
+        >
+          {STYLES.map((s) => (
+            <ToggleGroupItem
+              key={s.id}
+              value={s.id}
+              size="sm"
+              className="h-7 rounded-md px-2.5 text-[11px] font-medium data-[state=on]:bg-foreground data-[state=on]:text-background"
+            >
+              {s.label}
+            </ToggleGroupItem>
           ))}
-        </div>
+        </ToggleGroup>
       </div>
 
-      {/* ── Фон баннера ── */}
+      {/* Фон баннера */}
       <div>
         <label className="island-label">Фон</label>
         <ColorPickerRow
@@ -180,7 +176,7 @@ export function DesignPanel({ value, onChange }: DesignPanelProps) {
         />
       </div>
 
-      {/* ── Цвет кнопок ── */}
+      {/* Цвет кнопок */}
       <div>
         <label className="island-label">Кнопки</label>
         <ColorPickerRow
@@ -192,38 +188,42 @@ export function DesignPanel({ value, onChange }: DesignPanelProps) {
         />
       </div>
 
-      {/* ── Скругление ── */}
+      {/* Скругление — shadcn Slider */}
       <div>
         <div className="flex items-center justify-between">
           <label className="island-label mb-0">Скругление</label>
           <span className="text-[11px] tabular-nums text-muted-foreground">{value.radius}px</span>
         </div>
-        <input
-          type="range"
+        <Slider
           min={0}
           max={24}
           step={2}
-          value={value.radius}
-          onChange={(e) => onChange({ ...value, radius: Number(e.target.value) })}
-          className="island-slider mt-1.5 w-full"
+          value={[value.radius]}
+          onValueChange={([v]) => onChange({ ...value, radius: v })}
+          className="mt-1.5 [&_[role=slider]]:size-3.5 [&_[role=slider]]:border-0 [&_[role=slider]]:bg-foreground [&_[role=slider]]:shadow-sm"
         />
       </div>
 
-      {/* ── Тень ── */}
+      {/* Тень — shadcn ToggleGroup */}
       <div>
         <label className="island-label">Тень</label>
-        <div className="island-segmented">
+        <ToggleGroup
+          type="single"
+          value={value.shadow}
+          onValueChange={(v) => { if (v) onChange({ ...value, shadow: v as ShadowLabel }) }}
+          className="flex gap-1"
+        >
           {SHADOWS.map((s) => (
-            <button
+            <ToggleGroupItem
               key={s}
-              type="button"
-              onClick={() => onChange({ ...value, shadow: s })}
-              className={`island-segment ${value.shadow === s ? 'island-segment-active' : ''}`}
+              value={s}
+              size="sm"
+              className="h-7 flex-1 rounded-md px-2 text-[11px] font-medium data-[state=on]:bg-foreground data-[state=on]:text-background"
             >
               {s}
-            </button>
+            </ToggleGroupItem>
           ))}
-        </div>
+        </ToggleGroup>
       </div>
     </div>
   )

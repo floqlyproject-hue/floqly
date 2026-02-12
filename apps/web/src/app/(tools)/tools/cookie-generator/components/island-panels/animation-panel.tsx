@@ -1,22 +1,21 @@
 'use client'
 
 import { Play } from 'lucide-react'
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
+import { Slider } from '@/components/ui/slider'
+import { Button } from '@/components/ui/button'
 
 /* ── Animation Types ── */
 export type AnimId = 'slide' | 'fade' | 'bounce' | 'scale' | 'none'
 export type TriggerId = 'time' | 'scroll'
 export type BackdropOption = 'Выкл' | 'Лёгкое' | 'Сильное'
 
-const ANIM_ROWS: { id: AnimId; label: string }[][] = [
-  [
-    { id: 'slide', label: 'Слайд' },
-    { id: 'fade', label: 'Затухание' },
-    { id: 'bounce', label: 'Отскок' },
-  ],
-  [
-    { id: 'scale', label: 'Масштаб' },
-    { id: 'none', label: 'Без' },
-  ],
+const ANIMS: { id: AnimId; label: string }[] = [
+  { id: 'slide', label: 'Слайд' },
+  { id: 'fade', label: 'Затухание' },
+  { id: 'bounce', label: 'Отскок' },
+  { id: 'scale', label: 'Масштаб' },
+  { id: 'none', label: 'Без' },
 ]
 
 const TRIGGERS: { id: TriggerId; label: string }[] = [
@@ -43,42 +42,48 @@ interface AnimationPanelProps {
 export function AnimationPanel({ value, onChange }: AnimationPanelProps) {
   return (
     <div className="space-y-3.5">
-      {/* ── Тип появления — 2-row pills ── */}
+      {/* Тип появления — shadcn ToggleGroup wrapping */}
       <div>
         <label className="island-label">Появление</label>
-        <div className="flex flex-col gap-1">
-          {ANIM_ROWS.map((row, i) => (
-            <div key={i} className="island-segmented">
-              {row.map((a) => (
-                <button
-                  key={a.id}
-                  type="button"
-                  onClick={() => onChange({ ...value, anim: a.id })}
-                  className={`island-segment ${value.anim === a.id ? 'island-segment-active' : ''}`}
-                >
-                  {a.label}
-                </button>
-              ))}
-            </div>
+        <ToggleGroup
+          type="single"
+          value={value.anim}
+          onValueChange={(v) => { if (v) onChange({ ...value, anim: v as AnimId }) }}
+          className="flex flex-wrap gap-1"
+        >
+          {ANIMS.map((a) => (
+            <ToggleGroupItem
+              key={a.id}
+              value={a.id}
+              size="sm"
+              className="h-7 rounded-md px-2.5 text-[11px] font-medium data-[state=on]:bg-foreground data-[state=on]:text-background"
+            >
+              {a.label}
+            </ToggleGroupItem>
           ))}
-        </div>
+        </ToggleGroup>
       </div>
 
-      {/* ── Триггер ── */}
+      {/* Триггер */}
       <div>
         <label className="island-label">Триггер</label>
-        <div className="island-segmented">
+        <ToggleGroup
+          type="single"
+          value={value.trigger}
+          onValueChange={(v) => { if (v) onChange({ ...value, trigger: v as TriggerId }) }}
+          className="flex gap-1"
+        >
           {TRIGGERS.map((t) => (
-            <button
+            <ToggleGroupItem
               key={t.id}
-              type="button"
-              onClick={() => onChange({ ...value, trigger: t.id })}
-              className={`island-segment ${value.trigger === t.id ? 'island-segment-active' : ''}`}
+              value={t.id}
+              size="sm"
+              className="h-7 flex-1 rounded-md px-2 text-[11px] font-medium data-[state=on]:bg-foreground data-[state=on]:text-background"
             >
               {t.label}
-            </button>
+            </ToggleGroupItem>
           ))}
-        </div>
+        </ToggleGroup>
 
         {/* Conditional slider — smooth reveal */}
         <div className={`island-trigger-expand ${value.trigger === 'time' ? 'island-trigger-expand-time' : 'island-trigger-expand-scroll'}`}>
@@ -89,14 +94,13 @@ export function AnimationPanel({ value, onChange }: AnimationPanelProps) {
                   <label className="island-label mb-0">Задержка</label>
                   <span className="text-[11px] tabular-nums text-muted-foreground">{value.delay}с</span>
                 </div>
-                <input
-                  type="range"
+                <Slider
                   min={0}
                   max={10}
                   step={0.5}
-                  value={value.delay}
-                  onChange={(e) => onChange({ ...value, delay: Number(e.target.value) })}
-                  className="island-slider mt-1.5 w-full"
+                  value={[value.delay]}
+                  onValueChange={([v]) => onChange({ ...value, delay: v })}
+                  className="mt-1.5 [&_[role=slider]]:size-3.5 [&_[role=slider]]:border-0 [&_[role=slider]]:bg-foreground [&_[role=slider]]:shadow-sm"
                 />
               </div>
             ) : (
@@ -105,14 +109,13 @@ export function AnimationPanel({ value, onChange }: AnimationPanelProps) {
                   <label className="island-label mb-0">Прокрутка</label>
                   <span className="text-[11px] tabular-nums text-muted-foreground">{value.scrollPx}px</span>
                 </div>
-                <input
-                  type="range"
+                <Slider
                   min={50}
                   max={1000}
                   step={50}
-                  value={value.scrollPx}
-                  onChange={(e) => onChange({ ...value, scrollPx: Number(e.target.value) })}
-                  className="island-slider mt-1.5 w-full"
+                  value={[value.scrollPx]}
+                  onValueChange={([v]) => onChange({ ...value, scrollPx: v })}
+                  className="mt-1.5 [&_[role=slider]]:size-3.5 [&_[role=slider]]:border-0 [&_[role=slider]]:bg-foreground [&_[role=slider]]:shadow-sm"
                 />
               </div>
             )}
@@ -120,48 +123,54 @@ export function AnimationPanel({ value, onChange }: AnimationPanelProps) {
         </div>
       </div>
 
-      {/* ── Затемнение фона ── */}
+      {/* Затемнение фона */}
       <div>
         <label className="island-label">Затемнение</label>
-        <div className="island-segmented">
+        <ToggleGroup
+          type="single"
+          value={value.backdrop}
+          onValueChange={(v) => { if (v) onChange({ ...value, backdrop: v as BackdropOption }) }}
+          className="flex gap-1"
+        >
           {BACKDROPS.map((b) => (
-            <button
+            <ToggleGroupItem
               key={b}
-              type="button"
-              onClick={() => onChange({ ...value, backdrop: b })}
-              className={`island-segment ${value.backdrop === b ? 'island-segment-active' : ''}`}
+              value={b}
+              size="sm"
+              className="h-7 flex-1 rounded-md px-2 text-[11px] font-medium data-[state=on]:bg-foreground data-[state=on]:text-background"
             >
               {b}
-            </button>
+            </ToggleGroupItem>
           ))}
-        </div>
+        </ToggleGroup>
       </div>
 
-      {/* ── Скорость анимации ── */}
+      {/* Скорость анимации — shadcn Slider */}
       <div>
         <div className="flex items-center justify-between">
           <label className="island-label mb-0">Скорость</label>
           <span className="text-[11px] tabular-nums text-muted-foreground">{value.speed}с</span>
         </div>
-        <input
-          type="range"
+        <Slider
           min={0.1}
           max={1}
           step={0.1}
-          value={value.speed}
-          onChange={(e) => onChange({ ...value, speed: Number(e.target.value) })}
-          className="island-slider mt-1.5 w-full"
+          value={[value.speed]}
+          onValueChange={([v]) => onChange({ ...value, speed: v })}
+          className="mt-1.5 [&_[role=slider]]:size-3.5 [&_[role=slider]]:border-0 [&_[role=slider]]:bg-foreground [&_[role=slider]]:shadow-sm"
         />
       </div>
 
-      {/* ── Предпросмотр ── */}
-      <button
+      {/* Предпросмотр — shadcn Button */}
+      <Button
         type="button"
-        className="flex w-full items-center justify-center gap-1.5 rounded-lg border border-border/50 py-2 text-[12px] font-medium text-foreground/60 transition-colors hover:bg-foreground/[0.04] hover:text-foreground"
+        variant="outline"
+        size="sm"
+        className="w-full gap-1.5 text-[12px] font-medium text-foreground/60"
       >
         <Play className="size-3.5" strokeWidth={2} />
         Воспроизвести
-      </button>
+      </Button>
     </div>
   )
 }

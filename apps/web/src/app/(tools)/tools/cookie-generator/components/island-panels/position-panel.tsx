@@ -1,5 +1,8 @@
 'use client'
 
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
+import { Slider } from '@/components/ui/slider'
+
 export type WidthOption = 'Вытянутый' | 'Обычный' | 'Компакт'
 export type VertOption = 'Сверху' | 'Центр' | 'Снизу'
 export type HorizOption = 'Слева' | 'Центр' | 'Справа'
@@ -27,85 +30,98 @@ export function PositionPanel({ value, onChange }: PositionPanelProps) {
       {/* Ширина */}
       <div>
         <label className="island-label">Ширина</label>
-        <div className="island-segmented">
+        <ToggleGroup
+          type="single"
+          value={value.width}
+          onValueChange={(v) => { if (v) onChange({ ...value, width: v as WidthOption }) }}
+          className="flex gap-1"
+        >
           {WIDTHS.map((w) => (
-            <button
+            <ToggleGroupItem
               key={w}
-              type="button"
-              onClick={() => onChange({ ...value, width: w })}
-              className={`island-segment ${value.width === w ? 'island-segment-active' : ''}`}
+              value={w}
+              size="sm"
+              className="h-7 flex-1 rounded-md px-2 text-[11px] font-medium data-[state=on]:bg-foreground data-[state=on]:text-background"
             >
               {w}
-            </button>
+            </ToggleGroupItem>
           ))}
-        </div>
+        </ToggleGroup>
       </div>
 
       {/* Вертикаль */}
       <div>
         <label className="island-label">Вертикаль</label>
-        <div className="island-segmented">
+        <ToggleGroup
+          type="single"
+          value={value.vert}
+          onValueChange={(v) => { if (v) onChange({ ...value, vert: v as VertOption }) }}
+          className="flex gap-1"
+        >
           {VERT.map((v) => (
-            <button
+            <ToggleGroupItem
               key={v}
-              type="button"
-              onClick={() => onChange({ ...value, vert: v })}
-              className={`island-segment ${value.vert === v ? 'island-segment-active' : ''}`}
+              value={v}
+              size="sm"
+              className="h-7 flex-1 rounded-md px-2 text-[11px] font-medium data-[state=on]:bg-foreground data-[state=on]:text-background"
             >
               {v}
-            </button>
+            </ToggleGroupItem>
           ))}
-        </div>
+        </ToggleGroup>
       </div>
 
       {/* Горизонталь */}
       <div>
         <label className="island-label">Горизонталь</label>
-        <div className="island-segmented">
+        <ToggleGroup
+          type="single"
+          value={value.horiz}
+          onValueChange={(v) => { if (v) onChange({ ...value, horiz: v as HorizOption }) }}
+          className="flex gap-1"
+        >
           {HORIZ.map((h) => (
-            <button
+            <ToggleGroupItem
               key={h}
-              type="button"
-              onClick={() => onChange({ ...value, horiz: h })}
-              className={`island-segment ${value.horiz === h ? 'island-segment-active' : ''}`}
+              value={h}
+              size="sm"
+              className="h-7 flex-1 rounded-md px-2 text-[11px] font-medium data-[state=on]:bg-foreground data-[state=on]:text-background"
             >
               {h}
-            </button>
+            </ToggleGroupItem>
           ))}
-        </div>
+        </ToggleGroup>
       </div>
 
-      {/* Отступ X */}
+      {/* Отступ X — shadcn Slider */}
       <div>
         <div className="flex items-center justify-between">
           <label className="island-label mb-0">Отступ X</label>
           <span className="text-[11px] tabular-nums text-muted-foreground">{value.offsetX}px</span>
         </div>
-        <input
-          type="range"
+        <Slider
           min={0}
           max={48}
           step={4}
-          value={value.offsetX}
-          onChange={(e) => onChange({ ...value, offsetX: Number(e.target.value) })}
-          className="island-slider mt-1.5 w-full"
+          value={[value.offsetX]}
+          onValueChange={([v]) => onChange({ ...value, offsetX: v })}
+          className="mt-1.5 [&_[role=slider]]:size-3.5 [&_[role=slider]]:border-0 [&_[role=slider]]:bg-foreground [&_[role=slider]]:shadow-sm"
         />
       </div>
 
-      {/* Отступ Y */}
+      {/* Отступ Y — shadcn Slider */}
       <div>
         <div className="flex items-center justify-between">
           <label className="island-label mb-0">Отступ Y</label>
           <span className="text-[11px] tabular-nums text-muted-foreground">{value.offsetY}px</span>
         </div>
-        <input
-          type="range"
+        <Slider
           min={0}
           max={48}
           step={4}
-          value={value.offsetY}
-          onChange={(e) => onChange({ ...value, offsetY: Number(e.target.value) })}
-          className="island-slider mt-1.5 w-full"
+          value={[value.offsetY]}
+          onValueChange={([v]) => onChange({ ...value, offsetY: v })}
+          className="mt-1.5 [&_[role=slider]]:size-3.5 [&_[role=slider]]:border-0 [&_[role=slider]]:bg-foreground [&_[role=slider]]:shadow-sm"
         />
       </div>
     </div>

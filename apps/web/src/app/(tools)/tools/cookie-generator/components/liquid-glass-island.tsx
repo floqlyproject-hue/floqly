@@ -1,8 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { motion, AnimatePresence, LayoutGroup } from 'framer-motion'
 import { Palette, Sparkles, Type, LayoutTemplate, X } from 'lucide-react'
+import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@/components/ui/tooltip'
 import {
   DesignPanel, AnimationPanel, TextPanel, PositionPanel,
   type TextState, type DesignState, type PositionState, type AnimationState,
@@ -42,16 +43,26 @@ export function LiquidGlassIsland({
   onCustomizationChange,
 }: LiquidGlassIslandProps) {
   const [activePanel, setActivePanel] = useState<PanelId | null>(null)
+  const prevPanelRef = useRef<number>(0)
   const isExpanded = activePanel !== null
   const activeCategory = ISLAND_CATEGORIES.find((c) => c.id === activePanel)
+  const activeIndex = activePanel ? ISLAND_CATEGORIES.findIndex((c) => c.id === activePanel) : 0
 
   function handleIconClick(id: PanelId) {
+    const newIndex = ISLAND_CATEGORIES.findIndex((c) => c.id === id)
+    prevPanelRef.current = activeIndex
     setActivePanel((prev) => (prev === id ? null : id))
+    if (id !== activePanel) prevPanelRef.current = activeIndex
   }
 
   function handleDotClick(id: PanelId) {
+    const newIndex = ISLAND_CATEGORIES.findIndex((c) => c.id === id)
+    prevPanelRef.current = activeIndex
     setActivePanel(id)
   }
+
+  // Direction for slide animation
+  const direction = activeIndex >= prevPanelRef.current ? 1 : -1
 
   function renderPanel(panelId: PanelId) {
     switch (panelId) {
@@ -87,7 +98,7 @@ export function LiquidGlassIsland({
   }
 
   return (
-    <>
+    <TooltipProvider delayDuration={300}>
       {/* Hidden SVG filter — glass distortion */}
       <svg
         style={{ position: 'absolute', width: 0, height: 0, pointerEvents: 'none' }}
@@ -148,28 +159,30 @@ export function LiquidGlassIsland({
           {/* Content */}
           <div className="liquid-glass-content">
             {!isExpanded ? (
-              /* ── Collapsed: icon buttons ── */
+              /* ── Collapsed: icon buttons with shadcn Tooltip ── */
               <div className="flex flex-col gap-0.5 p-1.5">
                 {ISLAND_CATEGORIES.map((cat) => (
-                  <span key={cat.id} className="tooltip-trigger relative">
-                    <motion.button
-                      layout
-                      type="button"
-                      aria-label={cat.label}
-                      onClick={() => handleIconClick(cat.id)}
-                      className="flex size-9 items-center justify-center rounded-lg text-foreground/70 transition-colors duration-150 hover:bg-white/20 hover:text-foreground dark:text-foreground/60 dark:hover:bg-white/10 dark:hover:text-foreground"
-                      transition={{ layout: SPRING }}
-                    >
-                      <cat.icon className="size-[18px]" strokeWidth={1.75} />
-                    </motion.button>
-                    <span className="tooltip-content-right ml-1 whitespace-nowrap rounded-lg bg-foreground px-2.5 py-1.5 text-[11px] font-medium text-background shadow-lg">
+                  <Tooltip key={cat.id}>
+                    <TooltipTrigger asChild>
+                      <motion.button
+                        layout
+                        type="button"
+                        aria-label={cat.label}
+                        onClick={() => handleIconClick(cat.id)}
+                        className="flex size-9 items-center justify-center rounded-lg text-foreground/70 transition-colors duration-150 hover:bg-white/20 hover:text-foreground dark:text-foreground/60 dark:hover:bg-white/10 dark:hover:text-foreground"
+                        transition={{ layout: SPRING }}
+                      >
+                        <cat.icon className="size-[18px]" strokeWidth={1.75} />
+                      </motion.button>
+                    </TooltipTrigger>
+                    <TooltipContent side="right" sideOffset={8} className="text-xs">
                       {cat.label}
-                    </span>
-                  </span>
+                    </TooltipContent>
+                  </Tooltip>
                 ))}
               </div>
             ) : (
-              /* ── Expanded: panel ── */
+              /* ── Expanded: panel with directional slide ── */
               <div className="w-[240px] p-3">
                 {/* Header */}
                 <div className="mb-3 flex items-center justify-between">
@@ -194,33 +207,42 @@ export function LiquidGlassIsland({
                   </button>
                 </div>
 
-                {/* Panel content with AnimatePresence */}
-                <AnimatePresence mode="popLayout" initial={false}>
-                  <motion.div
-                    key={activePanel}
-                    initial={{ opacity: 0, y: 6 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -6 }}
-                    transition={{ duration: 0.15, ease: [0, 0, 0.2, 1] }}
-                  >
-                    {renderPanel(activePanel!)}
-                  </motion.div>
-                </AnimatePresence>
+                {/* Panel content with directional AnimatePresence */}
+                <div className="overflow-hidden">
+                  <AnimatePresence mode="popLayout" initial={false} custom={direction}>
+                    <motion.div
+                      key={activePanel}
+                      custom={direction}
+                      initial={(d: number) => ({ opacity: 0, x: d * 20 })}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={(d: number) => ({ opacity: 0, x: d * -20 })}
+                      transition={{ duration: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
+                    >
+                      {renderPanel(activePanel!)}
+                    </motion.div>
+                  </AnimatePresence>
+                </div>
 
-                {/* Dot navigation */}
+                {/* Dot navigation with active indicator */}
                 <div className="mt-3 flex items-center justify-center gap-1.5 border-t border-foreground/[0.06] pt-3">
                   {ISLAND_CATEGORIES.map((cat) => (
-                    <button
-                      key={cat.id}
-                      type="button"
-                      aria-label={cat.label}
-                      onClick={() => handleDotClick(cat.id)}
-                      className={`rounded-full transition-all duration-200 ${
-                        cat.id === activePanel
-                          ? 'size-2 bg-foreground'
-                          : 'size-1.5 bg-foreground/25 hover:bg-foreground/50'
-                      }`}
-                    />
+                    <Tooltip key={cat.id}>
+                      <TooltipTrigger asChild>
+                        <button
+                          type="button"
+                          aria-label={cat.label}
+                          onClick={() => handleDotClick(cat.id)}
+                          className={`rounded-full transition-all duration-200 ${
+                            cat.id === activePanel
+                              ? 'size-2 bg-foreground'
+                              : 'size-1.5 bg-foreground/25 hover:bg-foreground/50'
+                          }`}
+                        />
+                      </TooltipTrigger>
+                      <TooltipContent side="bottom" sideOffset={6} className="text-[10px]">
+                        {cat.label}
+                      </TooltipContent>
+                    </Tooltip>
                   ))}
                 </div>
               </div>
@@ -228,6 +250,6 @@ export function LiquidGlassIsland({
           </div>
         </motion.div>
       </LayoutGroup>
-    </>
+    </TooltipProvider>
   )
 }
