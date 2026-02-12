@@ -3,7 +3,7 @@
 import { useState, useCallback, useMemo, useEffect, useRef, Fragment } from 'react'
 import {
   CompanyForm,
-  Step4Editor,
+  BannerPreview,
   DocumentPreview,
 } from './components'
 import { CookiePolicyForm } from './components/cookie-policy-form'
@@ -180,7 +180,7 @@ export function CookieGeneratorClient() {
               />
             )}
             {activeTab === 'design' && (
-              <Step4Editor
+              <BannerPreview
                 config={config}
                 screenshotUrl={screenshotUrl}
                 isScreenshotLoading={isScreenshotLoading}

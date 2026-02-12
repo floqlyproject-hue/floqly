@@ -95,22 +95,13 @@ function computeBannerContainerStyle(pos: PositionState): React.CSSProperties {
 
 /* ── Default customization state ── */
 
-export const DEFAULT_CUSTOMIZATION: BannerCustomization = {
+const DEFAULT_CUSTOMIZATION: BannerCustomization = {
   text: {
     tone: 'friendly',
     title: TONE_TEXTS.friendly.title,
     desc: TONE_TEXTS.friendly.desc,
     accept: TONE_TEXTS.friendly.accept,
     decline: TONE_TEXTS.friendly.decline,
-    settings: 'Настроить',
-    showDecline: true,
-    showSettings: true,
-    linkWordEnabled: false,
-    linkWord: 'cookie',
-    linkLineEnabled: false,
-    linkLineText: 'Подробнее о cookie',
-    linkTarget: 'popup',
-    linkUrl: '',
   },
   design: {
     bannerStyle: 'classic',
@@ -144,20 +135,12 @@ interface BannerPreviewProps {
   config: CookieConfig
   screenshotUrl: string | null
   isScreenshotLoading: boolean
-  /** When provided, state is controlled externally (from Step4Editor) */
-  customization?: BannerCustomization
-  onCustomizationChange?: (next: BannerCustomization) => void
-  /** Hide the text panel from island (text is edited on Content tab) */
-  hideTextPanel?: boolean
 }
 
 export function BannerPreview({
   config,
   screenshotUrl,
   isScreenshotLoading,
-  customization: externalCustomization,
-  onCustomizationChange: externalOnChange,
-  hideTextPanel,
 }: BannerPreviewProps) {
   const { company } = config
 
@@ -184,10 +167,8 @@ export function BannerPreview({
     setActiveBackground('custom')
   }, [])
 
-  // Banner customization — lifted state, can be controlled externally
-  const [internalCustomization, setInternalCustomization] = useState<BannerCustomization>(DEFAULT_CUSTOMIZATION)
-  const customization = externalCustomization ?? internalCustomization
-  const setCustomization = externalOnChange ?? setInternalCustomization
+  // Banner customization — lifted state from island panels
+  const [customization, setCustomization] = useState<BannerCustomization>(DEFAULT_CUSTOMIZATION)
 
   // Resolve customization → BannerStyleProps
   const bannerProps: BannerStyleProps = useMemo(() => ({
@@ -195,13 +176,9 @@ export function BannerPreview({
     description: customization.text.desc || `${companyName} использует файлы cookie для улучшения работы сайта и анализа трафика.`,
     acceptText: customization.text.accept,
     declineText: customization.text.decline,
-    settingsText: customization.text.settings,
-    showDecline: customization.text.showDecline,
-    showSettings: customization.text.showSettings,
-    linkWordEnabled: customization.text.linkWordEnabled,
-    linkWord: customization.text.linkWord,
-    linkLineEnabled: customization.text.linkLineEnabled,
-    linkLineText: customization.text.linkLineText,
+    settingsText: 'Настроить',
+    showDecline: true,
+    showSettings: true,
     backgroundColor: resolveBgColor(customization.design.bgColor, customization.design.bgCustom),
     textColor: '#111111',
     buttonColor: resolveBtnColor(customization.design.btnColor, customization.design.btnCustom),
@@ -348,7 +325,6 @@ export function BannerPreview({
           containerRef={previewRef}
           customization={customization}
           onCustomizationChange={setCustomization}
-          hideTextPanel={hideTextPanel}
         />
       </div>
 

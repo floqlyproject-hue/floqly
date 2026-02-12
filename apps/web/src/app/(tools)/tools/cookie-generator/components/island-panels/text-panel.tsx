@@ -57,15 +57,6 @@ export interface TextState {
   desc: string
   accept: string
   decline: string
-  settings: string
-  showDecline: boolean
-  showSettings: boolean
-  linkWordEnabled: boolean
-  linkWord: string
-  linkLineEnabled: boolean
-  linkLineText: string
-  linkTarget: 'popup' | 'page'
-  linkUrl: string
 }
 
 interface TextPanelProps {
@@ -76,7 +67,7 @@ interface TextPanelProps {
 export function TextPanel({ value, onChange }: TextPanelProps) {
   function applyTone(id: ToneId) {
     const t = TONE_TEXTS[id]
-    onChange({ ...value, tone: id, title: t.title, desc: t.desc, accept: t.accept, decline: t.decline })
+    onChange({ tone: id, title: t.title, desc: t.desc, accept: t.accept, decline: t.decline })
   }
 
   return (

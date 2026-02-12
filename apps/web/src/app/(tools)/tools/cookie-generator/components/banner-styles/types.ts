@@ -15,12 +15,6 @@ export interface BannerStyleProps {
   showDecline: boolean
   showSettings: boolean
 
-  /* ── Link in text ── */
-  linkWordEnabled?: boolean
-  linkWord?: string
-  linkLineEnabled?: boolean
-  linkLineText?: string
-
   /* ── Colors ── */
   backgroundColor: string // hex
   textColor: string // hex

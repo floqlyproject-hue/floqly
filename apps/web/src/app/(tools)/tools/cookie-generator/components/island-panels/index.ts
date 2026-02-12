@@ -3,7 +3,7 @@ export { AnimationPanel } from './animation-panel'
 export { TextPanel } from './text-panel'
 export { PositionPanel } from './position-panel'
 
-export type { TextState, ToneId } from './text-panel'
+export type { TextState } from './text-panel'
 export type { DesignState, ShadowLabel } from './design-panel'
 export type { PositionState, WidthOption, VertOption, HorizOption } from './position-panel'
 export type { AnimationState, AnimId, TriggerId, BackdropOption } from './animation-panel'

@@ -34,24 +34,16 @@ interface LiquidGlassIslandProps {
   containerRef: React.RefObject<HTMLDivElement | null>
   customization: BannerCustomization
   onCustomizationChange: (next: BannerCustomization) => void
-  /** Hide text panel (text is edited on Content tab of Step4Editor) */
-  hideTextPanel?: boolean
 }
 
 export function LiquidGlassIsland({
   containerRef,
   customization,
   onCustomizationChange,
-  hideTextPanel,
 }: LiquidGlassIslandProps) {
   const [activePanel, setActivePanel] = useState<PanelId | null>(null)
   const isExpanded = activePanel !== null
-
-  // Filter out text panel when hideTextPanel is true
-  const visibleCategories = hideTextPanel
-    ? ISLAND_CATEGORIES.filter((c) => c.id !== 'text')
-    : ISLAND_CATEGORIES
-  const activeCategory = visibleCategories.find((c) => c.id === activePanel)
+  const activeCategory = ISLAND_CATEGORIES.find((c) => c.id === activePanel)
 
   function handleIconClick(id: PanelId) {
     setActivePanel((prev) => (prev === id ? null : id))
@@ -158,7 +150,7 @@ export function LiquidGlassIsland({
             {!isExpanded ? (
               /* ── Collapsed: icon buttons ── */
               <div className="flex flex-col gap-0.5 p-1.5">
-                {visibleCategories.map((cat) => (
+                {ISLAND_CATEGORIES.map((cat) => (
                   <span key={cat.id} className="tooltip-trigger relative">
                     <motion.button
                       layout
@@ -217,7 +209,7 @@ export function LiquidGlassIsland({
 
                 {/* Dot navigation */}
                 <div className="mt-3 flex items-center justify-center gap-1.5 border-t border-foreground/[0.06] pt-3">
-                  {visibleCategories.map((cat) => (
+                  {ISLAND_CATEGORIES.map((cat) => (
                     <button
                       key={cat.id}
                       type="button"
