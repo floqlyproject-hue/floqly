@@ -193,7 +193,7 @@ export function DesignPanel({ value, onChange }: DesignPanelProps) {
       <div>
         <div className="flex items-center justify-between">
           <label className="island-label mb-0">Скругление</label>
-          <span className="font-variant-numeric-tabular text-[11px] text-muted-foreground" style={{ fontVariantNumeric: 'tabular-nums' }}>{value.radius}px</span>
+          <span className="font-variant-numeric-tabular text-[11px] text-foreground/60" style={{ fontVariantNumeric: 'tabular-nums' }}>{value.radius}px</span>
         </div>
         <Slider
           min={0}

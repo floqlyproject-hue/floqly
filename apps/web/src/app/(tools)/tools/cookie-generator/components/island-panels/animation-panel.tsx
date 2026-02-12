@@ -37,9 +37,10 @@ export interface AnimationState {
 interface AnimationPanelProps {
   value: AnimationState
   onChange: (next: AnimationState) => void
+  onPlay?: () => void
 }
 
-export function AnimationPanel({ value, onChange }: AnimationPanelProps) {
+export function AnimationPanel({ value, onChange, onPlay }: AnimationPanelProps) {
   return (
     <div className="space-y-4">
       {/* Тип появления — shadcn ToggleGroup wrapping */}
@@ -94,7 +95,7 @@ export function AnimationPanel({ value, onChange }: AnimationPanelProps) {
               <div className="pb-2 pt-3">
                 <div className="flex items-center justify-between">
                   <label className="island-label mb-0">Задержка</label>
-                  <span className="text-[11px] text-muted-foreground" style={{ fontVariantNumeric: 'tabular-nums' }}>{value.delay}с</span>
+                  <span className="text-[11px] text-foreground/60" style={{ fontVariantNumeric: 'tabular-nums' }}>{value.delay}с</span>
                 </div>
                 <Slider
                   min={0}
@@ -109,7 +110,7 @@ export function AnimationPanel({ value, onChange }: AnimationPanelProps) {
               <div className="pb-2 pt-3">
                 <div className="flex items-center justify-between">
                   <label className="island-label mb-0">Прокрутка</label>
-                  <span className="text-[11px] text-muted-foreground" style={{ fontVariantNumeric: 'tabular-nums' }}>{value.scrollPx}px</span>
+                  <span className="text-[11px] text-foreground/60" style={{ fontVariantNumeric: 'tabular-nums' }}>{value.scrollPx}px</span>
                 </div>
                 <Slider
                   min={50}
@@ -152,7 +153,7 @@ export function AnimationPanel({ value, onChange }: AnimationPanelProps) {
       <div>
         <div className="flex items-center justify-between">
           <label className="island-label mb-0">Скорость</label>
-          <span className="text-[11px] text-muted-foreground" style={{ fontVariantNumeric: 'tabular-nums' }}>{value.speed}с</span>
+          <span className="text-[11px] text-foreground/60" style={{ fontVariantNumeric: 'tabular-nums' }}>{value.speed}с</span>
         </div>
         <Slider
           min={0.1}
@@ -170,6 +171,7 @@ export function AnimationPanel({ value, onChange }: AnimationPanelProps) {
         variant="outline"
         size="sm"
         className="w-full gap-1.5 text-[12px] font-medium text-foreground/60"
+        onClick={onPlay}
       >
         <Play className="size-3.5" strokeWidth={2} />
         Воспроизвести

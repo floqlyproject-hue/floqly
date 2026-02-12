@@ -118,7 +118,8 @@ export function ClassicBanner({
           backgroundColor,
           bgDark ? 0.95 : 0.97
         ),
-        borderTop: `1px solid ${borderColor}`,
+        borderRadius: `${borderRadius}px`,
+        border: `1px solid ${borderColor}`,
         boxShadow: shadowValue,
         backdropFilter: 'blur(12px)',
         WebkitBackdropFilter: 'blur(12px)',

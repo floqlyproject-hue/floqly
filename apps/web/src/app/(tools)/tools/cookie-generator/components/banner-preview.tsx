@@ -1,12 +1,14 @@
 'use client'
 
 import { useMemo, useRef, useState, useCallback } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import type { CookieConfig } from '../types'
 import { LiquidGlassIsland, type BannerCustomization } from './liquid-glass-island'
 import { BackgroundSwitcherIsland, type PreviewBackground } from './background-switcher-island'
 import { ClassicBanner, GlassBanner } from './banner-styles'
 import { BG_COLORS, BTN_COLORS, TONE_TEXTS, type ShadowLabel, type PositionState } from './island-panels'
 import type { BannerStyleProps } from './banner-styles/types'
+import type { AnimId, BackdropOption } from './island-panels'
 
 /* ── Color resolution: preset ID → hex ── */
 
@@ -34,9 +36,15 @@ function resolveBtnColor(btnColor: string, btnCustom: string): string {
 function computeBannerContainerStyle(pos: PositionState): React.CSSProperties {
   const style: React.CSSProperties = {
     position: 'absolute',
-    transition: 'all 0.3s ease',
+    // Note: we use CSS 'scale' property (not transform) to shrink the preview
+    // so it doesn't conflict with Framer Motion's transform-based animations
     scale: '0.75',
   }
+
+  // We use CSS `translate` property (not `transform`) for centering,
+  // so it doesn't conflict with Framer Motion's transform-based animations.
+  let translateX = ''
+  let translateY = ''
 
   // Vertical
   if (pos.vert === 'Сверху') {
@@ -46,7 +54,7 @@ function computeBannerContainerStyle(pos: PositionState): React.CSSProperties {
   } else if (pos.vert === 'Центр') {
     style.top = '50%'
     style.bottom = 'auto'
-    style.transform = 'translateY(-50%)'
+    translateY = '-50%'
     style.transformOrigin = 'center center'
   } else {
     // 'Снизу' (default)
@@ -68,10 +76,9 @@ function computeBannerContainerStyle(pos: PositionState): React.CSSProperties {
       style.right = pos.offsetX
       style.left = 'auto'
     } else {
-      // Центр
       style.left = '50%'
       style.right = 'auto'
-      style.transform = (style.transform ? style.transform + ' ' : '') + 'translateX(-50%)'
+      translateX = '-50%'
     }
   } else {
     // 'Компакт'
@@ -83,11 +90,15 @@ function computeBannerContainerStyle(pos: PositionState): React.CSSProperties {
       style.right = pos.offsetX
       style.left = 'auto'
     } else {
-      // Центр
       style.left = '50%'
       style.right = 'auto'
-      style.transform = (style.transform ? style.transform + ' ' : '') + 'translateX(-50%)'
+      translateX = '-50%'
     }
+  }
+
+  // Apply CSS translate (separate from transform)
+  if (translateX || translateY) {
+    style.translate = `${translateX || '0'} ${translateY || '0'}`
   }
 
   return style
@@ -127,6 +138,60 @@ const DEFAULT_CUSTOMIZATION: BannerCustomization = {
     backdrop: 'Выкл',
     speed: 0.3,
   },
+}
+
+/* ── Animation variants for cookie banner ── */
+
+function getAnimationVariants(anim: AnimId, position: PositionState) {
+  const isBottom = position.vert === 'Снизу'
+  const isTop = position.vert === 'Сверху'
+
+  switch (anim) {
+    case 'slide': {
+      const slideY = isTop ? -40 : isBottom ? 40 : 0
+      return {
+        initial: { opacity: 0, y: slideY },
+        animate: { opacity: 1, y: 0 },
+        exit: { opacity: 0, y: slideY },
+      }
+    }
+    case 'fade':
+      return {
+        initial: { opacity: 0 },
+        animate: { opacity: 1 },
+        exit: { opacity: 0 },
+      }
+    case 'bounce': {
+      const bounceY = isTop ? -50 : isBottom ? 50 : 0
+      return {
+        initial: { opacity: 0, y: bounceY, scale: 0.9 },
+        animate: { opacity: 1, y: 0, scale: 1 },
+        exit: { opacity: 0, y: bounceY, scale: 0.9 },
+      }
+    }
+    case 'scale':
+      return {
+        initial: { opacity: 0, scale: 0.85 },
+        animate: { opacity: 1, scale: 1 },
+        exit: { opacity: 0, scale: 0.85 },
+      }
+    case 'none':
+    default:
+      return {
+        initial: { opacity: 1 },
+        animate: { opacity: 1 },
+        exit: { opacity: 0 },
+      }
+  }
+}
+
+function getBackdropOpacity(backdrop: BackdropOption): number {
+  switch (backdrop) {
+    case 'Лёгкое': return 0.2
+    case 'Сильное': return 0.5
+    case 'Выкл':
+    default: return 0
+  }
 }
 
 /* ── Component ── */
@@ -169,6 +234,20 @@ export function BannerPreview({
 
   // Banner customization — lifted state from island panels
   const [customization, setCustomization] = useState<BannerCustomization>(DEFAULT_CUSTOMIZATION)
+
+  // Animation state — key increments to replay animation
+  const [animKey, setAnimKey] = useState(0)
+  const [bannerVisible, setBannerVisible] = useState(true)
+
+  // Replay animation: hide → wait frame → show with new key
+  const handlePlayAnimation = useCallback(() => {
+    setBannerVisible(false)
+    // Small delay for exit animation, then re-enter
+    setTimeout(() => {
+      setAnimKey((k) => k + 1)
+      setBannerVisible(true)
+    }, 200)
+  }, [])
 
   // Resolve customization → BannerStyleProps
   const bannerProps: BannerStyleProps = useMemo(() => ({
@@ -310,13 +389,41 @@ export function BannerPreview({
               </div>
             )}
 
-            {/* Cookie Banner Overlay — dynamic position from island panels */}
-            <div style={bannerContainerStyle}>
-              {customization.design.bannerStyle === 'glass'
-                ? <GlassBanner {...bannerProps} />
-                : <ClassicBanner {...bannerProps} />
-              }
-            </div>
+            {/* Backdrop overlay — animated */}
+            <AnimatePresence>
+              {bannerVisible && getBackdropOpacity(customization.animation.backdrop) > 0 && (
+                <motion.div
+                  key={`backdrop-${animKey}`}
+                  className="absolute inset-0 z-[1]"
+                  style={{ backgroundColor: '#000' }}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: getBackdropOpacity(customization.animation.backdrop) }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: customization.animation.speed }}
+                />
+              )}
+            </AnimatePresence>
+
+            {/* Cookie Banner Overlay — animated with Framer Motion */}
+            <AnimatePresence mode="wait">
+              {bannerVisible && (
+                <motion.div
+                  key={`banner-${animKey}`}
+                  style={{ ...bannerContainerStyle, zIndex: 2 }}
+                  {...getAnimationVariants(customization.animation.anim, customization.position)}
+                  transition={
+                    customization.animation.anim === 'bounce'
+                      ? { type: 'spring', stiffness: 400, damping: 15 }
+                      : { duration: customization.animation.speed, ease: [0.4, 0, 0.2, 1] }
+                  }
+                >
+                  {customization.design.bannerStyle === 'glass'
+                    ? <GlassBanner {...bannerProps} />
+                    : <ClassicBanner {...bannerProps} />
+                  }
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </div>
 
@@ -325,6 +432,7 @@ export function BannerPreview({
           containerRef={previewRef}
           customization={customization}
           onCustomizationChange={setCustomization}
+          onPlayAnimation={handlePlayAnimation}
         />
       </div>
 

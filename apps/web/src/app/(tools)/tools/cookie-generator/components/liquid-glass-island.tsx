@@ -37,12 +37,14 @@ interface LiquidGlassIslandProps {
   containerRef: React.RefObject<HTMLDivElement | null>
   customization: BannerCustomization
   onCustomizationChange: (next: BannerCustomization) => void
+  onPlayAnimation?: () => void
 }
 
 export function LiquidGlassIsland({
   containerRef,
   customization,
   onCustomizationChange,
+  onPlayAnimation,
 }: LiquidGlassIslandProps) {
   const [activePanel, setActivePanel] = useState<PanelId | null>(null)
   const [lastPanel, setLastPanel] = useState<PanelId>('text') // for pre-measuring
@@ -125,6 +127,7 @@ export function LiquidGlassIsland({
           <AnimationPanel
             value={customization.animation}
             onChange={(next) => onCustomizationChange({ ...customization, animation: next })}
+            onPlay={onPlayAnimation}
           />
         )
     }

@@ -100,7 +100,7 @@ export function PositionPanel({ value, onChange }: PositionPanelProps) {
       <div>
         <div className="flex items-center justify-between">
           <label className="island-label mb-0">Отступ X</label>
-          <span className="text-[11px] text-muted-foreground" style={{ fontVariantNumeric: 'tabular-nums' }}>{value.offsetX}px</span>
+          <span className="text-[11px] text-foreground/60" style={{ fontVariantNumeric: 'tabular-nums' }}>{value.offsetX}px</span>
         </div>
         <Slider
           min={0}
@@ -116,7 +116,7 @@ export function PositionPanel({ value, onChange }: PositionPanelProps) {
       <div>
         <div className="flex items-center justify-between">
           <label className="island-label mb-0">Отступ Y</label>
-          <span className="text-[11px] text-muted-foreground" style={{ fontVariantNumeric: 'tabular-nums' }}>{value.offsetY}px</span>
+          <span className="text-[11px] text-foreground/60" style={{ fontVariantNumeric: 'tabular-nums' }}>{value.offsetY}px</span>
         </div>
         <Slider
           min={0}
