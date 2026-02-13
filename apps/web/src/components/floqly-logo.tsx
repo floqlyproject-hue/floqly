@@ -22,8 +22,12 @@ export function FloqlyLogo({
 }: FloqlyLogoProps) {
   const iconSize = size === 'sm' ? 28 : 32
   const textSize = size === 'sm' ? 'text-[15px]' : 'text-xl'
-  const bubbleW = size === 'sm' ? 14 : 16
-  const bubbleH = size === 'sm' ? 10 : 12
+  /* Bubble SVG sizing — same proportions as widget Design-02
+     viewBox 0 0 40 38, body Y 3→27 (center Y=15), tail to Y=33
+     Optical centering: margin-top shifts bubble down so body center = icon center */
+  const bubbleSvgW = size === 'sm' ? 15 : 17
+  const bubbleSvgH = size === 'sm' ? 16 : 18
+  const bubbleShift = size === 'sm' ? 2 : 2.5
 
   return (
     <Link
@@ -35,37 +39,41 @@ export function FloqlyLogo({
         className="fl-logo-icon relative flex shrink-0 items-center justify-center rounded-[7px] border-[1.5px] transition-shadow duration-300"
         style={{ width: iconSize, height: iconSize }}
       >
-        {/* Speech bubble — single SVG path with integrated tail */}
-        <div className="fl-logo-bubble relative" style={{ width: bubbleW, height: bubbleH + 3 }}>
-          <svg
-            viewBox="0 0 16 15"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            className="absolute inset-0 w-full h-full"
-          >
-            {/* One continuous path: rounded rect + smooth tail on bottom-left */}
-            <path
-              d="M4 1h8a3 3 0 0 1 3 3v4a3 3 0 0 1-3 3H4.5l-1.5 2.5c-.3.4-.5.1-.4-.2L3.5 11H4a3 3 0 0 1-3-3V4a3 3 0 0 1 3-3z"
-              className="fl-logo-bubble-path"
-              strokeWidth="1.5"
-              strokeLinejoin="round"
-            />
-          </svg>
-          {/* Content overlay — centered on the bubble body (excluding tail) */}
-          <div className="absolute inset-0 flex items-center justify-center" style={{ height: bubbleH }}>
-            {variant === 'line' ? (
-              <div className="fl-logo-line-container relative flex items-center">
-                <div className="fl-logo-line" />
-                <div className="fl-logo-cursor" />
-              </div>
-            ) : (
-              <div className="fl-logo-dots flex items-center gap-[2px]">
-                <span className="fl-logo-dot" style={{ animationDelay: '0ms' }} />
-                <span className="fl-logo-dot" style={{ animationDelay: '300ms' }} />
-                <span className="fl-logo-dot" style={{ animationDelay: '600ms' }} />
-              </div>
-            )}
-          </div>
+        {/* Speech bubble — same SVG path as widget Design-02 */}
+        <svg
+          viewBox="0 0 40 38"
+          fill="none"
+          style={{
+            width: bubbleSvgW,
+            height: bubbleSvgH,
+            marginTop: bubbleShift,
+          }}
+        >
+          <path
+            d="M3 33 V10 a7 7 0 0 1 7-7 h20 a7 7 0 0 1 7 7 v10 a7 7 0 0 1-7 7 H13 C9 27 5 30 3 33 Z"
+            className="fl-logo-bubble-path"
+            strokeWidth="2.3"
+            strokeLinejoin="round"
+            strokeLinecap="round"
+          />
+        </svg>
+        {/* Content overlay — shifted up 1px to center on bubble body */}
+        <div
+          className="absolute inset-0 flex items-center justify-center"
+          style={{ marginTop: -1 }}
+        >
+          {variant === 'line' ? (
+            <div className="fl-logo-line-container relative flex items-center">
+              <div className="fl-logo-line" />
+              <div className="fl-logo-cursor" />
+            </div>
+          ) : (
+            <div className="fl-logo-dots flex items-center gap-[2px]">
+              <span className="fl-logo-dot" style={{ animationDelay: '0ms' }} />
+              <span className="fl-logo-dot" style={{ animationDelay: '300ms' }} />
+              <span className="fl-logo-dot" style={{ animationDelay: '600ms' }} />
+            </div>
+          )}
         </div>
       </div>
 
