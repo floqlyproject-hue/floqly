@@ -1,5 +1,5 @@
 import { ThemeToggle } from '@/components/theme-toggle'
-import Link from 'next/link'
+import { FloqlyLogo } from '@/components/floqly-logo'
 
 export default function AuthLayout({
   children,
@@ -12,15 +12,7 @@ export default function AuthLayout({
       <header className="absolute top-0 right-0 left-0 z-10">
         <div className="flex h-16 items-center justify-between px-5 sm:px-8">
           {/* Logo */}
-          <Link
-            href="/"
-            className="flex items-center gap-2.5 transition-opacity hover:opacity-80"
-          >
-            <div className="size-7 rounded-lg bg-primary" />
-            <span className="text-lg font-semibold tracking-tight text-foreground">
-              Floqly
-            </span>
-          </Link>
+          <FloqlyLogo variant="line" size="sm" />
 
           {/* Theme toggle */}
           <ThemeToggle />

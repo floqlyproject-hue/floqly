@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { FloqlyLogo } from '@/components/floqly-logo'
 import {
   LayoutDashboard,
   Globe,
@@ -94,15 +95,8 @@ function SidebarNav() {
   return (
     <>
       {/* Logo */}
-      <div className="flex h-14 items-center gap-2.5 px-4">
-        <Link href="/" className="flex items-center gap-2.5 transition-opacity hover:opacity-80">
-          <div className="flex size-7 items-center justify-center rounded-lg bg-foreground">
-            <span className="text-[11px] font-bold text-background">F</span>
-          </div>
-          <span className="text-[15px] font-semibold tracking-tight text-foreground">
-            Floqly
-          </span>
-        </Link>
+      <div className="flex h-14 items-center px-4">
+        <FloqlyLogo variant="line" size="sm" />
       </div>
 
       {/* Main navigation */}
