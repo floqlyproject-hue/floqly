@@ -26,19 +26,55 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 
+/** SVG filter for liquid glass distortion — rendered once, hidden */
+function LiquidGlassFilter() {
+  return (
+    <svg className="pointer-events-none absolute size-0" aria-hidden="true">
+      <defs>
+        <filter id="liquid-glass-header" x="0%" y="0%" width="100%" height="100%">
+          <feTurbulence
+            type="fractalNoise"
+            baseFrequency="0.012 0.012"
+            numOctaves="2"
+            seed="42"
+            result="noise"
+          />
+          <feGaussianBlur in="noise" stdDeviation="1.5" result="blurred" />
+          <feDisplacementMap
+            in="SourceGraphic"
+            in2="blurred"
+            scale="18"
+            xChannelSelector="R"
+            yChannelSelector="G"
+          />
+        </filter>
+      </defs>
+    </svg>
+  )
+}
+
 export function Header() {
   const [mobileOpen, setMobileOpen] = useState(false)
   const breadcrumbs = useBreadcrumbs()
 
   return (
     <>
-      <header className="sticky top-0 z-40 flex h-14 items-center justify-between border-b border-border bg-card/80 px-4 backdrop-blur-sm sm:px-6">
+      <header className="liquid-glass-header sticky top-0 z-40 flex h-14 items-center justify-between px-4 sm:px-6">
+        {/* SVG filter definition */}
+        <LiquidGlassFilter />
+
+        {/* Liquid glass distortion layer */}
+        <div className="liquid-glass-distortion" />
+
+        {/* Specular highlight overlay */}
+        <div className="liquid-glass-specular" />
+
         {/* Left: mobile menu + breadcrumbs */}
-        <div className="flex items-center gap-3">
+        <div className="relative z-10 flex items-center gap-3">
           {/* Mobile menu trigger */}
           <button
             onClick={() => setMobileOpen(true)}
-            className="rounded-lg p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground lg:hidden"
+            className="rounded-lg p-2 text-muted-foreground transition-colors hover:bg-white/10 hover:text-foreground lg:hidden"
             aria-label="Открыть меню"
           >
             <Menu className="size-5" strokeWidth={1.5} />
@@ -69,7 +105,7 @@ export function Header() {
         </div>
 
         {/* Right: theme toggle + user menu */}
-        <div className="flex items-center gap-1">
+        <div className="relative z-10 flex items-center gap-1">
           <ThemeButton />
           <UserMenu />
         </div>

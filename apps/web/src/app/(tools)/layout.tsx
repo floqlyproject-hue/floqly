@@ -1,6 +1,5 @@
-import { ThemeToggle } from '@/components/theme-toggle'
-import { FloqlyLogo } from '@/components/floqly-logo'
 import Link from 'next/link'
+import { MarketingHeader } from '@/components/marketing-header'
 
 export default function ToolsLayout({
   children,
@@ -9,30 +8,7 @@ export default function ToolsLayout({
 }) {
   return (
     <div className="min-h-screen bg-background">
-      {/* Tools Header */}
-      <header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur-sm">
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-4">
-            <FloqlyLogo variant="dots" size="md" />
-
-            <span className="hidden text-muted-foreground sm:block">/</span>
-
-            <span className="hidden text-sm text-muted-foreground sm:block">
-              Инструменты
-            </span>
-          </div>
-
-          <div className="flex items-center gap-4">
-            <ThemeToggle />
-            <Link
-              href="/dashboard"
-              className="inline-flex h-9 items-center justify-center rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
-            >
-              Личный кабинет
-            </Link>
-          </div>
-        </div>
-      </header>
+      <MarketingHeader />
 
       {children}
 
