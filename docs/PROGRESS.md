@@ -1,7 +1,7 @@
 # Floqly — Прогресс разработки
 
-> Последнее обновление: 2026-02-13
-> Текущая фаза: **Dashboard Redesign**
+> Последнее обновление: 2026-02-14
+> Текущая фаза: **Embed System + Branding**
 > Задачи: обсуждаются в сессии, история фиксируется ниже
 
 ---
@@ -30,6 +30,20 @@
 ---
 
 ## Последние 5 сессий
+
+### 2026-02-14 — Embed-система (план) + Логотип FloqlyLogo
+- **Embed-система спланирована:** полный план из 5 фаз, 17 файлов, 3 этапа реализации
+  - Per-widget embed: каждый виджет — отдельный `<script data-widget-id="...">`, один JS-файл для всех типов
+  - Сервисный слой `embed-service.ts` для абстракции от Supabase (подготовка к миграции БД)
+  - Shadow DOM изоляция, multi-widget без конфликтов
+  - Документ для Никиты/Ильи: `docs/plans/PLAN-embed-system-setup.md`
+  - Технический план: `docs/plans/PLAN-embed-system.md`
+- **FloqlyLogo компонент:** анимированный логотип с двумя вариантами
+  - `variant="line"` — линия + курсор, `variant="dots"` — прыгающие точки
+  - Иконка (speech bubble) + шеврон (slide-in на hover) + "floqly" (JetBrains Mono)
+  - Тёмная/светлая тема через CSS custom properties (#059669 / #34D399)
+  - Pure CSS анимации, без Framer Motion
+  - Заменён логотип во всех 4 лейаутах: sidebar, auth, marketing, tools
 
 ### 2026-02-13 — Полный редизайн дашборда + страница «Инструменты»
 - **Sidebar полностью переписан:** Lucide icons, группы (Продукты/Данные), секции mt-auto (Settings/Subscription), Sheet mobile menu, убраны ВСЕ бейджи «Скоро»
