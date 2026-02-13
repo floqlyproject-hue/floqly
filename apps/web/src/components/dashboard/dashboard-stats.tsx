@@ -46,11 +46,11 @@ export function DashboardStats({ views, accepts, declines, hasData }: DashboardS
           const Icon = stat.icon
           return (
             <div key={stat.label}>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5">
                 <Icon className="size-3.5 text-muted-foreground/40" strokeWidth={1.5} />
                 <span className="text-[12px] text-muted-foreground">{stat.label}</span>
               </div>
-              <p className="mt-1 text-[20px] font-semibold tracking-tight text-foreground">
+              <p className="mt-1 text-lg font-semibold tracking-tight text-foreground">
                 {stat.value}
               </p>
             </div>
@@ -59,7 +59,7 @@ export function DashboardStats({ views, accepts, declines, hasData }: DashboardS
       </div>
 
       {!hasData && (
-        <p className="mt-4 text-[12px] text-muted-foreground/60">
+        <p className="mt-4 text-[12px] text-muted-foreground/50">
           Данные появятся после установки кода на сайт
         </p>
       )}

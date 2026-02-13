@@ -24,7 +24,7 @@ export function ConnectMoreTools() {
     <div>
       <div className="flex items-center justify-between">
         <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground/50">
-          Подключить ещё
+          Скоро
         </p>
         <Link
           href="/dashboard/tools"
@@ -35,18 +35,20 @@ export function ConnectMoreTools() {
         </Link>
       </div>
 
-      <div className="mt-3 grid gap-3 sm:grid-cols-3">
+      <div className="mt-3 grid gap-2 sm:grid-cols-3">
         {tools.map((tool) => {
           const Icon = tool.icon
           return (
             <div
               key={tool.name}
-              className="flex items-center gap-3 rounded-xl border border-border bg-card p-4 opacity-60"
+              className="flex items-center gap-3 rounded-xl border border-border bg-card p-3.5 opacity-50"
             >
-              <Icon className="size-5 shrink-0 text-muted-foreground/40" strokeWidth={1.5} />
-              <div>
-                <p className="text-[13px] font-medium text-foreground">{tool.name}</p>
-                <p className="text-[12px] text-muted-foreground">{tool.description}</p>
+              <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-foreground/[0.04]">
+                <Icon className="size-4 text-muted-foreground/50" strokeWidth={1.5} />
+              </div>
+              <div className="min-w-0">
+                <p className="truncate text-[13px] font-medium text-foreground">{tool.name}</p>
+                <p className="text-[11px] text-muted-foreground">{tool.description}</p>
               </div>
             </div>
           )

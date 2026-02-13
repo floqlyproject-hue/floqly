@@ -19,7 +19,6 @@ export function DashboardGreeting() {
       if (user?.user_metadata?.full_name) {
         setName(user.user_metadata.full_name)
       } else if (user?.email) {
-        // Use part before @ as fallback name
         setName(user.email.split('@')[0])
       }
     })
@@ -29,11 +28,11 @@ export function DashboardGreeting() {
 
   return (
     <div>
-      <h1 className="text-[22px] font-semibold tracking-tight text-foreground">
-        {name ? `${greeting}, ${name}` : 'Добро пожаловать'}
+      <h1 className="text-xl font-semibold tracking-tight text-foreground">
+        {name ? `${greeting}, ${name}` : greeting}
       </h1>
       <p className="mt-1 text-[14px] text-muted-foreground">
-        Вот что происходит с вашими инструментами
+        Управляйте виджетами и инструментами
       </p>
     </div>
   )
