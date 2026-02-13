@@ -36,6 +36,19 @@
 
 ## Последние 5 сессий
 
+### 2026-02-14 — Design-02 Floqly Brand + GSAP setup
+- **Design-02 Simple Widget (Material Design):** флагманский дизайн, совпадает с логотипом
+  - SVG path единый контур с хвостиком (M3 33 V10...)
+  - Оптическое центрирование тела облачка по вертикали (без учёта хвостика)
+  - Idle glow, hover glow, spring-like wave точек, press scale
+  - Выбран вариант B (Material) из трёх сравнений (A/B/C)
+- **Логотип FloqlyLogo:** синхронизирован с виджетом (тот же SVG path, анимация, центрирование)
+- **GSAP 3.14.2:** установлен, документация в `docs/GSAP.md`
+  - Все плагины бесплатны (ScrollTrigger, DrawSVG, MorphSVG, SplitText, Flip, Observer...)
+  - Правило: GSAP для сложных анимаций, CSS для простых состояний
+  - Виджет (embed) — только GSAP (без React)
+- **Build:** ✅
+
 ### 2026-02-14 — Копирайтинг: Cookie Generator + Dashboard
 - **Cookie Generator (все 5 шагов):** полная переработка текстов
   - Убраны все длинные тире (—), заменены точками/запятыми/перестройкой предложений

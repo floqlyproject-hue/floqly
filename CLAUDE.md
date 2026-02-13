@@ -49,7 +49,7 @@ Smart Widget встраивается на floqly.ru и демонстрируе
 |------|------------|
 | Frontend | Next.js 16.1.6 (App Router), React 19.2, TypeScript, Tailwind CSS v4 |
 | UI библиотека | shadcn/ui (New York style) + Framer Motion (где обосновано) |
-| Анимации | CSS transitions (базовые), Framer Motion (сложные UI-взаимодействия), GSAP/Three.js (landing) |
+| Анимации | CSS transitions (простые hover/fade), GSAP 3.14 (сложные/последовательные/интерактивные), Framer Motion (React UI-переходы), Three.js (3D/landing) |
 | Database | Supabase (PostgreSQL, Auth, Storage) |
 | Widget | Vanilla TS, Shadow DOM, Vite |
 | Хостинг | TimeWeb App Platform (Docker, автодеплой из GitHub) |
@@ -131,8 +131,10 @@ pnpm widget:build # Билд виджета
 | Кричащие/декоративные эффекты | Запрещены в инструментах/ЛК, разрешены в виджетах/landing |
 
 **shadcn/ui** — основа UI. Установлены все компоненты. Кастомный код — когда shadcn не хватает.
-**Framer Motion** — разрешён везде, где улучшает UX (переходы, drag&drop, layout-анимации, визуальные редакторы).
-**CSS transitions** — для простых hover/fade (не тянуть Framer Motion ради opacity).
+**GSAP 3.14** — основная библиотека анимаций. Для сложных, последовательных и интерактивных анимаций. Все плагины бесплатны (ScrollTrigger, SplitText, Flip, Observer, DrawSVG, MorphSVG, MotionPath, CustomEase). Документация: [`docs/GSAP.md`](docs/GSAP.md)
+**Framer Motion** — для React UI-переходов (layout-анимации, drag&drop, AnimatePresence). Спросить: GSAP или FM?
+**CSS transitions** — для простых hover/fade/color (не тянуть GSAP/FM ради opacity).
+**Виджет (embed)** — только GSAP, без React (standalone JS-бандл на чужие сайты).
 **Стиль инструментов/ЛК:** Precision Minimalism (Linear, Vercel, Raycast) → [`docs/DESIGN_SYSTEM.md`](docs/DESIGN_SYSTEM.md)
 **Стиль виджетов/landing:** Креатив без ограничений (GSAP, градиенты, blur — всё можно)
 
@@ -217,3 +219,4 @@ pnpm widget:build # Билд виджета
 | [`docs/PROGRESS.md`](docs/PROGRESS.md) | Полная история прогресса |
 | [`docs/SPECIFICATION.md`](docs/SPECIFICATION.md) | Техническая спецификация |
 | [`docs/prd.md`](docs/prd.md) | Product Requirements Document |
+| [`docs/GSAP.md`](docs/GSAP.md) | GSAP 3 — индекс API, плагины, ресурсы |
