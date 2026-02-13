@@ -19,10 +19,10 @@ export function MarketingHeader({ transparent }: MarketingHeaderProps = {}) {
   return (
     <header
       className={cn(
-        'sticky top-0 z-50',
+        'top-0 z-50 w-full',
         transparent
-          ? 'bg-transparent'
-          : 'border-b border-border/50 bg-background/80 backdrop-blur-md',
+          ? 'absolute bg-transparent'
+          : 'sticky border-b border-border/50 bg-background/80 backdrop-blur-md',
       )}
     >
       <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
