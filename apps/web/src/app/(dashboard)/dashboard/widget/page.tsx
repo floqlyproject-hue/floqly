@@ -9,7 +9,7 @@ export default function WidgetPage() {
   return (
     <InDevelopmentPage
       title="Умный виджет"
-      description="AI-чат для вашего сайта, который сам отвечает на вопросы клиентов, собирает заявки и работает 24/7."
+      description="Виджет для вашего сайта, который сам отвечает на вопросы клиентов, собирает заявки и работает 24/7."
       icon={<Sparkles className="size-10" strokeWidth={1} />}
     />
   )

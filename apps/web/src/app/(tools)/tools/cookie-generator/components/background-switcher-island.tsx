@@ -136,7 +136,7 @@ export function BackgroundSwitcherIsland({
               <TooltipContent side="bottom" sideOffset={8} className="max-w-[200px]">
                 <p className="text-[10px] font-medium">Загрузить скриншот</p>
                 <p className="mt-0.5 text-[9px] text-muted-foreground">
-                  PNG, JPG или WebP · 16:10
+                  PNG, JPG или WebP. Пропорции 16:10
                 </p>
               </TooltipContent>
             </Tooltip>

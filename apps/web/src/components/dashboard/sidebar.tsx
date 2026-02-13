@@ -53,7 +53,7 @@ const mainSections: NavSection[] = [
   {
     label: 'Данные',
     items: [
-      { href: '/dashboard/company-data', label: 'База знаний', icon: BookOpen },
+      { href: '/dashboard/company-data', label: 'Данные компании', icon: BookOpen },
       { href: '/dashboard/dialogs', label: 'Диалоги', icon: MessageCircle },
       { href: '/dashboard/analytics', label: 'Аналитика', icon: BarChart3 },
       { href: '/dashboard/integrations', label: 'Интеграции', icon: Plug },

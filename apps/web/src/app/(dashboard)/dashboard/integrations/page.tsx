@@ -9,7 +9,7 @@ export default function IntegrationsPage() {
   return (
     <InDevelopmentPage
       title="Интеграции"
-      description="Telegram, VK, Avito и другие каналы — подключите все площадки и получайте сообщения в одном месте."
+      description="Telegram, VK, Avito и другие каналы. Подключите все площадки и получайте сообщения в одном месте."
       icon={<Plug className="size-10" strokeWidth={1} />}
     />
   )

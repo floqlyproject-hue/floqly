@@ -55,11 +55,11 @@ function ToolbarBtn({ icon, label, onClick, isActive }: ToolbarBtnProps) {
    Tips Popover
    ───────────────────────────────────────── */
 const TIPS = [
-  'Документ создан автоматически по данным из шагов 1 и 2',
+  'Документ создан автоматически по данным из предыдущих шагов',
   'Переключитесь в «Редактор» для правки текста',
-  'Используйте панель форматирования для жирного, курсива, списков',
+  'Панель форматирования: жирный, курсив, списки',
   'Скопируйте текст или скачайте файл (.html)',
-  'Сброс вернёт документ к оригинальной версии',
+  'Сброс вернёт оригинальную версию документа',
 ]
 
 export function DocumentPreview({
@@ -376,7 +376,7 @@ ${bodyContent}
       <div className="mb-10 max-w-lg">
         <h3 className="text-[22px] font-semibold tracking-tight text-foreground">Текст документа</h3>
         <p className="mt-2.5 text-[14px] leading-relaxed text-muted-foreground/70">
-          Проверьте и отредактируйте сгенерированную политику cookie
+          Проверьте и отредактируйте политику cookie
         </p>
       </div>
 
@@ -693,7 +693,7 @@ ${bodyContent}
       {viewMode === 'edit' && (
         <p className="mode-crossfade-enter mt-3 flex items-center gap-1.5 text-[12px] text-muted-foreground/60">
           <Pen className="size-3" strokeWidth={1.5} />
-          Кликните на текст для редактирования. Изменения сохраняются автоматически.
+          Кликните на текст для редактирования. Изменения сохранятся автоматически.
         </p>
       )}
     </div>

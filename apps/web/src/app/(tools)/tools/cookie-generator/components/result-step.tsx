@@ -111,10 +111,10 @@ export function ResultStep({
       {/* A. Step Header */}
       <div className="mb-6 max-w-lg">
         <h3 className="text-[22px] font-semibold tracking-tight text-foreground">
-          Ваш баннер готов
+          Баннер готов!
         </h3>
         <p className="mt-2.5 text-[14px] leading-relaxed text-muted-foreground/70">
-          Установите код на сайт — или управляйте баннером из личного кабинета
+          Установите код на сайт или управляйте баннером из личного кабинета
         </p>
       </div>
 
@@ -124,7 +124,7 @@ export function ResultStep({
           <span className="size-1.5 rounded-full bg-emerald-500" />
         </span>
         <span className="text-[13px] text-muted-foreground">
-          Баннер cookie и политика конфиденциальности сгенерированы
+          Баннер и политика cookie сгенерированы
         </span>
       </div>
 
@@ -137,7 +137,7 @@ export function ResultStep({
               Управляйте баннером из&nbsp;личного кабинета
             </h4>
             <p className="mt-2 text-[13px] leading-relaxed text-muted-foreground/70">
-              Не нужно менять код на сайте — настраивайте всё в одном месте
+              Не нужно менять код на сайте. Настраивайте всё в одном месте
             </p>
 
             {/* Benefits List */}
@@ -145,19 +145,19 @@ export function ResultStep({
               <BenefitItem
                 title="Короткий код"
                 subtitle={`2 строки вместо ~${lineCount}`}
-                detail="CDN-скрипт, не тормозит сайт"
+                detail="CDN-скрипт, не влияет на скорость сайта"
               />
               <BenefitItem
                 title="Обновления мгновенно"
-                detail="Измените дизайн в ЛК — обновится на сайте сразу"
+                detail="Измените дизайн в ЛК, и на сайте обновится сразу"
               />
               <BenefitItem
                 title="Аналитика бесплатно"
-                detail="Показы, согласия, отказы — без Google Analytics"
+                detail="Показы, согласия, отказы. Без Метрики и Google Analytics"
               />
               <BenefitItem
                 title="Все инструменты Floqly"
-                detail="Генератор соглашений и другие — бесплатно"
+                detail="Генератор соглашений и другие инструменты бесплатно"
               />
             </div>
 
@@ -195,7 +195,7 @@ export function ResultStep({
                       </div>
                     </TooltipTrigger>
                     <TooltipContent side="top" sideOffset={6} className="max-w-[220px] text-[11px] leading-relaxed">
-                      Короткий скрипт вместо ~{lineCount} строк — подключается через CDN, обновляется без правок на сайте
+                      Короткий скрипт вместо ~{lineCount} строк. Подключается через CDN, обновляется без правок на сайте
                     </TooltipContent>
                   </Tooltip>
 
@@ -211,7 +211,7 @@ export function ResultStep({
                       numericValue={892}
                       label="Приняли"
                       animate={mockupInView}
-                      tooltip="Сколько посетителей согласились на cookie. Низкий показатель? Возможно, баннер плохо заметен — попробуйте другую позицию"
+                      tooltip="Сколько посетителей согласились на cookie. Низкий показатель? Попробуйте другую позицию баннера"
                     />
                     <MiniStat
                       numericValue={2.3}
@@ -220,7 +220,7 @@ export function ResultStep({
                       label="Ср. время"
                       highlight
                       animate={mockupInView}
-                      tooltip="Среднее время от показа баннера до клика. Чем быстрее — тем меньше баннер мешает посетителям"
+                      tooltip="Среднее время от показа до клика. Чем быстрее, тем меньше баннер мешает посетителям"
                     />
                   </div>
                 </div>
@@ -332,7 +332,7 @@ export function ResultStep({
                       Откройте HTML-файл вашего сайта и вставьте код перед
                       закрывающим тегом <code className="rounded bg-muted px-1.5 py-0.5 font-mono text-[12px] text-foreground">&lt;/body&gt;</code>
                     </li>
-                    <li>Сохраните файл и обновите страницу — баннер появится автоматически</li>
+                    <li>Сохраните файл и обновите страницу. Баннер появится автоматически</li>
                   </ol>
                 </AccordionContent>
               </AccordionItem>
@@ -415,7 +415,7 @@ export function ResultStep({
                     <li>
                       Вставьте код перед закрывающим тегом <code className="rounded bg-muted px-1.5 py-0.5 font-mono text-[12px] text-foreground">&lt;/body&gt;</code>
                     </li>
-                    <li>Если такой секции нет — обратитесь к документации вашей CMS</li>
+                    <li>Если такой секции нет, обратитесь к документации вашей CMS</li>
                   </ol>
                 </AccordionContent>
               </AccordionItem>
@@ -458,7 +458,7 @@ function BenefitItem({
           {title}
           {subtitle && (
             <span className="ml-1 font-normal text-muted-foreground/60">
-              — {subtitle}
+              · {subtitle}
             </span>
           )}
         </span>

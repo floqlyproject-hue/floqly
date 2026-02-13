@@ -13,7 +13,7 @@ export function SmartWidgetUpsell() {
             Умный виджет
           </h3>
           <p className="mt-1 text-[13px] leading-relaxed text-muted-foreground">
-            AI-помощник для сайта — отвечает клиентам 24/7, собирает заявки и знает всё о вашем бизнесе
+            Виджет, который общается с посетителями 24/7, собирает заявки и повышает конверсию
           </p>
 
           <div className="mt-3.5 flex items-center gap-3">

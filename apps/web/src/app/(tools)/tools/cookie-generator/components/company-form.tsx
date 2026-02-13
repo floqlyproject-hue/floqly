@@ -22,7 +22,7 @@ export function CompanyForm({ data, onChange, isParserLoading, parserData }: Com
       <div className="mb-10 max-w-lg">
         <h3 className="text-[22px] font-semibold tracking-tight text-foreground">О вашем сайте</h3>
         <p className="mt-2.5 text-[14px] leading-relaxed text-muted-foreground/70">
-          На основе этих данных мы составим документ политики cookie
+          Эти данные нужны для документа и текста баннера
         </p>
       </div>
 
@@ -39,12 +39,12 @@ export function CompanyForm({ data, onChange, isParserLoading, parserData }: Com
             type="text"
             value={data.name}
             onChange={(e) => handleChange('name', e.target.value)}
-            placeholder="ООО «Компания» или example.ru…"
+            placeholder="ООО «Ромашка» или mysite.ru"
             autoComplete="organization"
             className="w-full border-b border-border bg-transparent px-0 py-3 text-[15px] text-foreground transition-colors duration-200 placeholder:text-muted-foreground/40 focus:border-foreground/40 focus:outline-none"
           />
           <p className="mt-2.5 text-[13px] leading-relaxed text-muted-foreground">
-            Указывается в баннере и документе как оператор, обрабатывающий данные
+            Будет указано в документе как название оператора
           </p>
         </div>
 
@@ -54,7 +54,7 @@ export function CompanyForm({ data, onChange, isParserLoading, parserData }: Com
           <div>
             <label htmlFor="company-website" className="mb-3 flex items-center gap-2 text-[13px] font-medium text-foreground">
               <Globe className="size-3.5 text-muted-foreground/50" strokeWidth={1.5} />
-              Домен вашего сайта
+              Адрес сайта
             </label>
             <div className="flex items-center border-b border-border transition-colors duration-200 focus-within:border-foreground/40">
               <span className="select-none pr-1 font-mono text-[13px] text-muted-foreground/35">
@@ -66,7 +66,7 @@ export function CompanyForm({ data, onChange, isParserLoading, parserData }: Com
                 inputMode="url"
                 value={data.website}
                 onChange={(e) => handleChange('website', e.target.value)}
-                placeholder="example.ru…"
+                placeholder="mysite.ru"
                 autoComplete="url"
                 className="w-full bg-transparent py-3 text-[15px] text-foreground placeholder:text-muted-foreground/40 focus:outline-none"
               />
@@ -102,13 +102,13 @@ export function CompanyForm({ data, onChange, isParserLoading, parserData }: Com
               type="email"
               value={data.email}
               onChange={(e) => handleChange('email', e.target.value)}
-              placeholder="privacy@example.ru…"
+              placeholder="info@mysite.ru"
               autoComplete="email"
               spellCheck={false}
               className="w-full border-b border-border bg-transparent px-0 py-3 text-[15px] text-foreground transition-colors duration-200 placeholder:text-muted-foreground/40 focus:border-foreground/40 focus:outline-none"
             />
             <p className="mt-2.5 text-[13px] leading-relaxed text-muted-foreground">
-              Попадёт в документ — по нему посетители смогут обратиться с вопросами о cookie. Мы не используем его для рассылок.
+              Этот адрес будет в документе для обращений посетителей. Мы не используем его для рассылок и рекламы.
             </p>
           </div>
         </div>

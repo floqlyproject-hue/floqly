@@ -347,7 +347,7 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
             )}
           </legend>
           <p className="text-[13px] leading-relaxed text-muted-foreground">
-            Отметьте функции, которые есть на вашем сайте — это нужно для правильного оформления документа
+            Это нужно для правильного оформления документа
           </p>
 
           <div className="space-y-1">
@@ -370,13 +370,13 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
               checked={data.technicalFeatures?.preferences || false}
               onChange={() => handleTechnicalFeatureToggle('preferences')}
               label="Избранное и пользовательские настройки"
-              hint="Добавление товаров в избранное, сравнение характеристик, выбор города или региона, сохранение предпочтений интерфейса"
+              hint="Избранное, сравнение товаров, выбор города, сохранение настроек интерфейса"
             />
             <CheckboxItem
               checked={data.technicalFeatures?.security || false}
               onChange={() => handleTechnicalFeatureToggle('security')}
               label="Защита от спама и ботов"
-              hint="CAPTCHA-системы (Google reCAPTCHA, Яндекс SmartCaptcha, hCaptcha) для защиты форм от автоматических отправок"
+              hint="CAPTCHA-системы (reCAPTCHA, SmartCaptcha, hCaptcha) для защиты форм"
             />
 
             {/* External Services (Chat widgets, etc.) - Collapsible */}
@@ -393,7 +393,7 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
                     Онлайн-чаты и виджеты связи
                   </span>
                   <p className="mt-0.5 text-[13px] leading-relaxed text-muted-foreground">
-                    Виджеты для общения с посетителями (чаты, мессенджеры, формы обратной связи)
+                    Чаты, мессенджеры, формы обратной связи
                   </p>
                 </div>
               </label>
@@ -402,7 +402,7 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
               {showExternalServicesForm && (
                 <div className="expand-enter ml-[1.875rem] mt-1 space-y-3 border-l-2 border-border pl-4">
                   <p className="text-[13px] leading-relaxed text-muted-foreground">
-                    Укажите названия сервисов (например, JivoSite, Битрикс24, Carrot Quest)
+                    Например: JivoSite, Битрикс24, Carrot Quest
                   </p>
                   <ServiceList
                     items={data.technicalFeatures?.externalServices}
@@ -434,7 +434,7 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
             )}
           </legend>
           <p className="text-[13px] leading-relaxed text-muted-foreground">
-            Сервисы для отслеживания посещаемости и поведения пользователей на сайте
+            Сервисы для отслеживания посещаемости и поведения на сайте
           </p>
 
           <div className="space-y-1">
@@ -470,7 +470,7 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
                 />
                 <span className="flex items-center gap-1.5 text-[14px] font-medium text-foreground/90 group-hover:text-foreground">
                   Другие сервисы
-                  <Tooltip text="Инструменты сквозной аналитики (Roistat, Calltouch), коллтрекинг, системы A/B-тестирования, карты кликов (Hotjar) и другие" />
+                  <Tooltip text="Сквозная аналитика (Roistat, Calltouch), коллтрекинг, A/B-тесты, карты кликов (Hotjar)" />
                 </span>
               </label>
 
@@ -506,14 +506,14 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
             )}
           </legend>
           <p className="text-[13px] leading-relaxed text-muted-foreground">
-            Некоторые сервисы передают данные на серверы за пределами РФ — это требует указания в политике
+            Некоторые сервисы передают данные за пределы РФ. Это нужно указать в политике
           </p>
 
           {/* Legal notice — borderless */}
           <div className="flex items-start gap-2.5 rounded-lg bg-muted/50 px-3.5 py-3">
             <Info className="mt-px size-4 shrink-0 text-foreground/50" strokeWidth={1.5} aria-hidden="true" />
             <p className="text-[13px] leading-relaxed text-muted-foreground">
-              <span className="font-medium text-foreground/80">ФЗ-152</span> требует указать передачу данных за границу для защиты от штрафов и претензий
+              По <span className="font-medium text-foreground/80">ФЗ-152</span> трансграничную передачу данных нужно указывать в политике. Это защитит вас от штрафов и претензий регулятора
             </p>
           </div>
 
@@ -540,7 +540,7 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
                 />
                 <span className="flex items-center gap-1.5 text-[14px] font-medium text-foreground/90 group-hover:text-foreground">
                   Другие сервисы
-                  <Tooltip text="Другие зарубежные сервисы, передающие данные за пределы России (например, Amazon AWS, Stripe, Mailchimp)" />
+                  <Tooltip text="Зарубежные сервисы с передачей данных за пределы РФ (AWS, Stripe, Mailchimp и др.)" />
                 </span>
               </label>
 
@@ -607,7 +607,7 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
                 />
                 <span className="flex items-center gap-1.5 text-[14px] font-medium text-foreground/90 group-hover:text-foreground">
                   Партнёрские программы
-                  <Tooltip text="Партнёрские и реферальные программы (Admitad, Actionpay, Где Слон, CPA и affiliate-сети)" />
+                  <Tooltip text="Admitad, Actionpay и другие CPA и affiliate-сети" />
                 </span>
               </label>
 
@@ -668,7 +668,7 @@ export function CookiePolicyForm({ data, onChange }: CookiePolicyFormProps) {
               Выбирайте только то, что действительно используется
             </p>
             <p className="mt-0.5 text-[13px] leading-relaxed text-muted-foreground">
-              Указывайте в политике только те сервисы, которые реально работают на вашем сайте
+              Указывайте только те сервисы, которые реально работают на вашем сайте
             </p>
           </div>
         </div>

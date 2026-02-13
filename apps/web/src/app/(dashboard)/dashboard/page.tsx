@@ -74,7 +74,7 @@ export default function DashboardPage() {
                 Начните с плашки cookies
               </h2>
               <p className="mt-2 text-[14px] leading-relaxed text-muted-foreground">
-                Создайте плашку cookies для вашего сайта — это бесплатно и займёт пару минут.
+                Создайте плашку cookies для вашего сайта. Это бесплатно и займёт пару минут.
                 После этого подключите Умный виджет для работы с клиентами.
               </p>
               <Link
@@ -108,7 +108,7 @@ export default function DashboardPage() {
               <QuickStartCard
                 step={3}
                 title="Умный виджет"
-                description="Подключите AI-помощника"
+                description="Подключите виджет продаж"
                 href="/dashboard/widget"
               />
             </div>

@@ -297,7 +297,7 @@ export function BannerPreview({
           Предпросмотр баннера
         </h3>
         <p className="mt-2 text-[14px] leading-relaxed text-muted-foreground/70">
-          Так будет выглядеть баннер cookie на вашем сайте
+          Так будет выглядеть баннер на вашем сайте
         </p>
       </div>
 

@@ -100,7 +100,7 @@ export default function CompanyDataPage() {
           Данные компании
         </h1>
         <p className="mt-1.5 text-[14px] leading-relaxed text-muted-foreground">
-          Загрузите информацию о бизнесе — виджет будет отвечать клиентам точно и по делу
+          Загрузите информацию о бизнесе. Виджет будет отвечать клиентам точно и по делу
         </p>
       </div>
 
@@ -113,7 +113,7 @@ export default function CompanyDataPage() {
 
         <div className="rounded-xl border border-border bg-card p-5">
           <p className="text-[13px] text-muted-foreground">
-            Укажите адрес — мы проанализируем страницы и соберём информацию об услугах, ценах и контактах
+            Укажите адрес, и мы проанализируем страницы и соберём информацию об услугах, ценах и контактах
           </p>
 
           <div className="mt-4 flex flex-col gap-3 sm:flex-row">
@@ -181,7 +181,7 @@ export default function CompanyDataPage() {
                 Перетащите файлы или <span className="font-medium underline underline-offset-2 decoration-foreground/20">выберите</span>
               </p>
               <p className="mt-0.5 text-[12px] text-muted-foreground/60">
-                PDF, Word, Excel, TXT — до 25 МБ
+                PDF, Word, Excel, TXT. До 25 МБ
               </p>
             </div>
           </div>
@@ -258,7 +258,7 @@ export default function CompanyDataPage() {
                 Загрузите скриншоты переписок
               </p>
               <p className="mt-0.5 text-[12px] text-muted-foreground/60">
-                PNG, JPG — диалоги из мессенджеров, почты, соцсетей
+                PNG, JPG. Диалоги из мессенджеров, почты, соцсетей
               </p>
             </div>
           </div>
@@ -294,7 +294,7 @@ export default function CompanyDataPage() {
         <div className="flex gap-2.5 rounded-lg bg-muted/50 px-3.5 py-3">
           <Lightbulb className="mt-0.5 size-3.5 shrink-0 text-muted-foreground/50" strokeWidth={1.5} />
           <p className="text-[12px] leading-relaxed text-muted-foreground">
-            Загружайте удачные диалоги — виджет будет использовать похожий стиль общения
+            Загружайте удачные диалоги с клиентами. Виджет будет общаться в похожем стиле
           </p>
         </div>
       </section>
