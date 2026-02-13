@@ -96,7 +96,7 @@ function SidebarNav() {
     <>
       {/* Logo */}
       <div className="flex h-14 items-center px-4">
-        <FloqlyLogo variant="line" size="sm" />
+        <FloqlyLogo variant="dots" size="sm" />
       </div>
 
       {/* Main navigation */}

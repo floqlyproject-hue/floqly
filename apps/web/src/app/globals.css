@@ -749,15 +749,26 @@ input[type="checkbox"].cb:focus-visible {
    ============================================ */
 
 /* CSS custom properties — light theme */
+.fl-logo,
+.fl-logo * {
+  cursor: pointer;
+}
+
 .fl-logo {
   --fl-color: #059669;
-  --fl-text: var(--color-foreground);
+  --fl-text: currentColor;
   --fl-hover-text: #059669;
   --fl-glow: rgba(5, 150, 105, 0.12);
 }
 
 /* Dark theme */
 .dark .fl-logo {
+  --fl-color: #34D399;
+  --fl-hover-text: #34D399;
+  --fl-glow: rgba(52, 211, 153, 0.15);
+}
+
+:is([data-theme="dark"], .dark) .fl-logo {
   --fl-color: #34D399;
   --fl-hover-text: #34D399;
   --fl-glow: rgba(52, 211, 153, 0.15);
@@ -773,9 +784,9 @@ input[type="checkbox"].cb:focus-visible {
   border-color: var(--fl-color);
 }
 
-/* Text — static color, changes on hover */
+/* Text — inherits foreground, changes to accent on hover */
 .fl-logo-text {
-  color: var(--fl-text);
+  color: inherit;
 }
 
 /* Chevron — hidden by default */
@@ -784,15 +795,16 @@ input[type="checkbox"].cb:focus-visible {
   align-items: center;
   justify-content: center;
   width: 0;
+  max-width: 0;
   overflow: hidden;
   opacity: 0;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 700;
+  line-height: 1;
   color: var(--fl-color);
   transition: width 350ms cubic-bezier(0.34, 1.56, 0.64, 1),
+              max-width 350ms cubic-bezier(0.34, 1.56, 0.64, 1),
               opacity 250ms ease;
-  margin-left: -6px;
-  margin-right: -6px;
 }
 
 /* ─── LINE variant ─── */
@@ -836,7 +848,8 @@ input[type="checkbox"].cb:focus-visible {
 
 /* Chevron slides in */
 .fl-logo:hover .fl-logo-chevron {
-  width: 14px;
+  width: 12px;
+  max-width: 12px;
   opacity: 1;
 }
 
@@ -868,7 +881,7 @@ input[type="checkbox"].cb:focus-visible {
 
 .fl-logo:hover .fl-logo-dot {
   opacity: 1;
-  animation: fl-dot-bounce 1.2s ease-in-out infinite;
+  animation: fl-dot-bounce 2.4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
 
 /* ─── Keyframes ─── */
@@ -885,7 +898,8 @@ input[type="checkbox"].cb:focus-visible {
 }
 
 @keyframes fl-dot-bounce {
-  0%, 60%, 100% { transform: translateY(0); }
-  30% { transform: translateY(-2.5px); }
+  0%, 100% { transform: translateY(0); }
+  15% { transform: translateY(-2px); }
+  30% { transform: translateY(0); }
 }
 

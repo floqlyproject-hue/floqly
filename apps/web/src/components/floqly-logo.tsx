@@ -15,7 +15,7 @@ interface FloqlyLogoProps {
 }
 
 export function FloqlyLogo({
-  variant = 'line',
+  variant = 'dots',
   href = '/',
   className,
   size = 'sm',
@@ -51,8 +51,8 @@ export function FloqlyLogo({
           ) : (
             <div className="fl-logo-dots flex items-center gap-[2px]">
               <span className="fl-logo-dot" style={{ animationDelay: '0ms' }} />
-              <span className="fl-logo-dot" style={{ animationDelay: '150ms' }} />
               <span className="fl-logo-dot" style={{ animationDelay: '300ms' }} />
+              <span className="fl-logo-dot" style={{ animationDelay: '600ms' }} />
             </div>
           )}
         </div>
@@ -64,7 +64,10 @@ export function FloqlyLogo({
       </span>
 
       {/* Text "floqly" */}
-      <span className={cn('fl-logo-text font-[var(--font-jetbrains)] font-semibold tracking-tight transition-all duration-300', textSize)}>
+      <span
+        className={cn('fl-logo-text font-semibold tracking-tight transition-all duration-300', textSize)}
+        style={{ fontFamily: 'var(--font-jetbrains), monospace' }}
+      >
         floqly
       </span>
     </Link>

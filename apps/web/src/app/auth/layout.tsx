@@ -12,7 +12,7 @@ export default function AuthLayout({
       <header className="absolute top-0 right-0 left-0 z-10">
         <div className="flex h-16 items-center justify-between px-5 sm:px-8">
           {/* Logo */}
-          <FloqlyLogo variant="line" size="sm" />
+          <FloqlyLogo variant="dots" size="sm" />
 
           {/* Theme toggle */}
           <ThemeToggle />
