@@ -46,11 +46,20 @@ COPY . .
 # Build arguments (переменные для Next.js на этапе сборки)
 ARG NEXT_PUBLIC_SUPABASE_URL
 ARG NEXT_PUBLIC_SUPABASE_ANON_KEY
+ARG VITE_API_URL=https://floqly.ru
 
 # Set environment variables for build
 ENV NEXT_PUBLIC_SUPABASE_URL=$NEXT_PUBLIC_SUPABASE_URL
 ENV NEXT_PUBLIC_SUPABASE_ANON_KEY=$NEXT_PUBLIC_SUPABASE_ANON_KEY
+ENV VITE_API_URL=$VITE_API_URL
 ENV NODE_ENV=production
+
+# Build the widget first (IIFE bundle)
+RUN pnpm --filter @floqly/widget build
+
+# Copy widget bundle to Next.js public folder for CDN serving
+RUN mkdir -p apps/web/public/embed/v1 && \
+    cp apps/widget/dist/fl-helper.iife.js apps/web/public/embed/v1/fl-helper.iife.js
 
 # Build the Next.js app
 RUN pnpm --filter @floqly/web build

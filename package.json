@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "pnpm --filter @floqly/web dev",
     "dev:all": "pnpm -r --parallel dev",
-    "build": "pnpm --filter @floqly/web build",
+    "build": "pnpm --filter @floqly/widget build && pnpm --filter @floqly/web build",
     "build:all": "pnpm -r build",
     "start": "pnpm --filter @floqly/web start",
     "lint": "pnpm -r lint",

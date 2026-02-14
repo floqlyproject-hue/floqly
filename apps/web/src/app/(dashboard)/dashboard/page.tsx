@@ -3,6 +3,10 @@
 import Link from 'next/link'
 import { Plus, Cookie, ArrowRight } from 'lucide-react'
 import { useProjects } from '@/lib/hooks/use-projects'
+import { useWidget } from '@/lib/hooks/use-widget'
+import { useWidgetStats, useWidgetAnalytics } from '@/lib/hooks/use-widget-stats'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { createClient } from '@/lib/supabase/client'
 import { DashboardGreeting } from '@/components/dashboard/dashboard-greeting'
 import { ProjectCard } from '@/components/dashboard/project-card'
 import { DashboardStats } from '@/components/dashboard/dashboard-stats'
@@ -12,6 +16,40 @@ import { ConnectMoreTools } from '@/components/dashboard/connect-more-tools'
 export default function DashboardPage() {
   const { projects, isLoading, deleteProject } = useProjects()
   const hasProjects = projects.length > 0
+
+  // Load widget for first project (current main use case: one project)
+  const firstProjectId = projects[0]?.id ?? null
+  const { widget } = useWidget(firstProjectId)
+
+  // Stats
+  const { data: stats } = useWidgetStats(widget?.id)
+  const { data: analytics } = useWidgetAnalytics(widget?.id)
+
+  // Toggle widget status mutation
+  const supabase = createClient()
+  const queryClient = useQueryClient()
+  const toggleStatusMutation = useMutation({
+    mutationFn: async ({ widgetId, newStatus }: { widgetId: string; newStatus: 'active' | 'paused' }) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { error } = await (supabase as any)
+        .from('widgets')
+        .update({
+          status: newStatus,
+          ...(newStatus === 'active' ? { published_at: new Date().toISOString() } : {}),
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', widgetId)
+
+      if (error) throw error
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['widget'] })
+    },
+  })
+
+  const handleToggleStatus = (widgetId: string, newStatus: 'active' | 'paused') => {
+    toggleStatusMutation.mutate({ widgetId, newStatus })
+  }
 
   if (isLoading) {
     return (
@@ -41,18 +79,21 @@ export default function DashboardPage() {
                 id={project.id}
                 name="Плашка cookies"
                 domain={project.domain}
-                isActive={true}
+                widgetId={project.id === firstProjectId ? widget?.id : undefined}
+                embedKey={project.id === firstProjectId ? widget?.embed_key : undefined}
+                widgetStatus={project.id === firstProjectId ? widget?.status : 'draft'}
                 onDelete={(id) => deleteProject(id)}
+                onToggleStatus={handleToggleStatus}
               />
             ))}
           </div>
 
           {/* Stats */}
           <DashboardStats
-            views={0}
-            accepts={0}
-            declines={0}
-            hasData={false}
+            views={stats?.views_count ?? 0}
+            accepts={analytics?.accepts ?? 0}
+            declines={analytics?.declines ?? 0}
+            hasData={(stats?.views_count ?? 0) > 0}
           />
 
           {/* Smart Widget upsell */}

@@ -142,3 +142,82 @@ export interface WidgetEvent {
 }
 
 export type WidgetEventHandler = (event: WidgetEvent) => void
+
+// ════════════════════════════════════════
+// Embed API types
+// ════════════════════════════════════════
+
+/** Response from GET /api/v1/embed/{widgetId} */
+export interface EmbedConfigResponse {
+  widget: {
+    id: string
+    type: WidgetType
+    config: WidgetConfig | CookieWidgetConfig
+  }
+}
+
+/** Cookie-specific widget configuration */
+export interface CookieWidgetConfig extends WidgetConfig {
+  type: 'cookie'
+  /** Cookie banner customization from Dashboard */
+  cookieConfig: {
+    /** Banner text */
+    text: {
+      title: string
+      description: string
+      acceptButton: string
+      declineButton: string
+      settingsButton?: string
+    }
+    /** Banner design */
+    design: {
+      preset: string
+      backgroundColor: string
+      textColor: string
+      buttonColor: string
+      buttonTextColor: string
+      borderRadius: number
+      shadow: boolean
+      opacity: number
+    }
+    /** Banner position */
+    position: {
+      vertical: 'top' | 'center' | 'bottom'
+      horizontal: 'left' | 'center' | 'right'
+      width: 'stretched' | 'normal' | 'compact'
+      offsetX: number
+      offsetY: number
+    }
+    /** Banner animation */
+    animation: {
+      type: 'slide' | 'fade' | 'bounce' | 'scale' | 'none'
+      speed: number
+      trigger: 'time' | 'scroll'
+      triggerValue: number
+      backdrop: boolean
+      backdropBlur: number
+      backdropOpacity: number
+    }
+    /** Cookie types to track */
+    cookieTypes: Array<{
+      id: string
+      name: string
+      required: boolean
+      enabled: boolean
+    }>
+    /** Consent expiry in days */
+    consentExpiryDays: number
+  }
+}
+
+/** Analytics event payload sent from widget to API */
+export interface AnalyticsEventPayload {
+  widget_id: string
+  event_type: 'view' | 'cookie_accept' | 'cookie_decline' | 'cookie_settings' | 'interaction' | 'open' | 'close'
+  event_data?: Record<string, unknown>
+  visitor_id: string
+  session_id: string
+  page_url: string
+  referrer: string
+  user_agent: string
+}

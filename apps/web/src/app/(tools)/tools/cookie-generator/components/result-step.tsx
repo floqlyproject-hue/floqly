@@ -144,7 +144,7 @@ export function ResultStep({
             <div className="mt-5 space-y-3">
               <BenefitItem
                 title="Короткий код"
-                subtitle={`2 строки вместо ~${lineCount}`}
+                subtitle={`1 строка вместо ~${lineCount}`}
                 detail="CDN-скрипт, не влияет на скорость сайта"
               />
               <BenefitItem
@@ -186,16 +186,16 @@ export function ResultStep({
                           Ваш код для сайта
                         </div>
                         <code className="block break-all font-mono text-[10px] leading-relaxed text-emerald-600 dark:text-emerald-400">
-                          &lt;script src=&quot;cdn.floqly.ru/c/
+                          &lt;script src=&quot;cdn.floqly.ru/embed/v1/fl-helper.iife.js&quot; data-widget-id=&quot;
                           {config.company.name
-                            ? config.company.name.toLowerCase().replace(/[^a-zа-я0-9]/gi, '').slice(0, 6)
-                            : 'abc123'}
-                          .js&quot;&gt;&lt;/script&gt;
+                            ? config.company.name.toLowerCase().replace(/[^a-zа-я0-9]/gi, '').slice(0, 8)
+                            : 'a1b2c3d4'}
+                          &quot;&gt;&lt;/script&gt;
                         </code>
                       </div>
                     </TooltipTrigger>
                     <TooltipContent side="top" sideOffset={6} className="max-w-[220px] text-[11px] leading-relaxed">
-                      Короткий скрипт вместо ~{lineCount} строк. Подключается через CDN, обновляется без правок на сайте
+                      1 строка вместо ~{lineCount}. Подключается через CDN, обновляется без правок на сайте
                     </TooltipContent>
                   </Tooltip>
 
@@ -267,7 +267,7 @@ export function ResultStep({
                 <div className="mb-3 flex items-center gap-4 text-[12px] text-muted-foreground/50">
                   <div className="flex items-center gap-1.5">
                     <span className="size-1.5 rounded-full bg-emerald-500/60" />
-                    С аккаунтом: 2 строки
+                    С аккаунтом: 1 строка
                   </div>
                   <div className="flex items-center gap-1.5">
                     <span className="size-1.5 rounded-full bg-muted-foreground/30" />

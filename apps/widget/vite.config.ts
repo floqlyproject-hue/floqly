@@ -31,5 +31,6 @@ export default defineConfig({
   },
   define: {
     'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
+    '__FLOQLY_API_URL__': JSON.stringify(process.env.VITE_API_URL || 'https://floqly.ru'),
   },
 })

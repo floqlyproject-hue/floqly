@@ -1,7 +1,7 @@
 # Floqly — Прогресс разработки
 
-> Последнее обновление: 2026-02-13
-> Текущая фаза: **UI Overhaul + Branding**
+> Последнее обновление: 2026-02-14
+> Текущая фаза: **Embed-система + виджеты**
 > Задачи: обсуждаются в сессии, история фиксируется ниже
 
 ---
@@ -16,7 +16,7 @@
 | Simple Widget дизайны | Design-01 ✅, Design-02 ✅ | Sandbox: `widget-preview/design-XX/` |
 | Smart Widget дизайны | Design-02 Terminal Boot ✅🔄 | Анимация утверждена, нужна доработка (multiline, диалог, формы) |
 | **Dashboard** | **Редизайн готов** | Sidebar + Header + Main + Cookie Gen tab + заглушки |
-| **Embed-система** | **Спланировано** | План готов, реализация — следующая сессия |
+| **Embed-система** | **Реализовано** | CDN + API + Cookie Widget (Shadow DOM) + Dashboard интеграция. Ждёт настройки cdn.floqly.ru |
 | Supabase Auth | Настроен | Авторизация, автологин, баннер подтверждения email |
 | **Marketing Header** | **Новый** | Единый хедер для marketing+tools, проп transparent |
 | **Главная страница** | **Заглушка** | WebGL GLSL sun-анимация, fullscreen, отдельный route group (home) |
@@ -35,6 +35,29 @@
 ---
 
 ## Последние 5 сессий
+
+### 2026-02-14 — Embed-система Cookie Generator: полная реализация
+- **Этап A: Build Pipeline + CDN инфраструктура**
+  - `Dockerfile` — widget build → copy to `public/embed/v1/`
+  - `next.config.ts` — CORS + immutable cache headers для `/embed/*` и `/api/v1/embed/*`
+  - Middleware — исключение `/api/v1/embed` из auth
+  - Root `package.json` — build: widget → web (последовательно)
+- **Этап B: API endpoints + сервисный слой**
+  - `embed-service.ts` — абстракция от Supabase (getWidgetConfig, recordAnalyticsEvent, getWidgetStats)
+  - `GET /api/v1/embed/[widgetId]` — public config endpoint (by embed_key)
+  - `POST /api/v1/embed/events` — public events endpoint (fire-and-forget)
+- **Этап C: Cookie Widget в Shadow DOM**
+  - `cookie-banner.ts` — Shadow DOM, consent localStorage, exit animation, scroll/time trigger
+  - `cookie-styles.ts` — CSS generation (position, animation, responsive, dark/light)
+  - `main.ts` — multi-instance, fetch config from API, router by type, sendBeacon analytics
+  - Widget bundle: 19.87 KB (gzip: 5.38 KB)
+- **Этап D: Dashboard интеграция**
+  - `project-card.tsx` — real embed code (`cdn.floqly.ru/embed/v1/fl-helper.iife.js`), stats, publish/pause
+  - `use-widget-stats.ts` — хуки useWidgetStats + useWidgetAnalytics (poll 30s)
+  - Dashboard page + cookie-generator page — реальная статистика из Supabase
+  - `result-step.tsx` — обновлён CDN code preview
+- **Что нужно сделать руками:** настроить cdn.floqly.ru (CNAME → TimeWeb), проверить Supabase миграции
+- **Build:** ✅
 
 ### 2026-02-14 — Smart Widget Design-02: Terminal Boot утверждён
 - **Terminal Boot** выбран как финальный вариант анимации раскрытия
